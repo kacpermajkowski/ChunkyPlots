@@ -1,0 +1,14 @@
+main: pl.kacpermajkowski.ChunkyPlots.ChunkyPlots
+name: ChunkyPlots
+version: ${project.version}
+author: Kacper Majkowski
+api-version: 1.21
+commands:
+  plot:
+    description: This command allows to commit basic operation on your own plots
+    permission: chunkyplots.plot
+    aliases: [p, dzialka, d]
+  plotadmin:
+    description: This command allows to commit basic operation on others plots and use some additional admin functions
+    permission: chunkyplots.plotadmin
+    aliases: [pa, plota, padmin, da, dzialkaadmin, dzialkiadmin, dzialkia]
