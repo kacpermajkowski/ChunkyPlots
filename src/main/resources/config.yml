@@ -17,6 +17,7 @@ defaultFlags:
   BREAK_MEMBER: true
   PVP: false
   PVE: true
+  EVE: false
   ANIMAL_SPAWNING: true
   MOB_SPAWNING: true
   CREEPER_EXPLOSION: true
