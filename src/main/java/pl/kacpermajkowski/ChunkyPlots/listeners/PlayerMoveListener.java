@@ -5,14 +5,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.config.Message;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.basic.User;
-import pl.kacpermajkowski.ChunkyPlots.config.Lang;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.manager.UserManager;
+import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
 public class PlayerMoveListener implements Listener {
     @EventHandler
@@ -54,7 +53,7 @@ public class PlayerMoveListener implements Listener {
                         }
                     } else {
                         if(newPlot == null){
-                            Lang.sendMessage(player, "&cDziałka, na której stałeś została usunięta!");
+                            TextUtil.sendMessage(player, "&cDziałka, na której stałeś została usunięta!");
                             user.hasEntered = false;
                         } else {
                             if (!newPlot.getOwnerNickname().equals(previousPlot.getOwnerNickname())) {
@@ -69,9 +68,9 @@ public class PlayerMoveListener implements Listener {
     }
 
     private void sendEnterMessages(Player player, Plot newPlot){
-        Lang.sendMessage(player, Config.getInstance().getMessage(Message.ENTERED_PLOT).replace("{plotOwnerName}", newPlot.getOwnerNickname()));
+        TextUtil.sendMessage(player, Config.getInstance().getMessage(Message.ENTERED_PLOT).replace("{plotOwnerName}", newPlot.getOwnerNickname()));
     }
     private void sendLeaveMessages(Player player, Plot previousPlot){
-        Lang.sendMessage(player, Config.getInstance().getMessage(Message.LEFT_PLOT).replace("{plotOwnerName}", previousPlot.getOwnerNickname()));
+        TextUtil.sendMessage(player, Config.getInstance().getMessage(Message.LEFT_PLOT).replace("{plotOwnerName}", previousPlot.getOwnerNickname()));
     }
 }

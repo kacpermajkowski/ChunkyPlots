@@ -2,15 +2,14 @@ package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
-import pl.kacpermajkowski.ChunkyPlots.config.Message;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.basic.User;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.config.Lang;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.manager.UserManager;
+import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
 import java.util.List;
 
@@ -48,12 +47,12 @@ public class PlotMembersCommand extends Subcommand {
 				if (args[1].equals("add")) {
 					List<Plot> plots = PlotGroupCommand.getPlotsFromGroupName(player, args[3]);
 					if(plots.size() > 0) for (Plot plot : plots) addMemberToPlot(player, args[2], plot);
-					else Lang.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
+					else TextUtil.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
 				}
 				else if (args[1].equals("remove")) {
 					List<Plot> plots = PlotGroupCommand.getPlotsFromGroupName(player, args[3]);
 					if(plots.size() > 0) for (Plot plot : plots) removeMemberFromPlot(player, args[2], plot);
-					else Lang.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
+					else TextUtil.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
 				}
 			} else if(args.length == 6){
 				if (args[1].equals("add")) addMemberToPlot(player, args[2], PlotManager.getInstance().getPlotByCoordinates(args[3], args[4], args[5]));
@@ -72,30 +71,30 @@ public class PlotMembersCommand extends Subcommand {
 							plot.members.add(userName);
 							PlotManager.getInstance().savePlot(plot);
 							String rawMessage = Config.getInstance().getMessage(Message.ADDED_MEMBER_TO_PLOT);
-							String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, user);
-							Lang.sendMessage(player, uncolouredMessage);
+							String uncolouredMessage = TextUtil.replacePlaceholders(rawMessage, plot, user);
+							TextUtil.sendMessage(player, uncolouredMessage);
 						} else {
 							String rawMessage = Config.getInstance().getMessage(Message.PLAYER_IS_ALREADY_A_MEMBER);
-							String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, user);
-							Lang.sendMessage(player, uncolouredMessage);
+							String uncolouredMessage = TextUtil.replacePlaceholders(rawMessage, plot, user);
+							TextUtil.sendMessage(player, uncolouredMessage);
 						}
 					} else {
 						String rawMessage = Config.getInstance().getMessage(Message.NULL_USER).replace("{userName}", userName);
-						Lang.sendMessage(player, rawMessage);
+						TextUtil.sendMessage(player, rawMessage);
 					}
 				} else {
 					String rawMessage = Config.getInstance().getMessage(Message.CANNOT_ADD_OWNER_AS_MEMBER);
-					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, player);
-					Lang.sendMessage(player, uncolouredMessage);
+					String uncolouredMessage = TextUtil.replacePlaceholders(rawMessage, player);
+					TextUtil.sendMessage(player, uncolouredMessage);
 				}
 			} else {
 				String rawMessage = Config.getInstance().getMessage(Message.NOT_OWNER);
-				String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, player);
-				Lang.sendMessage(player, uncolouredMessage);
+				String uncolouredMessage = TextUtil.replacePlaceholders(rawMessage, plot, player);
+				TextUtil.sendMessage(player, uncolouredMessage);
 			}
 		} else {
 			String rawMessage = Config.getInstance().getMessage(Message.NULL_PLOT);
-			Lang.sendMessage(player, rawMessage);
+			TextUtil.sendMessage(player, rawMessage);
 		}
 	}
 
@@ -109,20 +108,20 @@ public class PlotMembersCommand extends Subcommand {
 
 					User user = UserManager.getInstance().getUser(userName);
 					String rawMessage = Config.getInstance().getMessage(Message.REMOVED_MEMBER_FROM_PLOT);
-					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, user);
-					Lang.sendMessage(player, uncolouredMessage);
+					String uncolouredMessage = TextUtil.replacePlaceholders(rawMessage, plot, user);
+					TextUtil.sendMessage(player, uncolouredMessage);
 				} else {
 					String rawMessage = Config.getInstance().getMessage(Message.NULL_USER).replace("{userName}", userName);
-					Lang.sendMessage(player, rawMessage);
+					TextUtil.sendMessage(player, rawMessage);
 				}
 			} else {
 				String rawMessage = Config.getInstance().getMessage(Message.NOT_OWNER);
-				String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, player);
-				Lang.sendMessage(player, uncolouredMessage);
+				String uncolouredMessage = TextUtil.replacePlaceholders(rawMessage, plot, player);
+				TextUtil.sendMessage(player, uncolouredMessage);
 			}
 		} else {
 			String rawMessage = Config.getInstance().getMessage(Message.NULL_PLOT);
-			Lang.sendMessage(player, rawMessage);
+			TextUtil.sendMessage(player, rawMessage);
 		}
 	}
 }

@@ -3,12 +3,11 @@ package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands;
 import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.*;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.config.Lang;
-import pl.kacpermajkowski.ChunkyPlots.config.Message;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.manager.*;
 
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class PlotDisposeCommand extends Subcommand {
 				if(plot.getOwnerNickname().equals(player.getName())) {
 					PlotManager.getInstance().disposePlot(plot);
 					player.getInventory().addItem(PlotManager.getInstance().getPlotItem());
-					player.sendMessage(Config.getInstance().getMessage(Message.PLOT_DELETED).replace("{plotID}", plotID).replace("{world}", plot.getWorldName()));
+					new MessageBuilder(Message.PLOT_DELETED).plotID(plotID).world(plot.getWorldName()).send(player);
 
 					User user = UserManager.getInstance().getUser(player.getName());
 					for(Group group:user.groups){
@@ -61,14 +60,12 @@ public class PlotDisposeCommand extends Subcommand {
 					}
 					for (VisitPoint visitPoint : visitPointsToDelete) {
 						VisitManager.getInstance().deleteVisitPoint(visitPoint);
-						Lang.sendMessage(player, "&cNa usuniętej działce znajdował się punkt &f" + visitPoint.getName() + "&c, więc został on usunięty!");
+						new MessageBuilder(Message.VISIT_POINT_PLOT_DELETED).visitPoint(visitPoint).send(player);
 					}
-				} else player.sendMessage(Config.getInstance().getMessage(Message.NOT_OWNER));
-			} else player.sendMessage(Config.getInstance().getMessage(Message.NULL_PLOT).replace("{plotID}", plotID));
-
+				} else new MessageBuilder(Message.NOT_OWNER).send(player);
+			} else new MessageBuilder(Message.NULL_PLOT).plotID(plotID).send(player);
 		} else {
-			String message = Config.getInstance().getMessage(Message.SENDER_NOT_PLAYER);
-			sender.sendMessage(message);
+			new MessageBuilder(Message.SENDER_NOT_PLAYER).send(sender);
 		}
 	}
 }

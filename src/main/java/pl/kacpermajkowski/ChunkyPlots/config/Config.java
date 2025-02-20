@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 
 import java.io.File;
 import java.util.HashMap;

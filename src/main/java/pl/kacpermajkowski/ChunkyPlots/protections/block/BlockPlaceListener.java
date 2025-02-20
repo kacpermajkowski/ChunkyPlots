@@ -9,12 +9,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
-import pl.kacpermajkowski.ChunkyPlots.config.Message;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.config.Lang;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
+import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
 public class BlockPlaceListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
@@ -27,12 +27,12 @@ public class BlockPlaceListener implements Listener {
             if(!PlotPermissionUtil.canPlayerAffectPlot(player, blockPlot, Flag.PLACE_MEMBER, Flag.PLACE_STRANGER)){
                 event.setCancelled(true);
                 String message = Config.getInstance().getMessage(Message.NOT_PERMITTED);
-                Lang.sendMessage(player, message);
+                TextUtil.sendMessage(player, message);
             } else {
                 if(isBlockAPlotBlock(event.getItemInHand())){
                     event.setCancelled(true);
                     String message = Config.getInstance().getMessage(Message.PLOT_ALREADY_EXISTS);
-                    Lang.sendMessage(player, message);
+                    TextUtil.sendMessage(player, message);
                 }
             }
         } else {
@@ -42,7 +42,7 @@ public class BlockPlaceListener implements Listener {
                     block.setType(Material.AIR);
                 } else {
                     String message = Config.getInstance().getMessage(Message.NOT_PERMITTED);
-                    Lang.sendMessage(player, message);
+                    TextUtil.sendMessage(player, message);
                 }
             }
         }

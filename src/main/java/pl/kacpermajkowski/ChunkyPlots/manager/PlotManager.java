@@ -12,7 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.*;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.config.Message;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.util.InventoryUtil;
 
 import java.io.File;
@@ -20,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-import static pl.kacpermajkowski.ChunkyPlots.config.Lang.sendMessage;
 
 public class PlotManager {
 	private static PlotManager instance;
@@ -169,8 +168,8 @@ public class PlotManager {
 			assignPlotToUserDefaultGroup(plot, user);
 			plots.add(plot);
 			savePlot(plot);
-			sendMessage(player, Config.getInstance().getMessage(Message.PLOT_CREATED).replace("{plotID}", plotID));
-		} else sendMessage(player, Config.getInstance().getMessage(Message.PLOT_ALREADY_EXISTS).replace("{plotID}", plotID));
+			new MessageBuilder(Message.PLOT_CREATED).plot(plot).send(player);
+		} else new MessageBuilder(Message.PLOT_ALREADY_EXISTS).plotID(plotID).send(player);
 	}
 
 	private void assignPlotToUserDefaultGroup(Plot plot, User user){

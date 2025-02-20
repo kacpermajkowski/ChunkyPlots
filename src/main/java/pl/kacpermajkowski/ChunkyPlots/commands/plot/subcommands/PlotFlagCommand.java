@@ -2,15 +2,15 @@ package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
-import pl.kacpermajkowski.ChunkyPlots.config.Message;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotCommandManager;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.config.Lang;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -65,24 +65,20 @@ public class PlotFlagCommand extends Subcommand {
 								}
 							}
 							if(isValueSameInAllPlots){
-								String rawMessage = Config.getInstance().getMessage(Message.FLAG_VALUE_ON_PLOT);
-								String uncolouredMessage = Lang.replacePlaceholders(rawMessage, flag, value);
-								Lang.sendMessage(player, uncolouredMessage);
+								new MessageBuilder(Message.FLAG_VALUE_ON_PLOT).flag(flag, value);
 							} else {
-								String rawMessage = Config.getInstance().getMessage(Message.FLAG_VALUES_IN_GROUP_ARE_DIFFERENT);
-								String uncolouredMessage = Lang.replacePlaceholders(rawMessage, flag);
-								Lang.sendMessage(player, uncolouredMessage);
+								new MessageBuilder(Message.FLAG_VALUES_IN_GROUP_ARE_DIFFERENT).flag(flag).send(player);
 							}
 						}
 					}
-					else Lang.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
+					else new MessageBuilder(Message.EMPTY_GROUP).send(player);
 				}
 				else if (args[1].equals("set")) setFlagValue(player, args[2], args[3], PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
 			} else if(args.length == 5){
 				if (args[1].equals("set")){
 					List<Plot> plots = getPlotsFromGroupName(player, args[4]);
-					if(plots.size() > 0) for(Plot plot: plots) setFlagValue(player, args[2], args[3], plot);
-					else Lang.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
+					if(!plots.isEmpty()) for(Plot plot: plots) setFlagValue(player, args[2], args[3], plot);
+					else new MessageBuilder(Message.EMPTY_GROUP).send(player);
 				}
 				else if(args[1].equals("list")) displayFlags(player, false, PlotManager.getInstance().getPlotByCoordinates(args[2], args[3], args[4]));
 //				TODO: flag help message
@@ -93,21 +89,16 @@ public class PlotFlagCommand extends Subcommand {
 	private void displayFlagValue(Player player, String flagName, Plot plot) {
 		if(plot != null){
 //			TODO: message manager flag value
-			Flag flagToDisplay = Flag.getByName(flagName);
-			if(flagToDisplay != null){
-				String flagValue = plot.getFlags().get(flagToDisplay).toString();
+			Flag flag = Flag.getByName(flagName);
+			if(flag != null){
+				boolean flagValue = plot.getFlags().get(flag);
 
-				String rawMessage = Config.getInstance().getMessage(Message.FLAG_VALUE_ON_PLOT);
-				String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, flagToDisplay);
-				Lang.sendMessage(player, uncolouredMessage);
+				new MessageBuilder(Message.FLAG_VALUE_ON_PLOT).flag(flag, flagValue).plot(plot).send(player);
 			} else {
-				String rawMessage = Config.getInstance().getMessage(Message.UNKNOWN_FLAG);
-				String uncolouredMessage = rawMessage.replace("{flagName}", flagName.toUpperCase());
-				Lang.sendMessage(player, uncolouredMessage);
+				new MessageBuilder(Message.NULL_FLAG).flagName(flagName).send(player);
 			}
 		} else {
-			String rawMessage = Config.getInstance().getMessage(Message.NULL_PLOT);
-			Lang.sendMessage(player, rawMessage);
+			new MessageBuilder(Message.NULL_PLOT).send(player);
 		}
 	}
 
@@ -117,24 +108,25 @@ public class PlotFlagCommand extends Subcommand {
 		HashMap<Flag, Boolean> flags;
 		if(defaultOrNot) {
 			flags = Config.getInstance().getDefaultFlags();
-			Lang.sendMessage(player, "&a&lLista domyślnych flag dla działek:");
+			new MessageBuilder(Message.DEFAULT_FLAGS).noPrependedPrefix().send(player);
 		} else {
 			if(plot != null){
 				flags = plot.getFlags();
-				Lang.sendMessage(player, "&aLista flag dla działki o ID &8(&7" + plot.getID() + "&8)&a:");
+				new MessageBuilder(Message.PLOT_FLAGS).noPrependedPrefix().plot(plot).send(player);
 			} else {
 				player.sendMessage(Config.getInstance().getMessage(Message.NULL_PLOT));
+				new MessageBuilder(Message.NULL_PLOT).send(player);
 				return;
 			}
 		}
 		if (flags != null) {
 			for(Flag flag:flags.keySet()){
 				boolean flagValue = flags.get(flag);
-				Lang.sendMessage(player, "&7" + flag.toString() + "&8: " + (flagValue ? ("&a" + flagValue) : ("&c" + flagValue)));
+				//TODO: Do it properly in the config when the time comes to refactor commands
+				player.sendMessage(TextUtil.fixColors("&7" + flag.toString() + "&8: " + (flagValue ? ("&a" + flagValue) : ("&c" + flagValue))));
 			}
 		} else {
-			String rawMessage = Config.getInstance().getMessage(Message.ERROR_UNSPECIFIED);
-			Lang.sendMessage(player, rawMessage);
+			new MessageBuilder(Message.ERROR_UNSPECIFIED).send(player);
 		}
 	}
 
@@ -149,26 +141,18 @@ public class PlotFlagCommand extends Subcommand {
 						plot.setFlag(flag, value);
 						PlotManager.getInstance().savePlot(plot);
 
-						String rawMessage = Config.getInstance().getMessage(Message.FLAG_SET_ON_PLOT);
-						String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, flag);
-						Lang.sendMessage(player, uncolouredMessage);
+						new MessageBuilder(Message.FLAG_SET_ON_PLOT).plot(plot).flag(flag, value).send(player);
 					} else {
-						String rawMessage = Config.getInstance().getMessage(Message.WRONG_FLAG_VALUE);
-						String uncolouredMessage = rawMessage.replace("{flagValue}", flagValue.toUpperCase());
-						Lang.sendMessage(player, uncolouredMessage);
+						new MessageBuilder(Message.WRONG_FLAG_VALUE).flagValue(flagValue).send(player);
 					}
 				} else {
-					String rawMessage = Config.getInstance().getMessage(Message.UNKNOWN_FLAG);
-					String uncolouredMessage = rawMessage.replace("{flagName}", flagName.toUpperCase());
-					Lang.sendMessage(player, uncolouredMessage);
+					new MessageBuilder(Message.NULL_FLAG).flagName(flagName).send(player);
 				}
 			} else {
-				String rawMessage = Config.getInstance().getMessage(Message.NOT_OWNER);
-				Lang.sendMessage(player, rawMessage);
+				new MessageBuilder(Message.NOT_OWNER).send(player);
 			}
 		} else {
-			String rawMessage = Config.getInstance().getMessage(Message.NULL_PLOT);
-			Lang.sendMessage(player, rawMessage);
+			new MessageBuilder(Message.NULL_PLOT).send(player);
 		}
 	}
 }

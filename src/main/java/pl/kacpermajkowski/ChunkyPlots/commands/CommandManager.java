@@ -2,7 +2,8 @@ package pl.kacpermajkowski.ChunkyPlots.commands;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import pl.kacpermajkowski.ChunkyPlots.config.Lang;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +28,8 @@ public abstract class CommandManager implements CommandExecutor {
 			if(subcommand != null)
 				subcommand.execute(sender, args);
             else
-				Lang.sendMessage(sender, "&cCouldn't find matching subcommand to execute.");
+				new MessageBuilder(Message.SUBCOMMAND_NOT_FOUND).send(sender);
 		} else command.execute(sender);
-
 		return true;
 	}
 

@@ -64,6 +64,7 @@ public class ChunkyPlots extends JavaPlugin {
 	private void registerCommands(){
 		getCommand("plot").setExecutor(new PlotCommandManager());
 		getCommand("plotadmin").setExecutor(new PlotAdminCommandManager());
+
 	}
 
 	public static ChunkyPlots getInstance(){
