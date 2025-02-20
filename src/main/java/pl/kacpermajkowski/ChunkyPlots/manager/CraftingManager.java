@@ -17,20 +17,8 @@ import java.util.List;
 public class CraftingManager {
 	private static CraftingManager instance;
 
-	public static ItemStack plotBlock;
-
 	private CraftingManager(){
-		createPlotItem();
 		loadShapedRecipes(createShapedRecipes());
-	}
-
-	private void createPlotItem() {
-		String name = Config.getInstance().getPlotItemName();
-		List<String> lore = Config.getInstance().getPlotItemLore();
-		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
-		enchantments.put(Enchantment.UNBREAKING, 1);
-
-		plotBlock = InventoryUtil.createItemStack(Material.NOTE_BLOCK, 1, name, lore, enchantments, false);
 	}
 
 	private void loadShapedRecipes(List<ShapedRecipe> recipes){
@@ -47,7 +35,7 @@ public class CraftingManager {
 
 	private ShapedRecipe createPlotBlockRecipe(){
 		NamespacedKey key = new NamespacedKey(ChunkyPlots.getInstance(), "plot_block");
-		ShapedRecipe recipe = new ShapedRecipe(key, plotBlock);
+		ShapedRecipe recipe = new ShapedRecipe(key, PlotManager.getInstance().getPlotItem());
 		recipe.shape("fff", "fef", "fgf");
 		recipe.setIngredient('f', Material.OAK_FENCE);
 		recipe.setIngredient('g', Material.OAK_FENCE_GATE);

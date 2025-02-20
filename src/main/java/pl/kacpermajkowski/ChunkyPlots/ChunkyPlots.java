@@ -2,6 +2,7 @@ package pl.kacpermajkowski.ChunkyPlots;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotCommandManager;
+import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.PlotAdminCommandManager;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerJoinListener;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerLeftListener;
@@ -62,6 +63,7 @@ public class ChunkyPlots extends JavaPlugin {
 	}
 	private void registerCommands(){
 		getCommand("plot").setExecutor(new PlotCommandManager());
+		getCommand("plotadmin").setExecutor(new PlotAdminCommandManager());
 	}
 
 	public static ChunkyPlots getInstance(){

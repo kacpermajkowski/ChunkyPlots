@@ -37,12 +37,14 @@ public class PlotManager {
 
 	private void setupPlotItem(){
 		Config config = Config.getInstance();
+		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
+		enchantments.put(Enchantment.UNBREAKING, 1);
 		plotItem = InventoryUtil.createItemStack(
 				config.getPlotItemMaterial(),
 				1,
 				config.getPlotItemName(),
 				config.getPlotItemLore(),
-				new HashMap<Enchantment, Integer>(),
+				enchantments,
 				false);
 	}
 	private void loadPlots(){

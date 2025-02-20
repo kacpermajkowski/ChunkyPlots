@@ -47,7 +47,7 @@ public class PlotDisposeCommand extends Subcommand {
 			if(plot != null){
 				if(plot.getOwnerNickname().equals(player.getName())) {
 					PlotManager.getInstance().disposePlot(plot);
-					player.getInventory().addItem(CraftingManager.plotBlock);
+					player.getInventory().addItem(PlotManager.getInstance().getPlotItem());
 					player.sendMessage(Config.getInstance().getMessage(Message.PLOT_DELETED).replace("{plotID}", plotID).replace("{world}", plot.getWorldName()));
 
 					User user = UserManager.getInstance().getUser(player.getName());

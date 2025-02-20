@@ -7,13 +7,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.inventory.PlayerInventory;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
+import org.bukkit.inventory.ItemStack;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.config.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.manager.CraftingManager;
 import pl.kacpermajkowski.ChunkyPlots.config.Lang;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
@@ -31,7 +29,7 @@ public class BlockPlaceListener implements Listener {
                 String message = Config.getInstance().getMessage(Message.NOT_PERMITTED);
                 Lang.sendMessage(player, message);
             } else {
-                if(hasPlayerPlacedAPlotBlock(player, block)){
+                if(isBlockAPlotBlock(event.getItemInHand())){
                     event.setCancelled(true);
                     String message = Config.getInstance().getMessage(Message.PLOT_ALREADY_EXISTS);
                     Lang.sendMessage(player, message);
@@ -54,16 +52,12 @@ public class BlockPlaceListener implements Listener {
         if(!event.isCancelled()){
             Player player = event.getPlayer();
             Block block = event.getBlockPlaced();
-			return hasPlayerPlacedAPlotBlock(player, block);
+			return isBlockAPlotBlock(event.getItemInHand());
         }
         return false;
     }
-    private boolean hasPlayerPlacedAPlotBlock(Player player, Block block) {
-        PlayerInventory inventory = player.getInventory();
-        if (inventory.getItemInMainHand().isSimilar(CraftingManager.plotBlock) || inventory.getItemInOffHand().isSimilar(CraftingManager.plotBlock)) {
-			return block.getType().equals(Material.NOTE_BLOCK);
-        }
-        return false;
+    private boolean isBlockAPlotBlock(ItemStack block) {
+        return block.isSimilar(PlotManager.getInstance().getPlotItem());
     }
 
     private boolean hasBlockBeenPlacedInRestrictedArea(Block block) {
