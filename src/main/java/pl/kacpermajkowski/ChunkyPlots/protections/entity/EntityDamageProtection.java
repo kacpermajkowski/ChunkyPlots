@@ -42,6 +42,10 @@ public class EntityDamageProtection implements Listener {
 
     public boolean canPlayerDamageEntity(Player player, Entity victim) {
         Plot victimPlot = PlotManager.getInstance().getPlotByLocation(victim.getLocation());
+        if(victimPlot == null){
+            return true;
+        }
+
         if(victim instanceof Player){
             return victimPlot.flags.get(Flag.PVP);
         } else if(victim instanceof Monster){
