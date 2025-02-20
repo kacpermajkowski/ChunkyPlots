@@ -13,7 +13,6 @@ import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
 public class LingeringPotionProtection implements Listener {
-	private final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
 
 	@EventHandler
 	public void onAreaEffectCloudApply(AreaEffectCloudApplyEvent event){
@@ -30,7 +29,7 @@ public class LingeringPotionProtection implements Listener {
 	}
 
 	private boolean canShooterApplyEffectToEntity(ProjectileSource shooter, LivingEntity entity) {
-		Plot plotEntityIsStandingOn = plotManager.getPlotByChunk(entity.getLocation().getChunk());
+		Plot plotEntityIsStandingOn = ChunkyPlots.getInstance().plotManager.getPlotByChunk(entity.getLocation().getChunk());
 		if(plotEntityIsStandingOn != null){
 			return canShooterApplyEffectToEntityStandingOnPlot(shooter, plotEntityIsStandingOn);
 		}

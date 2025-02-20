@@ -15,7 +15,7 @@ public class PlayerShearEntityProtection implements Listener {
     public void onPlayerShearEntity(final PlayerShearEntityEvent event){
         final Location entityLocation = event.getEntity().getLocation();
         final Player player = event.getPlayer();
-        final Plot eventPlot = ChunkyPlots.plugin.plotManager.getPlotByChunk(entityLocation.getChunk());
+        final Plot eventPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(entityLocation.getChunk());
 
         if(eventPlot != null) {
             if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot, Flag.ENTITY_SHEAR_MEMBER, Flag.ENTITY_SHEAR_STRANGER)) {

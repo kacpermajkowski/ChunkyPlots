@@ -17,7 +17,7 @@ public class PlayerInteractListener implements Listener {
 		final Player player = event.getPlayer();
 		final Plot eventPlot;
 		if(block != null) {
-			eventPlot = ChunkyPlots.plugin.plotManager.getPlotByChunk(block.getChunk());
+			eventPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
 			if (eventPlot != null) {
 				if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot, Flag.BLOCK_INTERACT_MEMBER, Flag.BLOCK_INTERACT_STRANGER)) {
 					event.setCancelled(true);

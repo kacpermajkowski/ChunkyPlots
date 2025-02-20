@@ -4,10 +4,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Group;
-import pl.kacpermajkowski.ChunkyPlots.basic.MessageType;
+import pl.kacpermajkowski.ChunkyPlots.config.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.basic.User;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
+import pl.kacpermajkowski.ChunkyPlots.config.Config;
+import pl.kacpermajkowski.ChunkyPlots.config.Lang;
 import pl.kacpermajkowski.ChunkyPlots.manager.*;
 
 import java.util.ArrayList;
@@ -15,10 +17,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class PlotBlacklistCommand extends Subcommand {
-	final ConfigManager configManager = ChunkyPlots.plugin.configManager;
-	final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
-	final UserManager userManager = ChunkyPlots.plugin.userManager;
-	final VisitManager visitManager = ChunkyPlots.plugin.visitManager;
+	final PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
+	final UserManager userManager = ChunkyPlots.getInstance().userManager;
+	final VisitManager visitManager = ChunkyPlots.getInstance().visitManager;
 	@Override
 	public String getName() {
 		return "blacklist";
@@ -56,12 +57,12 @@ public class PlotBlacklistCommand extends Subcommand {
 				if (args[1].equals("add")) {
 					List<Plot> plots = getPlotsFromGroupName(player, args[3]);
 					if(!plots.isEmpty()) for(Plot plot: plots) addPlayerToBlacklist(player, args[2], plot );
-					else MessageManager.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
+					else Lang.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
 				}
 				else if (args[1].equals("remove")) {
 					List<Plot> plots = getPlotsFromGroupName(player, args[3]);
 					if(!plots.isEmpty()) for(Plot plot: plots) removePlayerFromBlacklist(player, args[2], plot);
-					else MessageManager.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
+					else Lang.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
 				}
 			} else if(args.length == 6){
 				if (args[1].equals("add")) addPlayerToBlacklist(player, args[2], plotManager.getPlotByCoordinates(args[3], args[4], args[5]));
@@ -77,24 +78,24 @@ public class PlotBlacklistCommand extends Subcommand {
 					if(user != null){
 						plot.blacklist.add(userName);
 						plotManager.savePlot(plot);
-						player.sendMessage(configManager.getMessage(MessageType.BLACKLIST_ADDED_TO_PLOT).replace("%plotID%", plot.getID()).replace("%userName%", userName));
+						player.sendMessage(Config.getInstance().getMessage(Message.BLACKLIST_ADDED_TO_PLOT).replace("%plotID%", plot.getID()).replace("%userName%", userName));
 					} else {
-						String rawMessage = configManager.getMessage(MessageType.NULL_USER).replace("{userName}", userName);
-						MessageManager.sendMessage(player, rawMessage);
+						String rawMessage = Config.getInstance().getMessage(Message.NULL_USER).replace("{userName}", userName);
+						Lang.sendMessage(player, rawMessage);
 					}
 				} else {
-					String rawMessage = configManager.getMessage(MessageType.CANNOT_ADD_OWNER_TO_BLACKLIST);
-					String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, player);
-					MessageManager.sendMessage(player, uncolouredMessage);
+					String rawMessage = Config.getInstance().getMessage(Message.CANNOT_ADD_OWNER_TO_BLACKLIST);
+					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, player);
+					Lang.sendMessage(player, uncolouredMessage);
 				}
 			} else {
-				String rawMessage = configManager.getMessage(MessageType.NOT_OWNER);
-				String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, plot, player);
-				MessageManager.sendMessage(player, uncolouredMessage);
+				String rawMessage = Config.getInstance().getMessage(Message.NOT_OWNER);
+				String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, player);
+				Lang.sendMessage(player, uncolouredMessage);
 			}
 		} else {
-			String rawMessage = configManager.getMessage(MessageType.NULL_PLOT);
-			MessageManager.sendMessage(player, rawMessage);
+			String rawMessage = Config.getInstance().getMessage(Message.NULL_PLOT);
+			Lang.sendMessage(player, rawMessage);
 		}
 	}
 
@@ -106,22 +107,22 @@ public class PlotBlacklistCommand extends Subcommand {
 					plot.blacklist.remove(userName);
 					plotManager.savePlot(plot);
 
-					player.sendMessage(configManager.getMessage(MessageType.BLACKLIST_REMOVED_FROM_PLOT).replace("%plotID%", plot.getID()).replace("%userName%", userName));
-					String rawMessage = configManager.getMessage(MessageType.BLACKLIST_REMOVED_FROM_PLOT);
-					String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, plot, userManager.getUser(userName));
-					MessageManager.sendMessage(player, uncolouredMessage);
+					player.sendMessage(Config.getInstance().getMessage(Message.BLACKLIST_REMOVED_FROM_PLOT).replace("%plotID%", plot.getID()).replace("%userName%", userName));
+					String rawMessage = Config.getInstance().getMessage(Message.BLACKLIST_REMOVED_FROM_PLOT);
+					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, userManager.getUser(userName));
+					Lang.sendMessage(player, uncolouredMessage);
 				} else {
-					String rawMessage = configManager.getMessage(MessageType.NULL_USER).replace("{userName}", userName);
-					MessageManager.sendMessage(player, rawMessage);
+					String rawMessage = Config.getInstance().getMessage(Message.NULL_USER).replace("{userName}", userName);
+					Lang.sendMessage(player, rawMessage);
 				}
 			} else {
-				String rawMessage = configManager.getMessage(MessageType.NOT_OWNER);
-				String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, plot, player);
-				MessageManager.sendMessage(player, uncolouredMessage);
+				String rawMessage = Config.getInstance().getMessage(Message.NOT_OWNER);
+				String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, player);
+				Lang.sendMessage(player, uncolouredMessage);
 			}
 		} else {
-			String rawMessage = configManager.getMessage(MessageType.NULL_PLOT);
-			MessageManager.sendMessage(player, rawMessage);
+			String rawMessage = Config.getInstance().getMessage(Message.NULL_PLOT);
+			Lang.sendMessage(player, rawMessage);
 		}
 	}
 
@@ -141,9 +142,9 @@ public class PlotBlacklistCommand extends Subcommand {
 				return plots;
 			}
 		}
-		String rawMessage = configManager.getMessage(MessageType.NULL_GROUP);
-		String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, player);
-		MessageManager.sendMessage(player, uncolouredMessage);
+		String rawMessage = Config.getInstance().getMessage(Message.NULL_GROUP);
+		String uncolouredMessage = Lang.replacePlaceholders(rawMessage, player);
+		Lang.sendMessage(player, uncolouredMessage);
 		return plots;
 
 	}

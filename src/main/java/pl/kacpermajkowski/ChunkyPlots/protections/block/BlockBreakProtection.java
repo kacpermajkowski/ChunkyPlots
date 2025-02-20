@@ -11,8 +11,6 @@ import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
 public class BlockBreakProtection implements Listener {
-	private final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
-
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBlockBreak(final BlockBreakEvent event){
 		if(!canPlayerDestroyBlock(event)){
@@ -21,7 +19,7 @@ public class BlockBreakProtection implements Listener {
 	}
 
 	private boolean canPlayerDestroyBlock(BlockBreakEvent event) {
-		Plot blockPlot = plotManager.getPlotByChunk(event.getBlock().getChunk());
+		Plot blockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(event.getBlock().getChunk());
 		if(blockPlot != null){
 			return PlotPermissionUtil.canPlayerAffectPlot(event.getPlayer(), blockPlot, Flag.BREAK_MEMBER, Flag.BREAK_STRANGER);
 		} else {

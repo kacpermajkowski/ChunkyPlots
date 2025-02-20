@@ -10,7 +10,6 @@ import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
 public class BlockBurnProtection implements Listener {
-	private final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
 
 	@EventHandler
 	public void onBlockBurn(BlockBurnEvent event){
@@ -21,8 +20,8 @@ public class BlockBurnProtection implements Listener {
 
 	private boolean blockCanBeBurntByFire(Block block, Block fire) {
 		if(fire != null) {
-			Plot blockPlot = plotManager.getPlotByChunk(block.getChunk());
-			Plot firePlot = plotManager.getPlotByChunk(fire.getChunk());
+			Plot blockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
+			Plot firePlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(fire.getChunk());
 			if(blockPlot != null) {
 				if(firePlot != null) {
 					if (blockPlot.hasTheSameOwnerAs(firePlot)) {

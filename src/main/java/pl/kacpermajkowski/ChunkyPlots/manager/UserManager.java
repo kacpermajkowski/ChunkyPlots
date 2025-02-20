@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class UserManager {
 	private List<User> users = new ArrayList<>();
-	File userDirectory = new File(ChunkyPlots.plugin.getDataFolder() + "/users");
+	File userDirectory = new File(ChunkyPlots.getInstance().getDataFolder() + "/users");
 
 	public UserManager(){
 		loadUsers();
@@ -67,7 +67,7 @@ public class UserManager {
 
 	public void saveUser(User user) {
 		try {
-			File file = new File(ChunkyPlots.plugin.getDataFolder() + "/users/" + user.getNickname());
+			File file = new File(ChunkyPlots.getInstance().getDataFolder() + "/users/" + user.getNickname());
 			FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
 			fc.set("isTeleporting", user.isTeleporting);
 			fc.set("isBypassingRestrictions", user.isBypassingRestrictions);

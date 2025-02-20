@@ -17,7 +17,7 @@ public class PlayerInteractAtEntityListener implements Listener {
 		Entity clickedEntity = event.getRightClicked();
 		Player player = event.getPlayer();
 		Location clickedEntityLocation = clickedEntity.getLocation();
-		Plot eventPlot = ChunkyPlots.plugin.plotManager.getPlotByChunk(clickedEntityLocation.getChunk());
+		Plot eventPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(clickedEntityLocation.getChunk());
 
 		if(eventPlot != null) {
 			if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot, Flag.ENTITY_INTERACT_MEMBER, Flag.ENTITY_INTERACT_STRANGER)) {

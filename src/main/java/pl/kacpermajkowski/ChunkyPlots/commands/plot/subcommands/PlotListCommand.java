@@ -6,12 +6,10 @@ import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
-import pl.kacpermajkowski.ChunkyPlots.manager.MessageManager;
+import pl.kacpermajkowski.ChunkyPlots.config.Lang;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
 public class PlotListCommand extends Subcommand {
-	final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
-
 	@Override
 	public String getName() {
 		return "list";
@@ -37,11 +35,11 @@ public class PlotListCommand extends Subcommand {
 		if(sender instanceof Player player){
 			player.sendMessage("");
 			player.sendMessage("");
-			MessageManager.sendNoPrefixMessage(player, "&eID Działki &9» &ePrzybliżone koordynaty działki");
-			for(Plot plot:plotManager.getPlots()){
+			Lang.sendNoPrefixMessage(player, "&eID Działki &9» &ePrzybliżone koordynaty działki");
+			for(Plot plot:ChunkyPlots.getInstance().plotManager.getPlots()){
 				if(plot.getOwnerNickname().equals(player.getName())) {
 					Location location = player.getWorld().getChunkAt(plot.getChunkX(), plot.getChunkZ()).getBlock(8, 64, 8).getLocation();
-					MessageManager.sendNoPrefixMessage(player,"&8(&6" + plot.getID() + "&8)" + " &a» &7X:&f" + location.getBlockX() + "  &7Y:&f" + location.getBlockY() + "  &7Z:&f" + location.getBlockZ());
+					Lang.sendNoPrefixMessage(player,"&8(&6" + plot.getID() + "&8)" + " &a» &7X:&f" + location.getBlockX() + "  &7Y:&f" + location.getBlockY() + "  &7Z:&f" + location.getBlockZ());
 				}
 			}
 			player.sendMessage("");

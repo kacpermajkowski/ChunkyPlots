@@ -4,10 +4,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Group;
-import pl.kacpermajkowski.ChunkyPlots.basic.MessageType;
+import pl.kacpermajkowski.ChunkyPlots.config.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.basic.User;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
+import pl.kacpermajkowski.ChunkyPlots.config.Config;
+import pl.kacpermajkowski.ChunkyPlots.config.Lang;
 import pl.kacpermajkowski.ChunkyPlots.manager.*;
 
 import java.util.ArrayList;
@@ -15,10 +17,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class PlotGroupCommand extends Subcommand {
-	final ConfigManager configManager = ChunkyPlots.plugin.configManager;
-	final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
-	final UserManager userManager = ChunkyPlots.plugin.userManager;
-	final VisitManager visitManager = ChunkyPlots.plugin.visitManager;
+	final PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
+	final UserManager userManager = ChunkyPlots.getInstance().userManager;
+	final VisitManager visitManager = ChunkyPlots.getInstance().visitManager;
 
 	@Override
 	public String getName() {
@@ -97,17 +98,17 @@ public class PlotGroupCommand extends Subcommand {
 				user.groups.add(new Group(groupName));
 				userManager.saveUser(user);
 
-				String rawMessage = configManager.getMessage(MessageType.GROUP_CREATE);
-				String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, user.getGroupByName(groupName));
-				MessageManager.sendMessage(player, uncolouredMessage);
+				String rawMessage = Config.getInstance().getMessage(Message.GROUP_CREATE);
+				String uncolouredMessage = Lang.replacePlaceholders(rawMessage, user.getGroupByName(groupName));
+				Lang.sendMessage(player, uncolouredMessage);
 			} else {
-				String rawMessage = configManager.getMessage(MessageType.GROUP_ALREADY_EXISTS);
-				String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, user.getGroupByName(groupName));
-				MessageManager.sendMessage(player, uncolouredMessage);
+				String rawMessage = Config.getInstance().getMessage(Message.GROUP_ALREADY_EXISTS);
+				String uncolouredMessage = Lang.replacePlaceholders(rawMessage, user.getGroupByName(groupName));
+				Lang.sendMessage(player, uncolouredMessage);
 			}
 		} else {
-			String rawMessage = configManager.getMessage(MessageType.NULL_USER);
-			MessageManager.sendMessage(player, rawMessage);
+			String rawMessage = Config.getInstance().getMessage(Message.NULL_USER);
+			Lang.sendMessage(player, rawMessage);
 		}
 	}
 
@@ -121,23 +122,23 @@ public class PlotGroupCommand extends Subcommand {
 					user.groups.remove(group);
 					userManager.saveUser(user);
 
-					String rawMessage = configManager.getMessage(MessageType.GROUP_DELETE);
-					String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, group);
-					MessageManager.sendMessage(player, uncolouredMessage);
+					String rawMessage = Config.getInstance().getMessage(Message.GROUP_DELETE);
+					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, group);
+					Lang.sendMessage(player, uncolouredMessage);
 				} else {
 					group = new Group(groupName);
-					String rawMessage = configManager.getMessage(MessageType.NULL_GROUP);
-					String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, group);
-					MessageManager.sendMessage(player, uncolouredMessage);
+					String rawMessage = Config.getInstance().getMessage(Message.NULL_GROUP);
+					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, group);
+					Lang.sendMessage(player, uncolouredMessage);
 				}
 			} else {
-				String rawMessage = configManager.getMessage(MessageType.NULL_USER);
-				MessageManager.sendMessage(player, rawMessage);
+				String rawMessage = Config.getInstance().getMessage(Message.NULL_USER);
+				Lang.sendMessage(player, rawMessage);
 			}
 		} else {
-			String rawMessage = configManager.getMessage(MessageType.CANNOT_DELETE_DEFAULT_GROUP);
-			String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, user.getGroupByName("all"));
-			MessageManager.sendMessage(player, uncolouredMessage);
+			String rawMessage = Config.getInstance().getMessage(Message.CANNOT_DELETE_DEFAULT_GROUP);
+			String uncolouredMessage = Lang.replacePlaceholders(rawMessage, user.getGroupByName("all"));
+			Lang.sendMessage(player, uncolouredMessage);
 		}
 	}
 
@@ -152,28 +153,28 @@ public class PlotGroupCommand extends Subcommand {
 						group.plots.add(plot.getUUID());
 						userManager.saveUser(user);
 
-						String rawMessage = configManager.getMessage(MessageType.PLOT_ADDED_TO_GROUP);
-						String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, plot, group);
-						MessageManager.sendMessage(player, uncolouredMessage);
+						String rawMessage = Config.getInstance().getMessage(Message.PLOT_ADDED_TO_GROUP);
+						String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, group);
+						Lang.sendMessage(player, uncolouredMessage);
 					} else {
-						String rawMessage = configManager.getMessage(MessageType.PLOT_ALREADY_IN_GROUP);
-						String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, group);
-						MessageManager.sendMessage(player, uncolouredMessage);
+						String rawMessage = Config.getInstance().getMessage(Message.PLOT_ALREADY_IN_GROUP);
+						String uncolouredMessage = Lang.replacePlaceholders(rawMessage, group);
+						Lang.sendMessage(player, uncolouredMessage);
 					}
 				} else {
-					String rawMessage = configManager.getMessage(MessageType.CANNOT_ADD_PLOT_TO_DEFAULT_GROUP);
-					String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, group);
-					MessageManager.sendMessage(player, uncolouredMessage);
+					String rawMessage = Config.getInstance().getMessage(Message.CANNOT_ADD_PLOT_TO_DEFAULT_GROUP);
+					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, group);
+					Lang.sendMessage(player, uncolouredMessage);
 				}
 			} else {
 				group = new Group(groupName);
-				String rawMessage = configManager.getMessage(MessageType.NULL_GROUP);
-				String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, group);
-				MessageManager.sendMessage(player, uncolouredMessage);
+				String rawMessage = Config.getInstance().getMessage(Message.NULL_GROUP);
+				String uncolouredMessage = Lang.replacePlaceholders(rawMessage, group);
+				Lang.sendMessage(player, uncolouredMessage);
 			}
 		} else {
-			String rawMessage = configManager.getMessage(MessageType.NULL_USER);
-			MessageManager.sendMessage(player, rawMessage);
+			String rawMessage = Config.getInstance().getMessage(Message.NULL_USER);
+			Lang.sendMessage(player, rawMessage);
 		}
 	}
 
@@ -188,50 +189,50 @@ public class PlotGroupCommand extends Subcommand {
 						group.plots.remove(plot.getUUID());
 						userManager.saveUser(user);
 
-						String rawMessage = configManager.getMessage(MessageType.PLOT_REMOVED_FROM_GROUP);
-						String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, plot, group);
-						MessageManager.sendMessage(player, uncolouredMessage);
+						String rawMessage = Config.getInstance().getMessage(Message.PLOT_REMOVED_FROM_GROUP);
+						String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, group);
+						Lang.sendMessage(player, uncolouredMessage);
 					} else {
-						String rawMessage = configManager.getMessage(MessageType.PLOT_NOT_IN_GROUP);
-						String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, group);
-						MessageManager.sendMessage(player, uncolouredMessage);
+						String rawMessage = Config.getInstance().getMessage(Message.PLOT_NOT_IN_GROUP);
+						String uncolouredMessage = Lang.replacePlaceholders(rawMessage, group);
+						Lang.sendMessage(player, uncolouredMessage);
 					}
 				} else {
-					String rawMessage = configManager.getMessage(MessageType.CANNOT_REMOVE_PLOT_FROM_DEFAULT_GROUP);
-					String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, group);
-					MessageManager.sendMessage(player, uncolouredMessage);
+					String rawMessage = Config.getInstance().getMessage(Message.CANNOT_REMOVE_PLOT_FROM_DEFAULT_GROUP);
+					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, group);
+					Lang.sendMessage(player, uncolouredMessage);
 				}
 			} else {
 				group = new Group(groupName);
-				String rawMessage = configManager.getMessage(MessageType.NULL_GROUP);
-				String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, group);
-				MessageManager.sendMessage(player, uncolouredMessage);
+				String rawMessage = Config.getInstance().getMessage(Message.NULL_GROUP);
+				String uncolouredMessage = Lang.replacePlaceholders(rawMessage, group);
+				Lang.sendMessage(player, uncolouredMessage);
 			}
 		} else {
-			String rawMessage = configManager.getMessage(MessageType.NULL_USER);
-			MessageManager.sendMessage(player, rawMessage);
+			String rawMessage = Config.getInstance().getMessage(Message.NULL_USER);
+			Lang.sendMessage(player, rawMessage);
 		}
 	}
 
 	public static List<Plot> getPlotsFromGroupName(Player player, String groupName){
 		List<Plot> plots = new ArrayList<>();
-		User user = ChunkyPlots.plugin.userManager.getUser(player.getName());
+		User user = ChunkyPlots.getInstance().userManager.getUser(player.getName());
 		Group group = null;
 		for(Group g:user.groups){
 			if(g.getName().equalsIgnoreCase(groupName)){
 				group = g;
 				List<UUID> plotUUIDs = group.plots;
 				for(UUID plotUUID:plotUUIDs){
-					Plot plot = ChunkyPlots.plugin.plotManager.getPlotByUUID(plotUUID);
+					Plot plot = ChunkyPlots.getInstance().plotManager.getPlotByUUID(plotUUID);
 					if(plot != null) plots.add(plot);
 					else group.plots.remove(plotUUID);
 				}
 				return plots;
 			}
 		}
-		String rawMessage = ChunkyPlots.plugin.configManager.getMessage(MessageType.NULL_GROUP);
-		String uncolouredMessage = MessageManager.replacePlaceholders(rawMessage, player);
-		MessageManager.sendMessage(player, uncolouredMessage);
+		String rawMessage = Config.getInstance().getMessage(Message.NULL_GROUP);
+		String uncolouredMessage = Lang.replacePlaceholders(rawMessage, player);
+		Lang.sendMessage(player, uncolouredMessage);
 		return plots;
 
 	}

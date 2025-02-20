@@ -1,6 +1,5 @@
 package pl.kacpermajkowski.ChunkyPlots;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotCommandManager;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerJoinListener;
@@ -18,20 +17,15 @@ import pl.kacpermajkowski.ChunkyPlots.protections.redstone.DispenserProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.redstone.PistonProtection;
 
 public class ChunkyPlots extends JavaPlugin {
-	public static ChunkyPlots plugin;
-	public FileConfiguration config;
-
+	private static ChunkyPlots instance;
 	public PlotManager plotManager;
 	public UserManager userManager;
-	public ConfigManager configManager;
 	public VisitManager visitManager;
 	public CraftingManager craftingManager;
 
 	@Override
 	public void onEnable(){
-		setupPluginConfig();
-		config = this.getConfig();
-		plugin = this;
+		instance = this;
 
 		initializeManagers();
 
@@ -39,12 +33,7 @@ public class ChunkyPlots extends JavaPlugin {
 		registerCommands();
 	}
 
-	private void setupPluginConfig() {
-		this.saveDefaultConfig();
-	}
-
 	private void initializeManagers(){
-		configManager = new ConfigManager();
 		plotManager = new PlotManager();
 		userManager = new UserManager();
 		visitManager = new VisitManager();
@@ -79,5 +68,9 @@ public class ChunkyPlots extends JavaPlugin {
 	}
 	private void registerCommands(){
 		getCommand("plot").setExecutor(new PlotCommandManager());
+	}
+
+	public static ChunkyPlots getInstance(){
+		return instance;
 	}
 }

@@ -6,16 +6,18 @@ import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.*;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
+import pl.kacpermajkowski.ChunkyPlots.config.Config;
+import pl.kacpermajkowski.ChunkyPlots.config.Lang;
+import pl.kacpermajkowski.ChunkyPlots.config.Message;
 import pl.kacpermajkowski.ChunkyPlots.manager.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlotDisposeCommand extends Subcommand {
-	final ConfigManager configManager = ChunkyPlots.plugin.configManager;
-	final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
-	final UserManager userManager = ChunkyPlots.plugin.userManager;
-	final VisitManager visitManager = ChunkyPlots.plugin.visitManager;
+	final PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
+	final UserManager userManager = ChunkyPlots.getInstance().userManager;
+	final VisitManager visitManager = ChunkyPlots.getInstance().visitManager;
 
 	@Override
 	public String getName() {
@@ -49,7 +51,7 @@ public class PlotDisposeCommand extends Subcommand {
 				if(plot.getOwnerNickname().equals(player.getName())) {
 					plotManager.disposePlot(plot);
 					player.getInventory().addItem(CraftingManager.plotBlock);
-					player.sendMessage(configManager.getMessage(MessageType.PLOT_DELETED).replace("{plotID}", plotID).replace("{world}", plot.getWorldName()));
+					player.sendMessage(Config.getInstance().getMessage(Message.PLOT_DELETED).replace("{plotID}", plotID).replace("{world}", plot.getWorldName()));
 
 					User user = userManager.getUser(player.getName());
 					for(Group group:user.groups){
@@ -62,13 +64,13 @@ public class PlotDisposeCommand extends Subcommand {
 					}
 					for (VisitPoint visitPoint : visitPointsToDelete) {
 						visitManager.deleteVisitPoint(visitPoint);
-						MessageManager.sendMessage(player, "&cNa usuniętej działce znajdował się punkt &f" + visitPoint.getName() + "&c, więc został on usunięty!");
+						Lang.sendMessage(player, "&cNa usuniętej działce znajdował się punkt &f" + visitPoint.getName() + "&c, więc został on usunięty!");
 					}
-				} else player.sendMessage(configManager.getMessage(MessageType.NOT_OWNER));
-			} else player.sendMessage(configManager.getMessage(MessageType.NULL_PLOT).replace("{plotID}", plotID));
+				} else player.sendMessage(Config.getInstance().getMessage(Message.NOT_OWNER));
+			} else player.sendMessage(Config.getInstance().getMessage(Message.NULL_PLOT).replace("{plotID}", plotID));
 
 		} else {
-			String message = ChunkyPlots.plugin.configManager.getMessage(MessageType.SENDER_NOT_PLAYER);
+			String message = Config.getInstance().getMessage(Message.SENDER_NOT_PLAYER);
 			sender.sendMessage(message);
 		}
 	}

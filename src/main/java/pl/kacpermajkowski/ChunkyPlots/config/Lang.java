@@ -1,4 +1,4 @@
-package pl.kacpermajkowski.ChunkyPlots.manager;
+package pl.kacpermajkowski.ChunkyPlots.config;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -9,8 +9,7 @@ import pl.kacpermajkowski.ChunkyPlots.basic.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageManager {
-	private static ConfigManager configManager = ChunkyPlots.plugin.configManager;
+public class Lang {
 	public static String fixColors(String string){
 		return ChatColor.translateAlternateColorCodes('&', string);
 	}
@@ -24,7 +23,7 @@ public class MessageManager {
 		sender.sendMessage(fixColors(message));
 	}
 	public static void sendMessage(CommandSender sender, String message){
-		sendNoPrefixMessage(sender, configManager.getPluginPrefix() + configManager.getPrefixSpacer() + message);
+		sendNoPrefixMessage(sender, Config.getInstance().getPrefix() + Config.getInstance().getPrefixSpacer() + message);
 	}
 
 	public static String replacePlaceholders(String message, VisitPoint visitPoint){
@@ -64,7 +63,7 @@ public class MessageManager {
 	public static String replacePlaceholders(String message, Group group, Flag flag){
 		message = replacePlaceholders(message, group);
 		message = message.replace("{flagName}", flag.name());
-		message = message.replace("{flagValue}", ChunkyPlots.plugin.plotManager.getPlotByUUID(group.plots.get(0)).getFlags().get(flag).toString());
+		message = message.replace("{flagValue}", ChunkyPlots.getInstance().plotManager.getPlotByUUID(group.plots.get(0)).getFlags().get(flag).toString());
 		return message;
 	}
 	public static String replacePlaceholders(String message, Plot plot, Group group){

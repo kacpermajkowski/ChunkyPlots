@@ -16,8 +16,6 @@ import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
 public class IgniteProtection implements Listener {
-	private final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
-
 	@EventHandler
 	public void onBlockIgnite(BlockIgniteEvent event){
 		if(!canBlockBeIgnited(event)){
@@ -43,8 +41,8 @@ public class IgniteProtection implements Listener {
 	private boolean canBlockBeIgnitedByBlock(Block block, Block ignitingBlock) {
 		Chunk ignitingBlockChunk = ignitingBlock.getChunk();
 		Chunk blockChunk = block.getChunk();
-		Plot sourceBlockPlot = plotManager.getPlotByChunk(ignitingBlockChunk);
-		Plot destinationBlockPlot = plotManager.getPlotByChunk(blockChunk);
+		Plot sourceBlockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(ignitingBlockChunk);
+		Plot destinationBlockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(blockChunk);
 
 		if(sourceBlockPlot != null && destinationBlockPlot != null){
 			return sourceBlockPlot.hasTheSameOwnerAs(destinationBlockPlot);
@@ -59,7 +57,7 @@ public class IgniteProtection implements Listener {
 
 	private boolean canBlockBeIgnitedByEntity(Block block, Entity ignitingEntity) {
 		Chunk blockChunk = block.getChunk();
-		Plot destinationBlockPlot = plotManager.getPlotByChunk(blockChunk);
+		Plot destinationBlockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(blockChunk);
 
 		if (destinationBlockPlot != null) {
 			if (ignitingEntity instanceof Player player) {

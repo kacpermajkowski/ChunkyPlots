@@ -10,7 +10,6 @@ import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
 public class BlockFromToListener implements Listener {
-	private final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
 
 	@EventHandler
 	public void onBlockFromTo(BlockFromToEvent event){
@@ -29,8 +28,8 @@ public class BlockFromToListener implements Listener {
 	}
 
 	private boolean canLiquidMoveFromTo(Block block, Block toBlock) {
-		Plot fromPlot = plotManager.getPlotByChunk(block.getChunk());
-		Plot toPlot = plotManager.getPlotByChunk(toBlock.getChunk());
+		Plot fromPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
+		Plot toPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(toBlock.getChunk());
 		if(fromPlot == null && toPlot == null) {
 			return true;
 		} else if(fromPlot != null && toPlot == null){
@@ -41,8 +40,8 @@ public class BlockFromToListener implements Listener {
 	}
 
 	private boolean canDragonEggMoveFromTo(Block block, Block toBlock) {
-		Plot fromPlot = plotManager.getPlotByChunk(block.getChunk());
-		Plot toPlot = plotManager.getPlotByChunk(toBlock.getChunk());
+		Plot fromPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
+		Plot toPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(toBlock.getChunk());
 		if(fromPlot == null && toPlot == null) {
 			return true;
 		} else if(fromPlot != null && toPlot == null){

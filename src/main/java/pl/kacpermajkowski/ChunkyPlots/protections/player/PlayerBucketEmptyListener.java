@@ -15,7 +15,7 @@ public class PlayerBucketEmptyListener implements Listener {
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event){
 		final Block block = event.getBlockClicked();
 		final Player player = event.getPlayer();
-		final Plot eventPlot = ChunkyPlots.plugin.plotManager.getPlotByChunk(block.getChunk());
+		final Plot eventPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
 
 		if(eventPlot != null) {
 			if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot, Flag.PLACE_MEMBER, Flag.PLACE_STRANGER)) {

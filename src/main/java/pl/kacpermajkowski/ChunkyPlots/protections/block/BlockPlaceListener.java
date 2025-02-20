@@ -10,44 +10,41 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.PlayerInventory;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
-import pl.kacpermajkowski.ChunkyPlots.basic.MessageType;
+import pl.kacpermajkowski.ChunkyPlots.config.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
-import pl.kacpermajkowski.ChunkyPlots.manager.ConfigManager;
+import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.manager.CraftingManager;
-import pl.kacpermajkowski.ChunkyPlots.manager.MessageManager;
+import pl.kacpermajkowski.ChunkyPlots.config.Lang;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
 public class BlockPlaceListener implements Listener {
-    private final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
-    private final ConfigManager configManager = ChunkyPlots.plugin.configManager;
-
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockPlace(final BlockPlaceEvent event){
         final Block block = event.getBlock();
         final Player player = event.getPlayer();
-        final Plot blockPlot = plotManager.getPlotByChunk(block.getChunk());
+        final Plot blockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
 
         if(blockPlot != null){
             if(!PlotPermissionUtil.canPlayerAffectPlot(player, blockPlot, Flag.PLACE_MEMBER, Flag.PLACE_STRANGER)){
                 event.setCancelled(true);
-                String message = configManager.getMessage(MessageType.NOT_PERMITTED);
-                MessageManager.sendMessage(player, message);
+                String message = Config.getInstance().getMessage(Message.NOT_PERMITTED);
+                Lang.sendMessage(player, message);
             } else {
                 if(hasPlayerPlacedAPlotBlock(player, block)){
                     event.setCancelled(true);
-                    String message = configManager.getMessage(MessageType.PLOT_ALREADY_EXISTS);
-                    MessageManager.sendMessage(player, message);
+                    String message = Config.getInstance().getMessage(Message.PLOT_ALREADY_EXISTS);
+                    Lang.sendMessage(player, message);
                 }
             }
         } else {
             if(shouldPlotBeCreated(event)){
                 if(!hasBlockBeenPlacedInRestrictedArea(block)) {
-                    plotManager.claimPlot(player, block);
+                    ChunkyPlots.getInstance().plotManager.claimPlot(player, block);
                     block.setType(Material.AIR);
                 } else {
-                    String message = configManager.getMessage(MessageType.NOT_PERMITTED);
-                    MessageManager.sendMessage(player, message);
+                    String message = Config.getInstance().getMessage(Message.NOT_PERMITTED);
+                    Lang.sendMessage(player, message);
                 }
             }
         }

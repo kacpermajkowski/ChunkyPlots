@@ -15,7 +15,7 @@ public class LecternBookProtection implements Listener {
 	public void onPlayerTakeLecternBook(PlayerTakeLecternBookEvent event){
 		final Location lecternLocation = event.getLectern().getLocation();
 		final Player player = event.getPlayer();
-		final Plot eventPlot = ChunkyPlots.plugin.plotManager.getPlotByChunk(lecternLocation.getChunk());
+		final Plot eventPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(lecternLocation.getChunk());
 
 		if(eventPlot != null) {
 			if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot, Flag.BLOCK_INTERACT_MEMBER, Flag.BLOCK_INTERACT_STRANGER)) {

@@ -13,7 +13,7 @@ public class PlayerLeftListener implements Listener {
     public void onPlayerLeft(final PlayerQuitEvent event){
         final Player player = event.getPlayer();
 
-        final UserManager userManager = ChunkyPlots.plugin.userManager;
+        final UserManager userManager = ChunkyPlots.getInstance().userManager;
         User user = userManager.getUser(player.getName());
         userManager.saveUser(user);
     }

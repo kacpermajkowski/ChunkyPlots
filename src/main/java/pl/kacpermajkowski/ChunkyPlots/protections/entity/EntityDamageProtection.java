@@ -14,7 +14,6 @@ import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
 public class EntityDamageProtection implements Listener {
-    private final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
 
     @EventHandler
     public void onEntityDamageByEntity(final EntityDamageByEntityEvent event){
@@ -42,7 +41,7 @@ public class EntityDamageProtection implements Listener {
     }
 
     public boolean canPlayerDamageEntity(Player player, Entity victim) {
-        Plot victimPlot = plotManager.getPlotByLocation(victim.getLocation());
+        Plot victimPlot = ChunkyPlots.getInstance().plotManager.getPlotByLocation(victim.getLocation());
         if(victim instanceof Player){
             return victimPlot.flags.get(Flag.PVP);
         } else if(victim instanceof Monster){
@@ -56,7 +55,7 @@ public class EntityDamageProtection implements Listener {
         if(projectileSource instanceof LivingEntity livingEntity){
             return canEntityDamageEntity(livingEntity, victim);
         } else if(projectileSource instanceof BlockProjectileSource blockProjectileSource){
-            Plot victimPlot = plotManager.getPlotByLocation(victim.getLocation());
+            Plot victimPlot = ChunkyPlots.getInstance().plotManager.getPlotByLocation(victim.getLocation());
             Block block = blockProjectileSource.getBlock();
             return PlotPermissionUtil.canBlockAffectPlot(block, victimPlot);
         }
@@ -64,7 +63,7 @@ public class EntityDamageProtection implements Listener {
     }
 
     public boolean canMonsterDamageEntity(Monster monster, Entity victim) {
-        Plot victimPlot = plotManager.getPlotByLocation(victim.getLocation());
+        Plot victimPlot = ChunkyPlots.getInstance().plotManager.getPlotByLocation(victim.getLocation());
         if(victim instanceof Player){
             return victimPlot.flags.get(Flag.PVE);
         } else {

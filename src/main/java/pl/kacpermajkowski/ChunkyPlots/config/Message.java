@@ -1,6 +1,6 @@
-package pl.kacpermajkowski.ChunkyPlots.basic;
+package pl.kacpermajkowski.ChunkyPlots.config;
 
-public enum MessageType {
+public enum Message {
 	PLOT_CREATED,
 	PLOT_DELETED,
 	ENTERED_PLOT,

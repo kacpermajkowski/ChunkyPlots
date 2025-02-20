@@ -4,6 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
+import pl.kacpermajkowski.ChunkyPlots.config.Config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +15,7 @@ public class Plot {
 	private String ownerNickname;
 	public List<String> blacklist = new ArrayList<String>();
 	public List<String> members = new ArrayList<String>();
-	public HashMap<Flag, Boolean> flags = new HashMap<Flag, Boolean>(ChunkyPlots.plugin.configManager.getDefaultFlags());
+	public HashMap<Flag, Boolean> flags = new HashMap<Flag, Boolean>(Config.getInstance().getDefaultFlags());
 	private int chunkX;
 	private int chunkZ;
 	private String worldName;

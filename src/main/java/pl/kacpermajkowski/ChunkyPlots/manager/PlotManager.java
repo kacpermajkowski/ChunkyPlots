@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.*;
+import pl.kacpermajkowski.ChunkyPlots.config.Config;
+import pl.kacpermajkowski.ChunkyPlots.config.Message;
 import pl.kacpermajkowski.ChunkyPlots.util.InventoryUtil;
 
 import java.io.File;
@@ -19,12 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import static pl.kacpermajkowski.ChunkyPlots.manager.MessageManager.sendMessage;
+import static pl.kacpermajkowski.ChunkyPlots.config.Lang.sendMessage;
 
 public class PlotManager {
 	private final List<Plot> plots = new ArrayList<Plot>();
 	private ItemStack plotItem;
-	File plotDirectory = new File(ChunkyPlots.plugin.getDataFolder() + "/plots");
+	File plotDirectory = new File(ChunkyPlots.getInstance().getDataFolder() + "/plots");
 
 	public PlotManager(){
 		loadPlots();
@@ -32,8 +34,14 @@ public class PlotManager {
 	}
 
 	private void setupPlotItem(){
-		ConfigManager configManager = ChunkyPlots.plugin.configManager;
-		plotItem = InventoryUtil.createItemStack(configManager.getPlotItemMaterial(), 1, configManager.getPlotItemName(), configManager.getPlotItemLore(), new HashMap<Enchantment, Integer>(), false);
+		Config config = Config.getInstance();
+		plotItem = InventoryUtil.createItemStack(
+				config.getPlotItemMaterial(),
+				1,
+				config.getPlotItemName(),
+				config.getPlotItemLore(),
+				new HashMap<Enchantment, Integer>(),
+				false);
 	}
 	private void loadPlots(){
 		File[] files = plotDirectory.listFiles();
@@ -74,7 +82,7 @@ public class PlotManager {
 	}
 	public void savePlot(Plot plot) {
 		try {
-			File file = new File(ChunkyPlots.plugin.getDataFolder() + "/plots/" + plot.getUUID());
+			File file = new File(ChunkyPlots.getInstance().getDataFolder() + "/plots/" + plot.getUUID());
 			FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
 			fc.set("ownerNickname", plot.getOwnerNickname());
 			fc.set("chunkX", plot.getChunkX());
@@ -148,18 +156,17 @@ public class PlotManager {
 	}
 
 	public void claimPlot(Player player, Block block){
-		ConfigManager configManager = ChunkyPlots.plugin.configManager;
 		Chunk chunk = block.getChunk();
 		String plotID = chunk.getX() + ";" + chunk.getZ();
 		if(getPlotByChunk(chunk) == null){
 			Plot plot = new Plot(player, chunk);
-			User user = ChunkyPlots.plugin.userManager.getUser(player.getName());
+			User user = ChunkyPlots.getInstance().userManager.getUser(player.getName());
 
 			assignPlotToUserDefaultGroup(plot, user);
 			plots.add(plot);
 			savePlot(plot);
-			sendMessage(player, configManager.getMessage(MessageType.PLOT_CREATED).replace("{plotID}", plotID));
-		} else sendMessage(player, configManager.getMessage(MessageType.PLOT_ALREADY_EXISTS).replace("{plotID}", plotID));
+			sendMessage(player, Config.getInstance().getMessage(Message.PLOT_CREATED).replace("{plotID}", plotID));
+		} else sendMessage(player, Config.getInstance().getMessage(Message.PLOT_ALREADY_EXISTS).replace("{plotID}", plotID));
 	}
 
 	private void assignPlotToUserDefaultGroup(Plot plot, User user){

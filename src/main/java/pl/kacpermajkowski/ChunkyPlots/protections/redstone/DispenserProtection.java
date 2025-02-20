@@ -10,7 +10,6 @@ import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
 public class DispenserProtection implements Listener {
-	private final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
 	@EventHandler
 	public void onDispense(BlockDispenseEvent event){
 		if(!canBlockDispense(event)){
@@ -26,7 +25,7 @@ public class DispenserProtection implements Listener {
 
 	private Plot getEventSourcePlot(BlockDispenseEvent event) {
 		Block source = event.getBlock();
-		return plotManager.getPlotByChunk(source.getChunk());
+		return ChunkyPlots.getInstance().plotManager.getPlotByChunk(source.getChunk());
 	}
 
 	private Plot getEventDestinationPlot(BlockDispenseEvent event) {
@@ -36,7 +35,7 @@ public class DispenserProtection implements Listener {
 		World world = event.getBlock().getWorld();
 		Block destination = world.getBlockAt(x, y, z);
 
-		return plotManager.getPlotByChunk(destination.getChunk());
+		return ChunkyPlots.getInstance().plotManager.getPlotByChunk(destination.getChunk());
 	}
 
 	private boolean canPlotDispenseOnPlot(Plot sourcePlot, Plot destinationPlot) {

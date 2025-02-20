@@ -4,7 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
-import pl.kacpermajkowski.ChunkyPlots.manager.MessageManager;
+import pl.kacpermajkowski.ChunkyPlots.config.Config;
+import pl.kacpermajkowski.ChunkyPlots.config.Lang;
+import pl.kacpermajkowski.ChunkyPlots.config.Message;
 
 import java.util.UUID;
 
@@ -19,7 +21,7 @@ public class VisitPoint {
 
 	public VisitPoint(Location location, UUID plotUUID, String ownerName, String name, String description){
 		if(description != null) this.description = description;
-		else this.description = MessageManager.fixColors(ChunkyPlots.plugin.configManager.getMessage(MessageType.DEFAULT_VISIT_POINT_DESCRIPTION)).replace("%userName%", ownerName);
+		else this.description = Lang.fixColors(Config.getInstance().getMessage(Message.DEFAULT_VISIT_POINT_DESCRIPTION)).replace("%userName%", ownerName);
 		this.ownerName = ownerName;
 		this.location = location;
 		this.name = name;

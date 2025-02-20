@@ -15,7 +15,7 @@ public class PlayerLeashEntityProtection implements Listener {
     public void onPlayerLeashEntity(final PlayerLeashEntityEvent event){
         final Location entityLocation = event.getEntity().getLocation();
         final Player player = event.getPlayer();
-        final Plot eventPlot = ChunkyPlots.plugin.plotManager.getPlotByLocation(entityLocation);
+        final Plot eventPlot = ChunkyPlots.getInstance().plotManager.getPlotByLocation(entityLocation);
 
         if(eventPlot != null) {
             if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot, Flag.ENTITY_LEASH_MEMBER, Flag.ENTITY_LEASH_STRANGER)) {

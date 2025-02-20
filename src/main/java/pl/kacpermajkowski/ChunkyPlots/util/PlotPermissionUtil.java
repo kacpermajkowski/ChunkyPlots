@@ -10,7 +10,7 @@ import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import java.util.List;
 
 public class PlotPermissionUtil {
-	private static final PlotManager plotManager = ChunkyPlots.plugin.plotManager;
+	private static final PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
 
 	public static boolean canPlayerAffectPlot(Player player, Plot plot, Flag memberFlag, Flag strangerFlag){
 		if (plot == null){
