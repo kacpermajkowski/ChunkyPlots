@@ -2,7 +2,7 @@ messages:
   # Command related messages
   wide_header: "&9-----------{ {prefix} &9}-----------"
   subcommand_not_found: "&cNie znaleziono takiej komendy."
-  help_command_item: "&a/{subcommandSyntax} &8- &7{subcommandDescription}"
+  help_command_item: "&a{subcommandSyntax} &8- &7{subcommandDescription}"
   help_command_error: "&cKomenda pomocy nie została poprawnie zainicjalizowana w pluginie."
   sender_not_player: "&cTa komenda może zostać wywołana tylko przez gracza!"
 
@@ -39,6 +39,7 @@ messages:
   blacklist_removed_from_group: "&cPomyślnie usunięto &f{user} &az czarnej listy grupy działek!"
 
   # Flag related messages
+  null_flag: "&cFlaga o nazwie &r{flagName}&c nie istnieje."
   available_flags: "&aLista dostępnych flag:"
   default_flags: "&aLista domyślnych flag dla działek:"
   plot_flags: "&aLista flag dla działki o ID &8(&7{plotID}&a:"
