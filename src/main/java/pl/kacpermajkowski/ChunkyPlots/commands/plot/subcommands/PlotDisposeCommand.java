@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlotDisposeCommand extends Subcommand {
-	final PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
-	final UserManager userManager = ChunkyPlots.getInstance().userManager;
-	final VisitManager visitManager = ChunkyPlots.getInstance().visitManager;
 
 	@Override
 	public String getName() {
@@ -46,24 +43,24 @@ public class PlotDisposeCommand extends Subcommand {
 
 			Chunk chunk = player.getLocation().getChunk();
 			String plotID = chunk.getX() + ";" + chunk.getZ();
-			Plot plot = plotManager.getPlotByChunk(chunk);
+			Plot plot = PlotManager.getInstance().getPlotByChunk(chunk);
 			if(plot != null){
 				if(plot.getOwnerNickname().equals(player.getName())) {
-					plotManager.disposePlot(plot);
+					PlotManager.getInstance().disposePlot(plot);
 					player.getInventory().addItem(CraftingManager.plotBlock);
 					player.sendMessage(Config.getInstance().getMessage(Message.PLOT_DELETED).replace("{plotID}", plotID).replace("{world}", plot.getWorldName()));
 
-					User user = userManager.getUser(player.getName());
+					User user = UserManager.getInstance().getUser(player.getName());
 					for(Group group:user.groups){
 						group.plots.remove(plot.getUUID());
 					}
 
 					List<VisitPoint> visitPointsToDelete = new ArrayList<>();
-					for (VisitPoint visitPoint : visitManager.getVisitPoints()) {
+					for (VisitPoint visitPoint : VisitManager.getInstance().getVisitPoints()) {
 						if (visitPoint.getPlotUUID().equals(plot.getUUID())) visitPointsToDelete.add(visitPoint);
 					}
 					for (VisitPoint visitPoint : visitPointsToDelete) {
-						visitManager.deleteVisitPoint(visitPoint);
+						VisitManager.getInstance().deleteVisitPoint(visitPoint);
 						Lang.sendMessage(player, "&cNa usuniętej działce znajdował się punkt &f" + visitPoint.getName() + "&c, więc został on usunięty!");
 					}
 				} else player.sendMessage(Config.getInstance().getMessage(Message.NOT_OWNER));

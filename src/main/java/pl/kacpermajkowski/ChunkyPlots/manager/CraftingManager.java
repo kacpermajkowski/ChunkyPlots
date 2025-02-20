@@ -15,9 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CraftingManager {
+	private static CraftingManager instance;
+
 	public static ItemStack plotBlock;
 
-	public CraftingManager(){
+	private CraftingManager(){
 		createPlotItem();
 		loadShapedRecipes(createShapedRecipes());
 	}
@@ -52,5 +54,12 @@ public class CraftingManager {
 		recipe.setIngredient('e', Material.EMERALD);
 
 		return recipe;
+	}
+
+	public static CraftingManager getInstance(){
+		if(instance == null){
+			instance = new CraftingManager();
+		}
+		return instance;
 	}
 }

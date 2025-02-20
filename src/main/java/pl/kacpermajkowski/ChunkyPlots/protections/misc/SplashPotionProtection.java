@@ -52,13 +52,13 @@ public class SplashPotionProtection implements Listener {
 	private boolean canBlockSplashPotion(final PotionSplashEvent event) {
 		BlockProjectileSource blockProjectileSource = (BlockProjectileSource) event.getPotion().getShooter();
 		Block block = blockProjectileSource.getBlock();
-		Plot blockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
+		Plot blockPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
 
 		return canPlotSplashPotion(blockPlot, event);
 	}
 	private boolean canLivingEntitySplashPotion(final PotionSplashEvent event) {
 		LivingEntity livingEntity = (LivingEntity) event.getPotion().getShooter();
-		Plot plot = ChunkyPlots.getInstance().plotManager.getPlotByLocation(livingEntity.getLocation());
+		Plot plot = PlotManager.getInstance().getPlotByLocation(livingEntity.getLocation());
 
 		return canPlotSplashPotion(plot, event);
 	}
@@ -67,7 +67,7 @@ public class SplashPotionProtection implements Listener {
 		Collection<LivingEntity> affectedEntities = event.getAffectedEntities();
 
 		for(LivingEntity entity:affectedEntities){
-			Plot plot = ChunkyPlots.getInstance().plotManager.getPlotByLocation(entity.getLocation());
+			Plot plot = PlotManager.getInstance().getPlotByLocation(entity.getLocation());
 			if(plot != null){
 				if(!plots.contains(plot)) {
 					plots.add(plot);
@@ -106,7 +106,7 @@ public class SplashPotionProtection implements Listener {
 		ProjectileSource shooter = event.getEntity().getShooter();
 		Player player = (Player) shooter;
 
-		Plot plot = ChunkyPlots.getInstance().plotManager.getPlotByLocation(event.getHitBlock().getLocation());
+		Plot plot = PlotManager.getInstance().getPlotByLocation(event.getHitBlock().getLocation());
 
 		if(plot != null) {
 			return PlotPermissionUtil.canPlayerAffectPlot(player, plot, Flag.SPLASH_POTION_MEMBER, Flag.SPLASH_POTION_STRANGER);
@@ -120,7 +120,7 @@ public class SplashPotionProtection implements Listener {
 		Block block = blockProjectileSource.getBlock();
 
 		Location splashLocation = event.getHitBlock().getLocation();
-		Plot plot = ChunkyPlots.getInstance().plotManager.getPlotByLocation(splashLocation);
+		Plot plot = PlotManager.getInstance().getPlotByLocation(splashLocation);
 
 		if(plot != null) {
 			return PlotPermissionUtil.canBlockAffectPlot(block, plot);
@@ -131,10 +131,10 @@ public class SplashPotionProtection implements Listener {
 	private boolean canLivingEntitySplashLingeringPotion(LingeringPotionSplashEvent event) {
 		ProjectileSource shooter = event.getEntity().getShooter();
 		LivingEntity livingEntity = (LivingEntity) shooter;
-		Plot shooterPlot = ChunkyPlots.getInstance().plotManager.getPlotByLocation(livingEntity.getLocation());
+		Plot shooterPlot = PlotManager.getInstance().getPlotByLocation(livingEntity.getLocation());
 
 		Location splashLocation = event.getHitBlock().getLocation();
-		Plot plot = ChunkyPlots.getInstance().plotManager.getPlotByLocation(splashLocation);
+		Plot plot = PlotManager.getInstance().getPlotByLocation(splashLocation);
 		if(plot != null){
 			if(shooterPlot != null) {
 				return plot.hasTheSameOwnerAs(shooterPlot);

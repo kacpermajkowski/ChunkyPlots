@@ -23,7 +23,7 @@ public class BlockPlaceListener implements Listener {
     public void onBlockPlace(final BlockPlaceEvent event){
         final Block block = event.getBlock();
         final Player player = event.getPlayer();
-        final Plot blockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
+        final Plot blockPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
 
         if(blockPlot != null){
             if(!PlotPermissionUtil.canPlayerAffectPlot(player, blockPlot, Flag.PLACE_MEMBER, Flag.PLACE_STRANGER)){
@@ -40,7 +40,7 @@ public class BlockPlaceListener implements Listener {
         } else {
             if(shouldPlotBeCreated(event)){
                 if(!hasBlockBeenPlacedInRestrictedArea(block)) {
-                    ChunkyPlots.getInstance().plotManager.claimPlot(player, block);
+                    PlotManager.getInstance().claimPlot(player, block);
                     block.setType(Material.AIR);
                 } else {
                     String message = Config.getInstance().getMessage(Message.NOT_PERMITTED);

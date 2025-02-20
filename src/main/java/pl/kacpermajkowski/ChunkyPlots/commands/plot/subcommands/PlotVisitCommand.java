@@ -14,9 +14,6 @@ import pl.kacpermajkowski.ChunkyPlots.config.Lang;
 import pl.kacpermajkowski.ChunkyPlots.manager.*;
 
 public class PlotVisitCommand extends Subcommand {
-	final PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
-	final UserManager userManager = ChunkyPlots.getInstance().userManager;
-	final VisitManager visitManager = ChunkyPlots.getInstance().visitManager;
 	@Override
 	public String getName() {
 		return "visit";
@@ -44,11 +41,11 @@ public class PlotVisitCommand extends Subcommand {
 
 			if(args.length == 2) {
 				String visitPointName = args[1];
-				final VisitPoint visitPoint = visitManager.getVisitPoint(visitPointName);
+				final VisitPoint visitPoint = VisitManager.getInstance().getVisitPoint(visitPointName);
 				if (visitPoint != null) {
 					if (visitPoint.isOpen) {
 						if (visitPoint.isSafe()) {
-							final User user = userManager.getUser(player.getName());
+							final User user = UserManager.getInstance().getUser(player.getName());
 							if (!user.isTeleporting) {
 								user.isTeleporting = true;
 								String rawMessage = Config.getInstance().getMessage(Message.TELEPORTING_TO_VISIT_POINT);
@@ -90,7 +87,7 @@ public class PlotVisitCommand extends Subcommand {
 					Lang.sendMessage(player, rawMessage);
 				}
 			} else if (args.length == 3){
-				if(args[1].equals("createpoint")) createVisitPoint(player, args[2], null, plotManager.getPlotByChunk(player.getLocation().getChunk()));
+				if(args[1].equals("createpoint")) createVisitPoint(player, args[2], null, PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
 				else if(args[1].equals("deletepoint")) deleteVisitPoint(player, args[2]);
 //				TODO: Add visit help command
 			}
@@ -98,7 +95,7 @@ public class PlotVisitCommand extends Subcommand {
 	}
 	private void createVisitPoint(Player player, String name, String description, Plot plot){
 		if(plot != null) {
-			for (VisitPoint visitPoint : visitManager.getVisitPoints()) {
+			for (VisitPoint visitPoint : VisitManager.getInstance().getVisitPoints()) {
 				if (visitPoint.getName().equals(name)) {
 					String rawMessage = Config.getInstance().getMessage(Message.VISIT_POINT_ALREADY_EXISTS);
 					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, visitPoint);
@@ -108,7 +105,7 @@ public class PlotVisitCommand extends Subcommand {
 			}
 			Location location = player.getLocation();
 			VisitPoint visitPoint = new VisitPoint(location, plot.getUUID(), player.getName(), name, description);
-			visitManager.createVisitPoint(visitPoint);
+			VisitManager.getInstance().createVisitPoint(visitPoint);
 
 			String rawMessage = Config.getInstance().getMessage(Message.CREATED_VISIT_POINT);
 			String uncolouredMessage = Lang.replacePlaceholders(rawMessage, visitPoint);
@@ -120,10 +117,10 @@ public class PlotVisitCommand extends Subcommand {
 	}
 
 	private void deleteVisitPoint(Player player, String visitPointName){
-		VisitPoint visitPoint = visitManager.getVisitPoint(visitPointName);
+		VisitPoint visitPoint = VisitManager.getInstance().getVisitPoint(visitPointName);
 		if(visitPoint != null) {
 			if(visitPoint.getOwnerName().equals(player.getName())){
-				visitManager.deleteVisitPoint(visitPoint);
+				VisitManager.getInstance().deleteVisitPoint(visitPoint);
 
 				String rawMessage = Config.getInstance().getMessage(Message.DELETED_VISIT_POINT);
 				String uncolouredMessage = Lang.replacePlaceholders(rawMessage, visitPoint);

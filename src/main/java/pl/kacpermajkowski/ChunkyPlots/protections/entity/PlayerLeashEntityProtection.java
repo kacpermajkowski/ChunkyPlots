@@ -8,6 +8,7 @@ import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
+import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
 public class PlayerLeashEntityProtection implements Listener {
@@ -15,7 +16,7 @@ public class PlayerLeashEntityProtection implements Listener {
     public void onPlayerLeashEntity(final PlayerLeashEntityEvent event){
         final Location entityLocation = event.getEntity().getLocation();
         final Player player = event.getPlayer();
-        final Plot eventPlot = ChunkyPlots.getInstance().plotManager.getPlotByLocation(entityLocation);
+        final Plot eventPlot = PlotManager.getInstance().getPlotByLocation(entityLocation);
 
         if(eventPlot != null) {
             if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot, Flag.ENTITY_LEASH_MEMBER, Flag.ENTITY_LEASH_STRANGER)) {

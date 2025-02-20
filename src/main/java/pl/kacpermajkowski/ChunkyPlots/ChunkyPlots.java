@@ -2,6 +2,7 @@ package pl.kacpermajkowski.ChunkyPlots;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotCommandManager;
+import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerJoinListener;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerLeftListener;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerMoveListener;
@@ -18,26 +19,19 @@ import pl.kacpermajkowski.ChunkyPlots.protections.redstone.PistonProtection;
 
 public class ChunkyPlots extends JavaPlugin {
 	private static ChunkyPlots instance;
-	public PlotManager plotManager;
-	public UserManager userManager;
-	public VisitManager visitManager;
-	public CraftingManager craftingManager;
 
 	@Override
 	public void onEnable(){
 		instance = this;
 
-		initializeManagers();
+		Config.getInstance();
+		PlotManager.getInstance();
+		UserManager.getInstance();
+		VisitManager.getInstance();
+		CraftingManager.getInstance();
 
 		registerListeners();
 		registerCommands();
-	}
-
-	private void initializeManagers(){
-		plotManager = new PlotManager();
-		userManager = new UserManager();
-		visitManager = new VisitManager();
-		craftingManager = new CraftingManager();
 	}
 
 	private void registerListeners(){

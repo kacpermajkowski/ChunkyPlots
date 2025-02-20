@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.*;
+import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +64,7 @@ public class Lang {
 	public static String replacePlaceholders(String message, Group group, Flag flag){
 		message = replacePlaceholders(message, group);
 		message = message.replace("{flagName}", flag.name());
-		message = message.replace("{flagValue}", ChunkyPlots.getInstance().plotManager.getPlotByUUID(group.plots.get(0)).getFlags().get(flag).toString());
+		message = message.replace("{flagValue}", PlotManager.getInstance().getPlotByUUID(group.plots.get(0)).getFlags().get(flag).toString());
 		return message;
 	}
 	public static String replacePlaceholders(String message, Plot plot, Group group){

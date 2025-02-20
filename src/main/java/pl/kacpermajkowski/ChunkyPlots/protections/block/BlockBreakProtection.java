@@ -19,7 +19,7 @@ public class BlockBreakProtection implements Listener {
 	}
 
 	private boolean canPlayerDestroyBlock(BlockBreakEvent event) {
-		Plot blockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(event.getBlock().getChunk());
+		Plot blockPlot = PlotManager.getInstance().getPlotByChunk(event.getBlock().getChunk());
 		if(blockPlot != null){
 			return PlotPermissionUtil.canPlayerAffectPlot(event.getPlayer(), blockPlot, Flag.BREAK_MEMBER, Flag.BREAK_STRANGER);
 		} else {

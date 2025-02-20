@@ -17,9 +17,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class PlotBlacklistCommand extends Subcommand {
-	final PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
-	final UserManager userManager = ChunkyPlots.getInstance().userManager;
-	final VisitManager visitManager = ChunkyPlots.getInstance().visitManager;
 	@Override
 	public String getName() {
 		return "blacklist";
@@ -45,9 +42,9 @@ public class PlotBlacklistCommand extends Subcommand {
 		if(sender instanceof Player player){
 			if(args.length == 3) {
 				if (args[1].equals("add"))
-					addPlayerToBlacklist(player, args[2], plotManager.getPlotByChunk(player.getLocation().getChunk()));
+					addPlayerToBlacklist(player, args[2], PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
 				else if (args[1].equals("remove"))
-					removePlayerFromBlacklist(player, args[2], plotManager.getPlotByChunk(player.getLocation().getChunk()));
+					removePlayerFromBlacklist(player, args[2], PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
 //			TODO: Add help for blacklist command
 			} else if (args.length == 4){
 //				TODO: Fix player not exist message appearing more than one time due to multiple plots
@@ -65,8 +62,8 @@ public class PlotBlacklistCommand extends Subcommand {
 					else Lang.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
 				}
 			} else if(args.length == 6){
-				if (args[1].equals("add")) addPlayerToBlacklist(player, args[2], plotManager.getPlotByCoordinates(args[3], args[4], args[5]));
-				else if (args[1].equals("remove")) removePlayerFromBlacklist(player, args[2], plotManager.getPlotByCoordinates(args[3], args[4], args[5]));
+				if (args[1].equals("add")) addPlayerToBlacklist(player, args[2], PlotManager.getInstance().getPlotByCoordinates(args[3], args[4], args[5]));
+				else if (args[1].equals("remove")) removePlayerFromBlacklist(player, args[2], PlotManager.getInstance().getPlotByCoordinates(args[3], args[4], args[5]));
 			}
 		}
 	}
@@ -74,10 +71,10 @@ public class PlotBlacklistCommand extends Subcommand {
 		if(plot != null) {
 			if(plot.getOwnerNickname().equals(player.getName())){
 				if(!userName.equals(plot.getOwnerNickname())){
-					User user = userManager.getUser(userName);
+					User user = UserManager.getInstance().getUser(userName);
 					if(user != null){
 						plot.blacklist.add(userName);
-						plotManager.savePlot(plot);
+						PlotManager.getInstance().savePlot(plot);
 						player.sendMessage(Config.getInstance().getMessage(Message.BLACKLIST_ADDED_TO_PLOT).replace("%plotID%", plot.getID()).replace("%userName%", userName));
 					} else {
 						String rawMessage = Config.getInstance().getMessage(Message.NULL_USER).replace("{userName}", userName);
@@ -105,11 +102,11 @@ public class PlotBlacklistCommand extends Subcommand {
 			if(plot.getOwnerNickname().equals(player.getName())){
 				if(plot.blacklist.contains(userName)){
 					plot.blacklist.remove(userName);
-					plotManager.savePlot(plot);
+					PlotManager.getInstance().savePlot(plot);
 
 					player.sendMessage(Config.getInstance().getMessage(Message.BLACKLIST_REMOVED_FROM_PLOT).replace("%plotID%", plot.getID()).replace("%userName%", userName));
 					String rawMessage = Config.getInstance().getMessage(Message.BLACKLIST_REMOVED_FROM_PLOT);
-					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, userManager.getUser(userName));
+					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, UserManager.getInstance().getUser(userName));
 					Lang.sendMessage(player, uncolouredMessage);
 				} else {
 					String rawMessage = Config.getInstance().getMessage(Message.NULL_USER).replace("{userName}", userName);
@@ -128,14 +125,14 @@ public class PlotBlacklistCommand extends Subcommand {
 
 	private List<Plot> getPlotsFromGroupName(Player player, String groupName){
 		List<Plot> plots = new ArrayList<>();
-		User user = userManager.getUser(player.getName());
+		User user = UserManager.getInstance().getUser(player.getName());
 		Group group = null;
 		for(Group g:user.groups){
 			if(g.getName().equalsIgnoreCase(groupName)){
 				group = g;
 				List<UUID> plotUUIDs = group.plots;
 				for(UUID plotUUID:plotUUIDs){
-					Plot plot = plotManager.getPlotByUUID(plotUUID);
+					Plot plot = PlotManager.getInstance().getPlotByUUID(plotUUID);
 					if(plot != null) plots.add(plot);
 					else group.plots.remove(plotUUID);
 				}

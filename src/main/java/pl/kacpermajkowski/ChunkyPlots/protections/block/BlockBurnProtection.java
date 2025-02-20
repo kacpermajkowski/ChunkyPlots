@@ -20,8 +20,8 @@ public class BlockBurnProtection implements Listener {
 
 	private boolean blockCanBeBurntByFire(Block block, Block fire) {
 		if(fire != null) {
-			Plot blockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
-			Plot firePlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(fire.getChunk());
+			Plot blockPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
+			Plot firePlot = PlotManager.getInstance().getPlotByChunk(fire.getChunk());
 			if(blockPlot != null) {
 				if(firePlot != null) {
 					if (blockPlot.hasTheSameOwnerAs(firePlot)) {

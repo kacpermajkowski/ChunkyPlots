@@ -10,8 +10,8 @@ import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 public class BlockSpreadListener implements Listener {
 	@EventHandler
 	public void onBlockSpread(BlockSpreadEvent event){
-		Plot sourceBlockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(event.getSource().getChunk());
-		Plot destinationBlockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(event.getBlock().getChunk());
+		Plot sourceBlockPlot = PlotManager.getInstance().getPlotByChunk(event.getSource().getChunk());
+		Plot destinationBlockPlot = PlotManager.getInstance().getPlotByChunk(event.getBlock().getChunk());
 		if(!canBlockSpreadFromPlotToPlot(sourceBlockPlot, destinationBlockPlot)){
 			event.setCancelled(true);
 		}

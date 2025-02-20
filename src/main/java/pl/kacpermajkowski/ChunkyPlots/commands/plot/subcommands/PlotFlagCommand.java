@@ -45,10 +45,10 @@ public class PlotFlagCommand extends Subcommand {
 			if(args.length == 2) {
 				if (args[1].equals("defaults")) displayFlags(player, true, null);
 				else if (args[1].equals("list"))
-					displayFlags(player, false, ChunkyPlots.getInstance().plotManager.getPlotByChunk(player.getLocation().getChunk()));
+					displayFlags(player, false, PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
 				else PlotCommandManager.sendHelpMessage(player);
 			} else if(args.length == 3){
-				if(args[1].equals("check")) displayFlagValue(player, args[2], ChunkyPlots.getInstance().plotManager.getPlotByChunk(player.getLocation().getChunk()));
+				if(args[1].equals("check")) displayFlagValue(player, args[2], PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
 			} else if(args.length == 4){
 //				TODO: Fix concurrent modification exception
 				if (args[1].equals("check")) {
@@ -77,14 +77,14 @@ public class PlotFlagCommand extends Subcommand {
 					}
 					else Lang.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
 				}
-				else if (args[1].equals("set")) setFlagValue(player, args[2], args[3], ChunkyPlots.getInstance().plotManager.getPlotByChunk(player.getLocation().getChunk()));
+				else if (args[1].equals("set")) setFlagValue(player, args[2], args[3], PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
 			} else if(args.length == 5){
 				if (args[1].equals("set")){
 					List<Plot> plots = getPlotsFromGroupName(player, args[4]);
 					if(plots.size() > 0) for(Plot plot: plots) setFlagValue(player, args[2], args[3], plot);
 					else Lang.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
 				}
-				else if(args[1].equals("list")) displayFlags(player, false, ChunkyPlots.getInstance().plotManager.getPlotByCoordinates(args[2], args[3], args[4]));
+				else if(args[1].equals("list")) displayFlags(player, false, PlotManager.getInstance().getPlotByCoordinates(args[2], args[3], args[4]));
 //				TODO: flag help message
 			}
 		}
@@ -147,7 +147,7 @@ public class PlotFlagCommand extends Subcommand {
 					if(flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")){
 						boolean value = Boolean.parseBoolean(flagValue);
 						plot.setFlag(flag, value);
-						ChunkyPlots.getInstance().plotManager.savePlot(plot);
+						PlotManager.getInstance().savePlot(plot);
 
 						String rawMessage = Config.getInstance().getMessage(Message.FLAG_SET_ON_PLOT);
 						String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, flag);

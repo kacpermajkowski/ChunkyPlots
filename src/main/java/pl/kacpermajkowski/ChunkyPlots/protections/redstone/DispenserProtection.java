@@ -25,7 +25,7 @@ public class DispenserProtection implements Listener {
 
 	private Plot getEventSourcePlot(BlockDispenseEvent event) {
 		Block source = event.getBlock();
-		return ChunkyPlots.getInstance().plotManager.getPlotByChunk(source.getChunk());
+		return PlotManager.getInstance().getPlotByChunk(source.getChunk());
 	}
 
 	private Plot getEventDestinationPlot(BlockDispenseEvent event) {
@@ -35,7 +35,7 @@ public class DispenserProtection implements Listener {
 		World world = event.getBlock().getWorld();
 		Block destination = world.getBlockAt(x, y, z);
 
-		return ChunkyPlots.getInstance().plotManager.getPlotByChunk(destination.getChunk());
+		return PlotManager.getInstance().getPlotByChunk(destination.getChunk());
 	}
 
 	private boolean canPlotDispenseOnPlot(Plot sourcePlot, Plot destinationPlot) {

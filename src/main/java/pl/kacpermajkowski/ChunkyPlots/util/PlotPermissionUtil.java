@@ -10,8 +10,6 @@ import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import java.util.List;
 
 public class PlotPermissionUtil {
-	private static final PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
-
 	public static boolean canPlayerAffectPlot(Player player, Plot plot, Flag memberFlag, Flag strangerFlag){
 		if (plot == null){
 			return true;
@@ -41,7 +39,7 @@ public class PlotPermissionUtil {
 	}
 
 	public static boolean canBlockAffectPlot(Block block, Plot plot){
-		Plot blockPlot = plotManager.getPlotByChunk(block.getChunk());
+		Plot blockPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
 		if(blockPlot != null) {
 			return plot.hasTheSameOwnerAs(blockPlot);
 		}
@@ -49,8 +47,8 @@ public class PlotPermissionUtil {
 	}
 
 	public static boolean canBlockAffectBlock(Block block, Block block2){
-		Plot blockPlot = plotManager.getPlotByChunk(block.getChunk());
-		Plot block2Plot = plotManager.getPlotByChunk(block2.getChunk());
+		Plot blockPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
+		Plot block2Plot = PlotManager.getInstance().getPlotByChunk(block2.getChunk());
 		if(blockPlot != null) {
 			return blockPlot.hasTheSameOwnerAs(block2Plot);
 		}

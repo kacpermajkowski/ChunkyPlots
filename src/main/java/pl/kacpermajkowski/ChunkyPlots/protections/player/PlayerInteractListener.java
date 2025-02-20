@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
+import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
 public class PlayerInteractListener implements Listener {
@@ -17,7 +18,7 @@ public class PlayerInteractListener implements Listener {
 		final Player player = event.getPlayer();
 		final Plot eventPlot;
 		if(block != null) {
-			eventPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
+			eventPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
 			if (eventPlot != null) {
 				if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot, Flag.BLOCK_INTERACT_MEMBER, Flag.BLOCK_INTERACT_STRANGER)) {
 					event.setCancelled(true);

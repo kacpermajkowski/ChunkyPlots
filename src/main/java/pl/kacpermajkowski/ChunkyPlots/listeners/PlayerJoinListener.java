@@ -13,7 +13,7 @@ public class PlayerJoinListener implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent event){
         final Player player = event.getPlayer();
 
-        final UserManager userManager = ChunkyPlots.getInstance().userManager;
+        final UserManager userManager = UserManager.getInstance();
         User user = userManager.getUser(player.getName());
         if(user == null){
             user = new User(event.getPlayer().getName());

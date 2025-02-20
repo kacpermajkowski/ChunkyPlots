@@ -24,11 +24,13 @@ import java.util.UUID;
 import static pl.kacpermajkowski.ChunkyPlots.config.Lang.sendMessage;
 
 public class PlotManager {
+	private static PlotManager instance;
+
 	private final List<Plot> plots = new ArrayList<Plot>();
 	private ItemStack plotItem;
-	File plotDirectory = new File(ChunkyPlots.getInstance().getDataFolder() + "/plots");
+	private File plotDirectory = new File(ChunkyPlots.getInstance().getDataFolder() + "/plots");
 
-	public PlotManager(){
+	private PlotManager(){
 		loadPlots();
 		setupPlotItem();
 	}
@@ -160,7 +162,7 @@ public class PlotManager {
 		String plotID = chunk.getX() + ";" + chunk.getZ();
 		if(getPlotByChunk(chunk) == null){
 			Plot plot = new Plot(player, chunk);
-			User user = ChunkyPlots.getInstance().userManager.getUser(player.getName());
+			User user = UserManager.getInstance().getUser(player.getName());
 
 			assignPlotToUserDefaultGroup(plot, user);
 			plots.add(plot);
@@ -173,5 +175,12 @@ public class PlotManager {
 		for(Group group:user.groups){
 			if(group.getName().equals("all")) group.plots.add(plot.getUUID());
 		}
+	}
+
+	public static PlotManager getInstance(){
+		if(instance == null){
+			instance = new PlotManager();
+		}
+		return instance;
 	}
 }

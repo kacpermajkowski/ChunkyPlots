@@ -1,18 +1,29 @@
 package pl.kacpermajkowski.ChunkyPlots.manager;
 
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
+import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.VisitPoint;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class VisitManager {
+public class VisitManager implements Listener {
+	private static VisitManager instance;
+
 	private List<VisitPoint> visitPoints = new ArrayList<>();
 
-	public VisitManager(){ loadVisitPoints(); }
-	//TODO: Find better solution to save visit points on server shutdown
-	protected void finalize(){ saveVisitPoints(); }
+	private VisitManager() {
+		loadVisitPoints();
+		ChunkyPlots.getInstance().getServer().getPluginManager().registerEvents(this, ChunkyPlots.getInstance());
+	}
 
+	@EventHandler
+	public void onPluginDisable(final PluginDisableEvent e) {
+		saveVisitPoints();
+	}
 
 	public void createVisitPoint(VisitPoint visitPoint){
 		visitPoints.add(visitPoint);
@@ -36,5 +47,11 @@ public class VisitManager {
 
 	private void saveVisitPoints(){
 		//TODO: Saving visit points to file
+	}
+
+	public static VisitManager getInstance(){
+		if(instance == null)
+			instance = new VisitManager();
+		return instance;
 	}
 }

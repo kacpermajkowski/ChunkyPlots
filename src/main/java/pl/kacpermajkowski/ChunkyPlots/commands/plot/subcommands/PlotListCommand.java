@@ -36,7 +36,7 @@ public class PlotListCommand extends Subcommand {
 			player.sendMessage("");
 			player.sendMessage("");
 			Lang.sendNoPrefixMessage(player, "&eID Działki &9» &ePrzybliżone koordynaty działki");
-			for(Plot plot:ChunkyPlots.getInstance().plotManager.getPlots()){
+			for(Plot plot:PlotManager.getInstance().getPlots()){
 				if(plot.getOwnerNickname().equals(player.getName())) {
 					Location location = player.getWorld().getChunkAt(plot.getChunkX(), plot.getChunkZ()).getBlock(8, 64, 8).getLocation();
 					Lang.sendNoPrefixMessage(player,"&8(&6" + plot.getID() + "&8)" + " &a» &7X:&f" + location.getBlockX() + "  &7Y:&f" + location.getBlockY() + "  &7Z:&f" + location.getBlockZ());

@@ -17,10 +17,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class PlotGroupCommand extends Subcommand {
-	final PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
-	final UserManager userManager = ChunkyPlots.getInstance().userManager;
-	final VisitManager visitManager = ChunkyPlots.getInstance().visitManager;
-
 	@Override
 	public String getName() {
 		return "group";
@@ -58,10 +54,10 @@ public class PlotGroupCommand extends Subcommand {
 						deleteGroup(player, args[2]);
 						break;
 					case "add":
-						addPlotToGroup(player, args[2], plotManager.getPlotByChunk(player.getLocation().getChunk()));
+						addPlotToGroup(player, args[2], PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
 						break;
 					case "remove":
-						removePlotFromGroup(player, args[2], plotManager.getPlotByChunk(player.getLocation().getChunk()));
+						removePlotFromGroup(player, args[2], PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
 						break;
 					case "info":
 						sendGroupInfoToPlayer(args[2], player);
@@ -70,14 +66,14 @@ public class PlotGroupCommand extends Subcommand {
 	//			TODO: Add group help message
 
 			} else if(args.length == 6){
-				if (args[1].equals("add")) addPlotToGroup(player, args[2], plotManager.getPlotByCoordinates(args[3], args[4], args[5]));
-				else if (args[1].equals("remove")) removePlotFromGroup(player, args[2], plotManager.getPlotByCoordinates(args[3], args[4], args[5]));
+				if (args[1].equals("add")) addPlotToGroup(player, args[2], PlotManager.getInstance().getPlotByCoordinates(args[3], args[4], args[5]));
+				else if (args[1].equals("remove")) removePlotFromGroup(player, args[2], PlotManager.getInstance().getPlotByCoordinates(args[3], args[4], args[5]));
 			}
 		}
 	}
 
 	private void sendGroupInfoToPlayer(String groupName, Player player) {
-		Group group = userManager.getUser(player.getName()).getGroupByName(groupName);
+		Group group = UserManager.getInstance().getUser(player.getName()).getGroupByName(groupName);
 		List<UUID> plotUUIDs = group.plots;
 		for(UUID uuid:plotUUIDs){
 			player.sendMessage(uuid.toString());
@@ -85,18 +81,18 @@ public class PlotGroupCommand extends Subcommand {
 	}
 
 	private void sendGroupListToPlayer(Player player) {
-		List<Group> groups = userManager.getUser(player.getName()).getGroups();
+		List<Group> groups = UserManager.getInstance().getUser(player.getName()).getGroups();
 		for (Group g: groups){
 			player.sendMessage(g.getName());
 		}
 	}
 
 	private void createGroup(Player player, String groupName){
-		User user = userManager.getUser(player.getName());
+		User user = UserManager.getInstance().getUser(player.getName());
 		if(user != null){
 			if(user.getGroupByName(groupName) == null){
 				user.groups.add(new Group(groupName));
-				userManager.saveUser(user);
+				UserManager.getInstance().saveUser(user);
 
 				String rawMessage = Config.getInstance().getMessage(Message.GROUP_CREATE);
 				String uncolouredMessage = Lang.replacePlaceholders(rawMessage, user.getGroupByName(groupName));
@@ -114,13 +110,13 @@ public class PlotGroupCommand extends Subcommand {
 
 
 	private void deleteGroup(Player player, String groupName){
-		User user = userManager.getUser(player.getName());
+		User user = UserManager.getInstance().getUser(player.getName());
 		if(!groupName.equalsIgnoreCase("all")) {
 			if (user != null) {
 				Group group = user.getGroupByName(groupName);
 				if (group != null) {
 					user.groups.remove(group);
-					userManager.saveUser(user);
+					UserManager.getInstance().saveUser(user);
 
 					String rawMessage = Config.getInstance().getMessage(Message.GROUP_DELETE);
 					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, group);
@@ -144,14 +140,14 @@ public class PlotGroupCommand extends Subcommand {
 
 
 	private void addPlotToGroup(Player player, String groupName, Plot plot){
-		User user = userManager.getUser(player.getName());
+		User user = UserManager.getInstance().getUser(player.getName());
 		if(user != null){
 			Group group = user.getGroupByName(groupName);
 			if(group != null){
 				if(!group.getName().equals("all")) {
 					if(!group.plots.contains(plot.getUUID())) {
 						group.plots.add(plot.getUUID());
-						userManager.saveUser(user);
+						UserManager.getInstance().saveUser(user);
 
 						String rawMessage = Config.getInstance().getMessage(Message.PLOT_ADDED_TO_GROUP);
 						String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, group);
@@ -180,14 +176,14 @@ public class PlotGroupCommand extends Subcommand {
 
 
 	private void removePlotFromGroup(Player player, String groupName, Plot plot){
-		User user = userManager.getUser(player.getName());
+		User user = UserManager.getInstance().getUser(player.getName());
 		if(user != null){
 			Group group = user.getGroupByName(groupName);
 			if(group != null){
 				if(!group.getName().equals("all")) {
 					if(group.plots.contains(plot.getUUID())){
 						group.plots.remove(plot.getUUID());
-						userManager.saveUser(user);
+						UserManager.getInstance().saveUser(user);
 
 						String rawMessage = Config.getInstance().getMessage(Message.PLOT_REMOVED_FROM_GROUP);
 						String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, group);
@@ -216,14 +212,14 @@ public class PlotGroupCommand extends Subcommand {
 
 	public static List<Plot> getPlotsFromGroupName(Player player, String groupName){
 		List<Plot> plots = new ArrayList<>();
-		User user = ChunkyPlots.getInstance().userManager.getUser(player.getName());
+		User user = UserManager.getInstance().getUser(player.getName());
 		Group group = null;
 		for(Group g:user.groups){
 			if(g.getName().equalsIgnoreCase(groupName)){
 				group = g;
 				List<UUID> plotUUIDs = group.plots;
 				for(UUID plotUUID:plotUUIDs){
-					Plot plot = ChunkyPlots.getInstance().plotManager.getPlotByUUID(plotUUID);
+					Plot plot = PlotManager.getInstance().getPlotByUUID(plotUUID);
 					if(plot != null) plots.add(plot);
 					else group.plots.remove(plotUUID);
 				}

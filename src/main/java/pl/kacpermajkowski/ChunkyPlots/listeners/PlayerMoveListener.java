@@ -21,8 +21,8 @@ public class PlayerMoveListener implements Listener {
         final Location to = event.getTo();
 
         if (to != null && from.distance(to) != 0){
-            final PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
-            final UserManager userManager = ChunkyPlots.getInstance().userManager;
+            final PlotManager plotManager = PlotManager.getInstance();
+            final UserManager userManager = UserManager.getInstance();
 
             final Player player = event.getPlayer();
             final User user = userManager.getUser(player.getName());

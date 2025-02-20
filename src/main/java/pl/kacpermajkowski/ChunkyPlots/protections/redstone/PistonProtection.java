@@ -30,7 +30,7 @@ public class PistonProtection implements Listener {
     }
 
     private boolean canPistonAffectBlocks(Block piston, BlockFace direction, List<Block> blocks) {
-        PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
+        PlotManager plotManager = PlotManager.getInstance();
 
         Plot pistonPlot = plotManager.getPlotByBlock(piston);
         Plot pistonHeadPlot = plotManager.getPlotByBlock(piston.getRelative(direction));
@@ -68,7 +68,7 @@ public class PistonProtection implements Listener {
     private List<Plot> getPlotsOfAllBlocks(List<Block> blocks) {
         ArrayList<Plot> plots = new ArrayList<>();
         for(Block b: blocks){
-            PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
+            PlotManager plotManager = PlotManager.getInstance();
 
             Plot plot = plotManager.getPlotByChunk(b.getChunk());
 
@@ -81,7 +81,7 @@ public class PistonProtection implements Listener {
     private List<Plot> getPlotsAffectedByPiston(BlockFace direction, List<Block> blocks) {
         ArrayList<Plot> plots = new ArrayList<>();
         for(Block b: blocks){
-            PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
+            PlotManager plotManager = PlotManager.getInstance();
 
             Block affectedBlock = b.getRelative(direction);
             Plot affectedPlot = plotManager.getPlotByChunk(affectedBlock.getChunk());

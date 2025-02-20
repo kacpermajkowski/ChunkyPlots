@@ -15,9 +15,6 @@ import pl.kacpermajkowski.ChunkyPlots.manager.UserManager;
 import java.util.List;
 
 public class PlotMembersCommand extends Subcommand {
-	final PlotManager plotManager = ChunkyPlots.getInstance().plotManager;
-	final UserManager userManager = ChunkyPlots.getInstance().userManager;
-
 	@Override
 	public String getName() {
 		return "members";
@@ -43,9 +40,9 @@ public class PlotMembersCommand extends Subcommand {
 		if (sender instanceof Player player) {
 			if(args.length == 3) {
 					if (args[1].equals("add"))
-						addMemberToPlot(player, args[2], plotManager.getPlotByChunk(player.getLocation().getChunk()));
+						addMemberToPlot(player, args[2], PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
 					else if (args[1].equals("remove"))
-						removeMemberFromPlot(player, args[2], plotManager.getPlotByChunk(player.getLocation().getChunk()));
+						removeMemberFromPlot(player, args[2], PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
 	//			TODO: add members help command
 			} else if(args.length == 4){
 				if (args[1].equals("add")) {
@@ -59,8 +56,8 @@ public class PlotMembersCommand extends Subcommand {
 					else Lang.sendMessage(player, "&cDo tej grupy nie są przypisane żadne działki");
 				}
 			} else if(args.length == 6){
-				if (args[1].equals("add")) addMemberToPlot(player, args[2], plotManager.getPlotByCoordinates(args[3], args[4], args[5]));
-				else if (args[1].equals("remove"))removeMemberFromPlot(player, args[2], plotManager.getPlotByCoordinates(args[3], args[4], args[5]));
+				if (args[1].equals("add")) addMemberToPlot(player, args[2], PlotManager.getInstance().getPlotByCoordinates(args[3], args[4], args[5]));
+				else if (args[1].equals("remove"))removeMemberFromPlot(player, args[2], PlotManager.getInstance().getPlotByCoordinates(args[3], args[4], args[5]));
 			}
 		}
 	}
@@ -69,11 +66,11 @@ public class PlotMembersCommand extends Subcommand {
 		if (plot != null) {
 			if (plot.getOwnerNickname().equals(player.getName())) {
 				if (!userName.equals(plot.getOwnerNickname())) {
-					User user = userManager.getUser(userName);
+					User user = UserManager.getInstance().getUser(userName);
 					if (user != null) {
 						if(!plot.members.contains(userName)) {
 							plot.members.add(userName);
-							plotManager.savePlot(plot);
+							PlotManager.getInstance().savePlot(plot);
 							String rawMessage = Config.getInstance().getMessage(Message.ADDED_MEMBER_TO_PLOT);
 							String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, user);
 							Lang.sendMessage(player, uncolouredMessage);
@@ -108,9 +105,9 @@ public class PlotMembersCommand extends Subcommand {
 			if(plot.getOwnerNickname().equals(player.getName())){
 				if(plot.members.contains(userName)){
 					plot.members.remove(userName);
-					plotManager.savePlot(plot);
+					PlotManager.getInstance().savePlot(plot);
 
-					User user = userManager.getUser(userName);
+					User user = UserManager.getInstance().getUser(userName);
 					String rawMessage = Config.getInstance().getMessage(Message.REMOVED_MEMBER_FROM_PLOT);
 					String uncolouredMessage = Lang.replacePlaceholders(rawMessage, plot, user);
 					Lang.sendMessage(player, uncolouredMessage);

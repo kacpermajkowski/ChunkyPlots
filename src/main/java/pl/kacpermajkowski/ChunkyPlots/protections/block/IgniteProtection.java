@@ -41,8 +41,8 @@ public class IgniteProtection implements Listener {
 	private boolean canBlockBeIgnitedByBlock(Block block, Block ignitingBlock) {
 		Chunk ignitingBlockChunk = ignitingBlock.getChunk();
 		Chunk blockChunk = block.getChunk();
-		Plot sourceBlockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(ignitingBlockChunk);
-		Plot destinationBlockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(blockChunk);
+		Plot sourceBlockPlot = PlotManager.getInstance().getPlotByChunk(ignitingBlockChunk);
+		Plot destinationBlockPlot = PlotManager.getInstance().getPlotByChunk(blockChunk);
 
 		if(sourceBlockPlot != null && destinationBlockPlot != null){
 			return sourceBlockPlot.hasTheSameOwnerAs(destinationBlockPlot);
@@ -57,7 +57,7 @@ public class IgniteProtection implements Listener {
 
 	private boolean canBlockBeIgnitedByEntity(Block block, Entity ignitingEntity) {
 		Chunk blockChunk = block.getChunk();
-		Plot destinationBlockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(blockChunk);
+		Plot destinationBlockPlot = PlotManager.getInstance().getPlotByChunk(blockChunk);
 
 		if (destinationBlockPlot != null) {
 			if (ignitingEntity instanceof Player player) {

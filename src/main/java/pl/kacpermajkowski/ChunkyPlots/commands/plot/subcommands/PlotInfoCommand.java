@@ -35,7 +35,7 @@ public class PlotInfoCommand extends Subcommand {
 	@Override
 	public void execute(CommandSender sender, String[] args) {
 		if(sender instanceof Player player) {
- 			Plot plot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(player.getLocation().getChunk());
+ 			Plot plot = PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk());
 			if (plot != null) {
 				Lang.sendMessage(player, "&9-----------{ " + Config.getInstance().getPrefix() + " &9}-----------");
 				Lang.sendMessage(player, "&aWłaściciel: &f" + plot.getOwnerNickname());

@@ -71,7 +71,7 @@ public class ExplodeProtection implements Listener {
 	}
 
 	private boolean canWitherExplodeBlock(Wither wither, Block block) {
-		Plot blockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
+		Plot blockPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
 		UUID uuid = wither.getUniqueId();
 		Player summoner = witherSummoners.get(uuid);
 
@@ -93,7 +93,7 @@ public class ExplodeProtection implements Listener {
 		Entity tntSource = tntPrimed.getSource();
 		if(tntSource != null) {
 			if (tntSource.isValid()) {
-				Plot blockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
+				Plot blockPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
 				if (tntSource instanceof Player player) {
 					return PlotPermissionUtil.canPlayerAffectPlot(player, blockPlot, Flag.EXPLODE_MEMBER, Flag.EXPLODE_STRANGER);
 				}
@@ -108,8 +108,8 @@ public class ExplodeProtection implements Listener {
 	}
 
 	private boolean canEnderCrystalExplodeBlock(EnderCrystal enderCrystal, Block block) {
-		Plot blockPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(block.getChunk());
-		Plot crystalPlot = ChunkyPlots.getInstance().plotManager.getPlotByChunk(enderCrystal.getLocation().getChunk());
+		Plot blockPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
+		Plot crystalPlot = PlotManager.getInstance().getPlotByChunk(enderCrystal.getLocation().getChunk());
 		return blockPlot.hasTheSameOwnerAs(crystalPlot);
 	}
 }

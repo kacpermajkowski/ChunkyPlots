@@ -16,10 +16,12 @@ import java.util.Set;
 import java.util.UUID;
 
 public class UserManager {
+	private static UserManager instance;
+
 	private List<User> users = new ArrayList<>();
 	File userDirectory = new File(ChunkyPlots.getInstance().getDataFolder() + "/users");
 
-	public UserManager(){
+	private UserManager(){
 		loadUsers();
 	}
 
@@ -110,5 +112,11 @@ public class UserManager {
 
 	public List<User> getPlots(){
 		return users;
+	}
+
+	public static UserManager getInstance(){
+		if(instance == null)
+			instance = new UserManager();
+		return instance;
 	}
 }
