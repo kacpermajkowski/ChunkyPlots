@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
@@ -18,7 +17,7 @@ public class PlayerInteractAtEntityListener implements Listener {
 		Entity clickedEntity = event.getRightClicked();
 		Player player = event.getPlayer();
 		Location clickedEntityLocation = clickedEntity.getLocation();
-		Plot eventPlot = PlotManager.getInstance().getPlotByChunk(clickedEntityLocation.getChunk());
+		Plot eventPlot = PlotManager.getInstance().getPlot(clickedEntityLocation.getChunk());
 
 		if(eventPlot != null) {
 			if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot, Flag.ENTITY_INTERACT_MEMBER, Flag.ENTITY_INTERACT_STRANGER)) {

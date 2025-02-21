@@ -6,7 +6,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.projectiles.ProjectileSource;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
@@ -29,7 +28,7 @@ public class LingeringPotionProtection implements Listener {
 	}
 
 	private boolean canShooterApplyEffectToEntity(ProjectileSource shooter, LivingEntity entity) {
-		Plot plotEntityIsStandingOn = PlotManager.getInstance().getPlotByChunk(entity.getLocation().getChunk());
+		Plot plotEntityIsStandingOn = PlotManager.getInstance().getPlot(entity.getLocation().getChunk());
 		if(plotEntityIsStandingOn != null){
 			return canShooterApplyEffectToEntityStandingOnPlot(shooter, plotEntityIsStandingOn);
 		}

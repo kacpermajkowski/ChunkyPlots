@@ -1,4 +1,4 @@
-package pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands;
+package pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.help;
 
 import org.bukkit.command.CommandSender;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;

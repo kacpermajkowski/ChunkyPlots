@@ -1,19 +1,20 @@
-package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands;
+package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.info;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
-import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
 import java.util.List;
 
-public class PlotInfoCommand implements Subcommand {
+public class PlotInfoCommand implements PlotSubcommand {
 	@Override
 	public String getName() {
 		return "info";
@@ -35,17 +36,17 @@ public class PlotInfoCommand implements Subcommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String[] args) {
+	public void execute(Player sender, String[] args) {
 		if(sender instanceof Player player) {
- 			Plot plot = PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk());
+ 			Plot plot = PlotManager.getInstance().getPlot(player.getLocation().getChunk());
 			if (plot != null) {
 				new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().send(player);
-				player.sendMessage(TextUtil.fixColors( "&aWłaściciel: &f" + plot.getOwnerNickname()));
+				player.sendMessage(TextUtil.fixColors( "&aWłaściciel: &f" + Bukkit.getOfflinePlayer(plot.getOwnerUUID()).getName()));
 				player.sendMessage(TextUtil.fixColors( "&aChunk X: &f" + plot.getChunkX()));
 				player.sendMessage(TextUtil.fixColors( "&aChunk Z: &f" + plot.getChunkZ()));
 				player.sendMessage(TextUtil.fixColors( "&aŚwiat: &f" + plot.getWorldName()));
-				player.sendMessage(TextUtil.fixColors( "&aCzłonkowie: &f" + plot.members.toString()));
-				player.sendMessage(TextUtil.fixColors( "&aZablokowani: &f" + plot.blacklist.toString()));
+				player.sendMessage(TextUtil.fixColors( "&aCzłonkowie: &f" + plot.getMembers().toString()));
+				player.sendMessage(TextUtil.fixColors( "&aZablokowani: &f" + plot.getBlacklist().toString()));
 				Location location = player.getWorld().getChunkAt(plot.getChunkX(), plot.getChunkZ()).getBlock(8, 64, 8).getLocation();
 				player.sendMessage(TextUtil.fixColors( "&aLokalizacja: &7X:&f" + location.getBlockX() + "  &7Y:&f" + location.getBlockY() + "  &7Z:&f" + location.getBlockZ()));
 				player.sendMessage(TextUtil.fixColors( "&aUUID: &f" + plot.getUUID()));

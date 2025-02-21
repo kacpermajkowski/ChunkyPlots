@@ -1,9 +1,10 @@
-package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands;
+package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.visit;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
+import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.basic.User;
@@ -15,7 +16,7 @@ import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
 import java.util.List;
 
-public class PlotVisitCommand implements Subcommand {
+public class PlotVisitCommand implements PlotSubcommand {
 	@Override
 	public String getName() {
 		return "visit";
@@ -37,7 +38,7 @@ public class PlotVisitCommand implements Subcommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String[] args) {
+	public void execute(Player sender, String[] args) {
 		if(sender instanceof Player) {
 			Player player = (Player) sender;
 
@@ -47,9 +48,9 @@ public class PlotVisitCommand implements Subcommand {
 				if (visitPoint != null) {
 					if (visitPoint.isOpen) {
 						if (visitPoint.isSafe()) {
-							final User user = UserManager.getInstance().getUser(player.getName());
-							if (!user.isTeleporting) {
-								user.isTeleporting = true;
+							final User user = UserManager.getInstance().getUser(player);
+							if (!user.isTeleporting()) {
+								user.setTeleporting(true);
 								String rawMessage = Config.getInstance().getMessage(Message.TELEPORTING_TO_VISIT_POINT);
 								String uncolouredMessage = TextUtil.replacePlaceholders(rawMessage, visitPoint);
 								TextUtil.sendMessage(player, uncolouredMessage);
@@ -69,7 +70,7 @@ public class PlotVisitCommand implements Subcommand {
 											TextUtil.sendMessage(player, uncolouredMessage1);
 										}
 									}
-									user.isTeleporting = false;
+									user.setTeleporting(false);
 								}, 20 * 5);
 							} else {
 								String rawMessage = Config.getInstance().getMessage(Message.ALREADY_TELEPORTING);
@@ -89,7 +90,7 @@ public class PlotVisitCommand implements Subcommand {
 					TextUtil.sendMessage(player, rawMessage);
 				}
 			} else if (args.length == 3){
-				if(args[1].equals("createpoint")) createVisitPoint(player, args[2], null, PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
+				if(args[1].equals("createpoint")) createVisitPoint(player, args[2], null, PlotManager.getInstance().getPlot(player.getLocation().getChunk()));
 				else if(args[1].equals("deletepoint")) deleteVisitPoint(player, args[2]);
 //				TODO: Add visit help command
 			}

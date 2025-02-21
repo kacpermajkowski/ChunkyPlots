@@ -1,36 +1,30 @@
 package pl.kacpermajkowski.ChunkyPlots.basic;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Plot {
-	private String ownerNickname;
-	public List<String> blacklist = new ArrayList<String>();
-	public List<String> members = new ArrayList<String>();
-	public HashMap<Flag, Boolean> flags = new HashMap<Flag, Boolean>(Config.getInstance().getDefaultFlags());
-	private int chunkX;
-	private int chunkZ;
-	private String worldName;
-	private UUID uuid;
+	private UUID ownerUUID;
+	private final HashSet<UUID> blacklist = new HashSet<UUID>();
+	private final HashSet<UUID> members = new HashSet<UUID>();
+	private HashMap<Flag, Boolean> flags = new HashMap<Flag, Boolean>(Config.getInstance().getDefaultFlags());
+	private final int chunkX;
+	private final int chunkZ;
+	private final String worldName;
+	private final UUID uuid;
 
-	public Plot(Player player, Chunk chunk){
-		this.ownerNickname = player.getName();
-		this.chunkX = chunk.getX();
-		this.chunkZ = chunk.getZ();
-		this.worldName = chunk.getWorld().getName();
-		this.uuid = UUID.randomUUID();
+	public Plot(Player owner, Chunk chunk){
+		this(owner.getUniqueId(), chunk.getX(), chunk.getZ(), chunk.getWorld().getName(), UUID.randomUUID());
 	}
-	
-	public Plot(String ownerNickname, int chunkX, int chunkZ, String worldName, UUID uuid){
-		this.ownerNickname = ownerNickname;
+
+	public Plot(UUID ownerUUID, int chunkX, int chunkZ, String worldName, UUID uuid){
+		this.ownerUUID = ownerUUID;
 		this.chunkX = chunkX;
 		this.chunkZ = chunkZ;
 		this.worldName = worldName;
@@ -39,8 +33,11 @@ public class Plot {
 
 	public void setFlag(Flag flag, boolean value){ flags.put(flag, value); }
 
-	public String getOwnerNickname(){
-		return ownerNickname;
+	public UUID getOwnerUUID(){
+		return ownerUUID;
+	}
+	public String getOwnerName(){
+		return Bukkit.getOfflinePlayer(ownerUUID).getName();
 	}
 	public HashMap<Flag, Boolean> getFlags() {
 		return flags;
@@ -60,32 +57,44 @@ public class Plot {
 	public String getID(){
 		return chunkX + ";" + chunkZ;
 	}
-	public List<String> getBlacklist(){
+	public HashSet<UUID> getBlacklist(){
 		return blacklist;
 	}
-	public List<String> getMembers(){
+	public HashSet<UUID> getMembers(){
 		return members;
 	}
+
+
 
 	public boolean isLocationInside(Location location){
 		return location.getChunk().getX() == chunkX && location.getChunk().getZ() == chunkZ;
 	}
-	public boolean isPlayerOwner(Player player){
-		if(player.getName().equals(ownerNickname)){
-			return true;
-		} else {
-			return false;
-		}
+
+	public boolean isPlayerMember(UUID playerUUID){
+		return members.contains(playerUUID);
 	}
-	public boolean isPlayerMember(Player player){
-		if(members.contains(player.getName())){
-			return true;
-		} else {
-			return false;
-		}
+	public boolean isPlayerMember(OfflinePlayer player){
+		return members.contains(player.getUniqueId());
+	}
+
+	public boolean isPlayerBlacklisted(UUID playerUUID){
+		return blacklist.contains(playerUUID);
+	}
+	public boolean isPlayerBlacklisted(OfflinePlayer player){
+		return blacklist.contains(player.getUniqueId());
+	}
+
+	public boolean isPlayerOwner(UUID playerUUID){
+		return ownerUUID.equals(playerUUID);
+	}
+	public boolean isPlayerOwner(OfflinePlayer player){
+		return ownerUUID.equals(player.getUniqueId());
 	}
 	public boolean hasTheSameOwnerAs(Plot plot){
-		if(plot == null) return false;
-		else return ownerNickname.equals(plot.getOwnerNickname());
+		if(plot == null) {
+			return false;
+		} else {
+			return ownerUUID.equals(plot.getOwnerUUID());
+		}
 	}
 }

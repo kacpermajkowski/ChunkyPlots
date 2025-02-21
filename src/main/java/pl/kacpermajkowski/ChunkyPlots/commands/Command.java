@@ -2,6 +2,7 @@ package pl.kacpermajkowski.ChunkyPlots.commands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 
@@ -15,6 +16,11 @@ public abstract class Command<T extends Command<T>> implements TabExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String s, String[] args) {
+		if(!(sender instanceof Player)){
+			new MessageBuilder(Message.SENDER_NOT_PLAYER).send(sender);
+			return true;
+		}
+
 		if(args.length == 0) {
 			this.execute(sender, args);
 			return true;

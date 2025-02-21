@@ -4,6 +4,7 @@ public enum Message {
 //	Command related messages
 	WIDE_HEADER,
 	SUBCOMMAND_NOT_FOUND,
+	COMMAND_USAGE,
 	HELP_COMMAND_ITEM,
 	HELP_COMMAND_ERROR,
 	SENDER_NOT_PLAYER,

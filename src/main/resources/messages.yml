@@ -2,13 +2,14 @@ messages:
   # Command related messages
   wide_header: "&9-----------{ {prefix} &9}-----------"
   subcommand_not_found: "&cNie znaleziono takiej komendy."
+  command_usage: "&cPoprawne użycie: &f{subcommandSyntax}"
   help_command_item: "&a{subcommandSyntax} &8- &7{subcommandDescription}"
   help_command_error: "&cKomenda pomocy nie została poprawnie zainicjalizowana w pluginie."
   sender_not_player: "&cTa komenda może zostać wywołana tylko przez gracza!"
   insufficient_permissions: "&cNie masz uprawnień, aby korzystać z tej komendy!"
 
   # Plot related messages
-  null_plot: "&cDziałka na której stoisz lub której koordynaty wpisałeś nie istnieje!"
+  null_plot: "&cNie istnieje działka w miejscu gdzie stoisz lub o podanych koordynatach!"
   plot_created: "&aPomyślnie utworzono działkę o ID &8(&7{plotID}&8)"
   plot_deleted: "&cPomyślnie usunięto działkę o ID &8(&7{plotID}&8)"
   plot_already_exists: "&cW tym miejscu istnieje już działka!"
@@ -21,7 +22,7 @@ messages:
   not_permitted: "&cNie masz uprawnień, aby to zrobić!"
 
   # User related messages
-  null_user: "&cGracz o nicku &f{userName} &cnie istnieje!"
+  null_user: "&cGracz o nicku &f{userName} &cnigdy nie był na serwerze!"
 
   # Member related messages
   added_member_to_plot: "&aDodałeś gracza &f{user} &ado działki!"

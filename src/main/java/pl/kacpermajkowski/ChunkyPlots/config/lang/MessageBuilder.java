@@ -1,5 +1,6 @@
 package pl.kacpermajkowski.ChunkyPlots.config.lang;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import pl.kacpermajkowski.ChunkyPlots.basic.*;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
@@ -40,7 +41,7 @@ public class MessageBuilder {
 
     public MessageBuilder plot(Plot plot) {
         this.plotID = plot.getID();
-        this.plotOwnerName = plot.getOwnerNickname();
+        this.plotOwnerName = Bukkit.getOfflinePlayer(plot.getOwnerUUID()).getName();
         this.worldName = plot.getWorldName();
         return this;
     }
@@ -59,7 +60,7 @@ public class MessageBuilder {
 
 
     public MessageBuilder user(User user) {
-        this.userName = user.getNickname();
+        this.userName = user.getName();
         return this;
     }
     public MessageBuilder username(String username) {
@@ -163,5 +164,6 @@ public class MessageBuilder {
     public void send(CommandSender receiver) {
         receiver.sendMessage(build());
     }
+
 
 }

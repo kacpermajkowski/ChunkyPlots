@@ -47,36 +47,42 @@ public class PlotManager {
 				false);
 	}
 	private void loadPlots(){
-		File[] files = plotDirectory.listFiles();
-		if(files != null) {
-			for (File file : files) {
-				FileConfiguration plotData = YamlConfiguration.loadConfiguration(file);
-				if (file != null) {
-					String ownerNickname = plotData.getString("ownerNickname");
-					int chunkX = plotData.getInt("chunkX");
-					int chunkZ = plotData.getInt("chunkZ");
-					String worldName = plotData.getString("worldName");
-					List<String> members = plotData.getStringList("members");
-					List<String> blacklist = plotData.getStringList("blacklist");;
-					HashMap<String, Boolean> flagsToConvert = new HashMap<>();
-					ConfigurationSection flagSection = plotData.getConfigurationSection("flags");
-					for(String s:flagSection.getKeys(false)){
-						flagsToConvert.put(s, flagSection.getBoolean(s));
-					}
-					HashMap<Flag, Boolean> flags = new HashMap<>();
-					for(String s:flagsToConvert.keySet()){
-						flags.put(Flag.valueOf(s),flagsToConvert.get(s));
-					}
-
-					Plot plot = new Plot(ownerNickname, chunkX, chunkZ, worldName, UUID.fromString(file.getName()));
-					plot.blacklist = blacklist;
-					plot.members = members;
-					plot.blacklist = blacklist;
-					plot.flags = flags;
-					plots.add(plot);
-				}
-			}
-		}
+//		File[] files = plotDirectory.listFiles();
+//		if(files != null) {
+//			for (File file : files) {
+//				FileConfiguration plotData = YamlConfiguration.loadConfiguration(file);
+//				if (file != null) {
+//					String ownerUUIDstring = plotData.getString("ownerUUID");
+//					UUID ownerUUID = UUID.fromString(ownerUUIDstring);
+//					int chunkX = plotData.getInt("chunkX");
+//					int chunkZ = plotData.getInt("chunkZ");
+//					String worldName = plotData.getString("worldName");
+//					List<String> members = plotData.getStringList("members");
+//					List<String> blacklist = plotData.getStringList("blacklist");;
+//					HashMap<String, Boolean> flagsToConvert = new HashMap<>();
+//					ConfigurationSection flagSection = plotData.getConfigurationSection("flags");
+//					for(String s:flagSection.getKeys(false)){
+//						flagsToConvert.put(s, flagSection.getBoolean(s));
+//					}
+//					HashMap<Flag, Boolean> flags = new HashMap<>();
+//					for(String s:flagsToConvert.keySet()){
+//						flags.put(Flag.valueOf(s),flagsToConvert.get(s));
+//					}
+//
+//					Plot plot = new Plot(ownerUUID, chunkX, chunkZ, worldName, UUID.fromString(file.getName()));
+//					for (String playerUUIDString : blacklist){
+//						plot.getBlacklist().add(UUID.fromString(playerUUIDString));
+//					}
+//					for (String playerUUIDString : members){
+//						plot.getMembers().add(UUID.fromString(playerUUIDString));
+//					}
+//					for (Flag flag : flags.keySet()){
+//						plot.getFlags().put(flag, flags.get(flag));
+//					}
+//					plots.add(plot);
+//				}
+//			}
+//		}
 	}
 	public void savePlots(){
 		for(Plot plot:plots) {
@@ -84,23 +90,23 @@ public class PlotManager {
 		}
 	}
 	public void savePlot(Plot plot) {
-		try {
-			File file = new File(ChunkyPlots.getInstance().getDataFolder() + "/plots/" + plot.getUUID());
-			FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
-			fc.set("ownerNickname", plot.getOwnerNickname());
-			fc.set("chunkX", plot.getChunkX());
-			fc.set("chunkZ", plot.getChunkZ());
-			fc.set("worldName", plot.getWorldName());
-			fc.set("members", plot.getMembers());
-			fc.set("blacklist", plot.getBlacklist());
-			ConfigurationSection flagSection = fc.createSection("flags");
-			for(Flag flag:plot.getFlags().keySet()){
-				flagSection.set(flag.name(), plot.getFlags().get(flag));
-			}
-			fc.save(file);
-		} catch (Exception e){
-			e.printStackTrace();
-		}
+//		try {
+//			File file = new File(ChunkyPlots.getInstance().getDataFolder() + "/plots/" + plot.getUUID());
+//			FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
+//			fc.set("ownerUUID", plot.getOwnerUUID());
+//			fc.set("chunkX", plot.getChunkX());
+//			fc.set("chunkZ", plot.getChunkZ());
+//			fc.set("worldName", plot.getWorldName());
+//			fc.set("members", plot.getMembers());
+//			fc.set("blacklist", plot.getBlacklist());
+//			ConfigurationSection flagSection = fc.createSection("flags");
+//			for(Flag flag:plot.getFlags().keySet()){
+//				flagSection.set(flag.name(), plot.getFlags().get(flag));
+//			}
+//			fc.save(file);
+//		} catch (Exception e){
+//			e.printStackTrace();
+//		}
 	}
 
 	public ItemStack getPlotItem() {
@@ -110,27 +116,31 @@ public class PlotManager {
 		return plots;
 	}
 
-	public Plot getPlotByBlock(Block block){
-		return getPlotByChunk(block.getChunk());
+	public Plot getPlot(Block block){
+		return getPlot(block.getChunk());
 	}
-	public Plot getPlotByChunk(Chunk chunk){
+	public Plot getPlot(Chunk chunk){
 		for(Plot plot:plots) {
 			if (plot.getChunkX() == chunk.getX() && plot.getChunkZ() == chunk.getZ()) return plot;
 		}
 		return null;
 	}
-	public Plot getPlotByUUID(UUID uuid){
+	public Plot getPlot(UUID uuid){
 		for(Plot plot:plots) {
 			if (plot.getUUID().equals(uuid)) return plot;
 		}
 		return null;
 	}
-	public Plot getPlotByCoordinates(String x, String z, String worldName){
-		int parsedX = Integer.parseInt(x);
-		int parsedZ = Integer.parseInt(z);
-		return getPlotByCoordinates(parsedX, parsedZ, worldName);
+	public Plot getPlot(String x, String z, String worldName){
+		try {
+			int parsedX = Integer.parseInt(x);
+			int parsedZ = Integer.parseInt(z);
+			return getPlot(parsedX, parsedZ, worldName);
+		} catch (NumberFormatException e){
+			return null;
+		}
 	}
-	public Plot getPlotByCoordinates(int x, int z, String worldName){
+	public Plot getPlot(int x, int z, String worldName){
 		for(Plot plot:plots) {
 			if (
 					plot.getChunkX() == x &&
@@ -140,9 +150,9 @@ public class PlotManager {
 		}
 		return null;
 	}
-	public Plot getPlotByLocation(Location location){
+	public Plot getPlot(Location location){
 		Chunk chunk = location.getChunk();
-		return getPlotByChunk(chunk);
+		return getPlot(chunk);
 	}
 
 	public void disposePlot(Plot plot){
@@ -161,9 +171,9 @@ public class PlotManager {
 	public void claimPlot(Player player, Block block){
 		Chunk chunk = block.getChunk();
 		String plotID = chunk.getX() + ";" + chunk.getZ();
-		if(getPlotByChunk(chunk) == null){
+		if(getPlot(chunk) == null){
 			Plot plot = new Plot(player, chunk);
-			User user = UserManager.getInstance().getUser(player.getName());
+			User user = UserManager.getInstance().getUser(player.getUniqueId());
 
 			assignPlotToUserDefaultGroup(plot, user);
 			plots.add(plot);
@@ -173,7 +183,7 @@ public class PlotManager {
 	}
 
 	private void assignPlotToUserDefaultGroup(Plot plot, User user){
-		for(Group group:user.groups){
+		for(Group group:user.getGroups()){
 			if(group.getName().equals("all")) group.plots.add(plot.getUUID());
 		}
 	}

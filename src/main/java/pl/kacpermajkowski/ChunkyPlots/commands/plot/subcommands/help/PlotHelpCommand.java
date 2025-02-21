@@ -1,21 +1,21 @@
-package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands;
+package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.help;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
-import pl.kacpermajkowski.ChunkyPlots.config.Config;
+import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class PlotHelpCommand implements Subcommand {
-	private List<Subcommand> subcommands;
+public class PlotHelpCommand implements PlotSubcommand {
+	private List<PlotSubcommand> subcommands;
 
 	public PlotHelpCommand() {
 		subcommands = null;
 	}
-	PlotHelpCommand(List<Subcommand> subcommands) {
+	PlotHelpCommand(List<PlotSubcommand> subcommands) {
 		this.subcommands = subcommands;
 	}
 
@@ -40,7 +40,7 @@ public class PlotHelpCommand implements Subcommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String[] args) {
+	public void execute(Player sender, String[] args) {
 		sendHelpMessage(sender);
 	}
 
@@ -61,7 +61,7 @@ public class PlotHelpCommand implements Subcommand {
 		}
 	}
 
-	public void setSubcommands(List<Subcommand> subcommands) {
+	public void setSubcommands(List<PlotSubcommand> subcommands) {
 		this.subcommands = subcommands;
 	}
 }

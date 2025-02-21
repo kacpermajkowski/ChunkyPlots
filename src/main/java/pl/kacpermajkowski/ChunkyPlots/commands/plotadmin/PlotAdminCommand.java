@@ -3,8 +3,8 @@ package pl.kacpermajkowski.ChunkyPlots.commands.plotadmin;
 import org.bukkit.command.CommandSender;
 import pl.kacpermajkowski.ChunkyPlots.commands.Command;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
-import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.PlotAdminBlockCommand;
-import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.PlotAdminHelpCommand;
+import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.block.PlotAdminBlockCommand;
+import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.help.PlotAdminHelpCommand;
 
 import java.util.ArrayList;
 import java.util.Collections;

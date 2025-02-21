@@ -14,7 +14,7 @@ public class PlayerLeftListener implements Listener {
         final Player player = event.getPlayer();
 
         final UserManager userManager = UserManager.getInstance();
-        User user = userManager.getUser(player.getName());
+        User user = userManager.getUser(player);
         userManager.saveUser(user);
     }
 }

@@ -21,7 +21,7 @@ public class BlockPlaceListener implements Listener {
     public void onBlockPlace(final BlockPlaceEvent event){
         final Block block = event.getBlock();
         final Player player = event.getPlayer();
-        final Plot blockPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
+        final Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
 
         if(blockPlot != null){
             if(!PlotPermissionUtil.canPlayerAffectPlot(player, blockPlot, Flag.PLACE_MEMBER, Flag.PLACE_STRANGER)){

@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockIgniteEvent;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
@@ -41,8 +40,8 @@ public class IgniteProtection implements Listener {
 	private boolean canBlockBeIgnitedByBlock(Block block, Block ignitingBlock) {
 		Chunk ignitingBlockChunk = ignitingBlock.getChunk();
 		Chunk blockChunk = block.getChunk();
-		Plot sourceBlockPlot = PlotManager.getInstance().getPlotByChunk(ignitingBlockChunk);
-		Plot destinationBlockPlot = PlotManager.getInstance().getPlotByChunk(blockChunk);
+		Plot sourceBlockPlot = PlotManager.getInstance().getPlot(ignitingBlockChunk);
+		Plot destinationBlockPlot = PlotManager.getInstance().getPlot(blockChunk);
 
 		if(sourceBlockPlot != null && destinationBlockPlot != null){
 			return sourceBlockPlot.hasTheSameOwnerAs(destinationBlockPlot);
@@ -57,7 +56,7 @@ public class IgniteProtection implements Listener {
 
 	private boolean canBlockBeIgnitedByEntity(Block block, Entity ignitingEntity) {
 		Chunk blockChunk = block.getChunk();
-		Plot destinationBlockPlot = PlotManager.getInstance().getPlotByChunk(blockChunk);
+		Plot destinationBlockPlot = PlotManager.getInstance().getPlot(blockChunk);
 
 		if (destinationBlockPlot != null) {
 			if (ignitingEntity instanceof Player player) {

@@ -44,7 +44,7 @@ public class TextUtil {
     }
     @Deprecated
     public static String replacePlaceholders(String message, User user){
-        message = message.replace("{user}", user.getNickname());
+        message = message.replace("{user}", user.getName());
         return message;
     }
     @Deprecated

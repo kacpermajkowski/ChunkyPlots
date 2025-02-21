@@ -14,9 +14,9 @@ public class PlayerJoinListener implements Listener {
         final Player player = event.getPlayer();
 
         final UserManager userManager = UserManager.getInstance();
-        User user = userManager.getUser(player.getName());
+        User user = userManager.getUser(player);
         if(user == null){
-            user = new User(event.getPlayer().getName());
+            user = new User(event.getPlayer());
             userManager.saveUser(user);
         }
         userManager.addUser(user);

@@ -6,12 +6,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class PistonProtection implements Listener {
@@ -32,8 +32,8 @@ public class PistonProtection implements Listener {
     private boolean canPistonAffectBlocks(Block piston, BlockFace direction, List<Block> blocks) {
         PlotManager plotManager = PlotManager.getInstance();
 
-        Plot pistonPlot = plotManager.getPlotByBlock(piston);
-        Plot pistonHeadPlot = plotManager.getPlotByBlock(piston.getRelative(direction));
+        Plot pistonPlot = plotManager.getPlot(piston);
+        Plot pistonHeadPlot = plotManager.getPlot(piston.getRelative(direction));
         List<Plot> blockPlots = getPlotsOfAllBlocks(blocks);
         List<Plot> affectedPlots = getPlotsAffectedByPiston(direction, blocks);
 
@@ -47,17 +47,17 @@ public class PistonProtection implements Listener {
         } else {
             if(!pistonPlot.hasTheSameOwnerAs(pistonHeadPlot) && pistonHeadPlot != null)
                 return false;
-            else if(doPlotsMatchTheOwnerOrHaveNoOwner(affectedPlots, pistonPlot.getOwnerNickname()))
-                return doPlotsMatchTheOwnerOrHaveNoOwner(blockPlots, pistonPlot.getOwnerNickname());
+            else if(doPlotsMatchTheOwnerOrHaveNoOwner(affectedPlots, pistonPlot.getOwnerUUID()))
+                return doPlotsMatchTheOwnerOrHaveNoOwner(blockPlots, pistonPlot.getOwnerUUID());
             else
                 return false;
         }
     }
 
-    private boolean doPlotsMatchTheOwnerOrHaveNoOwner(List<Plot> affectedPlots, String ownerNickname) {
+    private boolean doPlotsMatchTheOwnerOrHaveNoOwner(List<Plot> affectedPlots, UUID ownerUUID) {
         for(Plot p : affectedPlots){
             if(p != null) {
-                if (!p.getOwnerNickname().equals(ownerNickname)) {
+                if (!p.isPlayerOwner(ownerUUID)) {
                     return false;
                 }
             }
@@ -70,7 +70,7 @@ public class PistonProtection implements Listener {
         for(Block b: blocks){
             PlotManager plotManager = PlotManager.getInstance();
 
-            Plot plot = plotManager.getPlotByChunk(b.getChunk());
+            Plot plot = plotManager.getPlot(b.getChunk());
 
             if(!plots.contains(plot) && plot != null)
                 plots.add(plot);
@@ -84,7 +84,7 @@ public class PistonProtection implements Listener {
             PlotManager plotManager = PlotManager.getInstance();
 
             Block affectedBlock = b.getRelative(direction);
-            Plot affectedPlot = plotManager.getPlotByChunk(affectedBlock.getChunk());
+            Plot affectedPlot = plotManager.getPlot(affectedBlock.getChunk());
 
             if(!plots.contains(affectedPlot) && affectedPlot != null)
                 plots.add(affectedPlot);

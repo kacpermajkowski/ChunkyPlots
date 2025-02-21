@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
@@ -71,7 +70,7 @@ public class ExplodeProtection implements Listener {
 	}
 
 	private boolean canWitherExplodeBlock(Wither wither, Block block) {
-		Plot blockPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
+		Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
 		UUID uuid = wither.getUniqueId();
 		Player summoner = witherSummoners.get(uuid);
 
@@ -93,7 +92,7 @@ public class ExplodeProtection implements Listener {
 		Entity tntSource = tntPrimed.getSource();
 		if(tntSource != null) {
 			if (tntSource.isValid()) {
-				Plot blockPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
+				Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
 				if (tntSource instanceof Player player) {
 					return PlotPermissionUtil.canPlayerAffectPlot(player, blockPlot, Flag.EXPLODE_MEMBER, Flag.EXPLODE_STRANGER);
 				}
@@ -108,8 +107,8 @@ public class ExplodeProtection implements Listener {
 	}
 
 	private boolean canEnderCrystalExplodeBlock(EnderCrystal enderCrystal, Block block) {
-		Plot blockPlot = PlotManager.getInstance().getPlotByChunk(block.getChunk());
-		Plot crystalPlot = PlotManager.getInstance().getPlotByChunk(enderCrystal.getLocation().getChunk());
+		Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
+		Plot crystalPlot = PlotManager.getInstance().getPlot(enderCrystal.getLocation().getChunk());
 		return blockPlot.hasTheSameOwnerAs(crystalPlot);
 	}
 }

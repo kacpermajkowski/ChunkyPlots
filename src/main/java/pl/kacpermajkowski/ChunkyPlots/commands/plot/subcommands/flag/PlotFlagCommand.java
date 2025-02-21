@@ -1,8 +1,9 @@
-package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands;
+package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.flag;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
+import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
@@ -15,9 +16,9 @@ import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 import java.util.HashMap;
 import java.util.List;
 
-import static pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.PlotGroupCommand.getPlotsFromGroupName;
+import static pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.group.PlotGroupCommand.getPlotsFromGroupName;
 
-public class PlotFlagCommand implements Subcommand {
+public class PlotFlagCommand implements PlotSubcommand {
 	
 	@Override
 	public String getName() {
@@ -40,15 +41,15 @@ public class PlotFlagCommand implements Subcommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String[] args) {
+	public void execute(Player sender, String[] args) {
 		if(sender instanceof Player player){
 			if(args.length == 2) {
 				if (args[1].equals("defaults")) displayFlags(player, true, null);
 				else if (args[1].equals("list"))
-					displayFlags(player, false, PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
+					displayFlags(player, false, PlotManager.getInstance().getPlot(player.getLocation().getChunk()));
 				else PlotCommand.getHelpSubcommand().execute(sender, args);
 			} else if(args.length == 3){
-				if(args[1].equals("check")) displayFlagValue(player, args[2], PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
+				if(args[1].equals("check")) displayFlagValue(player, args[2], PlotManager.getInstance().getPlot(player.getLocation().getChunk()));
 			} else if(args.length == 4){
 //				TODO: Fix concurrent modification exception
 				if (args[1].equals("check")) {
@@ -73,14 +74,14 @@ public class PlotFlagCommand implements Subcommand {
 					}
 					else new MessageBuilder(Message.EMPTY_GROUP).send(player);
 				}
-				else if (args[1].equals("set")) setFlagValue(player, args[2], args[3], PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
+				else if (args[1].equals("set")) setFlagValue(player, args[2], args[3], PlotManager.getInstance().getPlot(player.getLocation().getChunk()));
 			} else if(args.length == 5){
 				if (args[1].equals("set")){
 					List<Plot> plots = getPlotsFromGroupName(player, args[4]);
 					if(!plots.isEmpty()) for(Plot plot: plots) setFlagValue(player, args[2], args[3], plot);
 					else new MessageBuilder(Message.EMPTY_GROUP).send(player);
 				}
-				else if(args[1].equals("list")) displayFlags(player, false, PlotManager.getInstance().getPlotByCoordinates(args[2], args[3], args[4]));
+				else if(args[1].equals("list")) displayFlags(player, false, PlotManager.getInstance().getPlot(args[2], args[3], args[4]));
 //				TODO: flag help message
 			}
 		}
@@ -132,7 +133,7 @@ public class PlotFlagCommand implements Subcommand {
 
 	private void setFlagValue(Player player, String flagName, String flagValue, Plot plot) {
 		if(plot != null){
-			if(plot.getOwnerNickname().equals(player.getName())){
+			if(plot.isPlayerOwner(player)){
 				Flag flag = Flag.getByName(flagName.toUpperCase());
 //				TODO: Proper checking if flag exists before taking value of it
 				if(flag != null){

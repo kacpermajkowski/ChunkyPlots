@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
@@ -18,7 +17,7 @@ public class VehicleDamageListener implements Listener {
         final Entity attacker = event.getAttacker();
 
         final Location vehicleLocation = event.getVehicle().getLocation();
-        final Plot eventPlot = PlotManager.getInstance().getPlotByChunk(vehicleLocation.getChunk());
+        final Plot eventPlot = PlotManager.getInstance().getPlot(vehicleLocation.getChunk());
 
         if(attacker instanceof Player player) {
             if(eventPlot != null) {
