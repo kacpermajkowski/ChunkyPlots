@@ -7,6 +7,7 @@ import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
@@ -38,7 +39,7 @@ public class PlotInfoCommand implements Subcommand {
 		if(sender instanceof Player player) {
  			Plot plot = PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk());
 			if (plot != null) {
-				player.sendMessage(TextUtil.fixColors( "&9-----------{ " + Config.getInstance().getPrefix() + " &9}-----------"));
+				new MessageBuilder(Message.WIDE_HEADER).send(player);
 				player.sendMessage(TextUtil.fixColors( "&aWłaściciel: &f" + plot.getOwnerNickname()));
 				player.sendMessage(TextUtil.fixColors( "&aChunk X: &f" + plot.getChunkX()));
 				player.sendMessage(TextUtil.fixColors( "&aChunk Z: &f" + plot.getChunkZ()));
@@ -48,8 +49,8 @@ public class PlotInfoCommand implements Subcommand {
 				Location location = player.getWorld().getChunkAt(plot.getChunkX(), plot.getChunkZ()).getBlock(8, 64, 8).getLocation();
 				player.sendMessage(TextUtil.fixColors( "&aLokalizacja: &7X:&f" + location.getBlockX() + "  &7Y:&f" + location.getBlockY() + "  &7Z:&f" + location.getBlockZ()));
 				player.sendMessage(TextUtil.fixColors( "&aUUID: &f" + plot.getUUID()));
-				player.sendMessage(TextUtil.fixColors( "&9-----------{ " + Config.getInstance().getPrefix() + " &9}-----------"));
-			} else player.sendMessage(TextUtil.fixColors(Config.getInstance().getMessage(Message.NULL_PLOT)));
+				new MessageBuilder(Message.WIDE_HEADER).send(player);
+			} else new MessageBuilder(Message.NULL_PLOT).send(sender);
 		}
 	}
 
