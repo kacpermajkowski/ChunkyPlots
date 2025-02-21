@@ -7,6 +7,7 @@ public enum Message {
 	HELP_COMMAND_ITEM,
 	HELP_COMMAND_ERROR,
 	SENDER_NOT_PLAYER,
+	INSUFFICIENT_PERMISSIONS,
 
 //	Plot related messages
 	NULL_PLOT,

@@ -6,7 +6,7 @@ import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
-import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotCommandManager;
+import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotCommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
@@ -17,7 +17,7 @@ import java.util.List;
 
 import static pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.PlotGroupCommand.getPlotsFromGroupName;
 
-public class PlotFlagCommand extends Subcommand {
+public class PlotFlagCommand implements Subcommand {
 	
 	@Override
 	public String getName() {
@@ -46,18 +46,18 @@ public class PlotFlagCommand extends Subcommand {
 				if (args[1].equals("defaults")) displayFlags(player, true, null);
 				else if (args[1].equals("list"))
 					displayFlags(player, false, PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
-				else PlotCommandManager.sendHelpMessage(player);
+				else PlotCommand.getHelpSubcommand().execute(sender, args);
 			} else if(args.length == 3){
 				if(args[1].equals("check")) displayFlagValue(player, args[2], PlotManager.getInstance().getPlotByChunk(player.getLocation().getChunk()));
 			} else if(args.length == 4){
 //				TODO: Fix concurrent modification exception
 				if (args[1].equals("check")) {
 					List<Plot> plots = getPlotsFromGroupName(player, args[3]);
-					if(plots.size() > 0) {
+					if(!plots.isEmpty()) {
 						boolean isValueSameInAllPlots = true;
 						Flag flag = Flag.getByName(args[2]);
 						if(flag != null) {
-							boolean value = plots.get(0).getFlags().get(flag);
+							boolean value = plots.getFirst().getFlags().get(flag);
 							for (Plot plot : plots) {
 								if(!value == plot.getFlags().get(flag)){
 									isValueSameInAllPlots = false;
@@ -123,7 +123,7 @@ public class PlotFlagCommand extends Subcommand {
 			for(Flag flag:flags.keySet()){
 				boolean flagValue = flags.get(flag);
 				//TODO: Do it properly in the config when the time comes to refactor commands
-				player.sendMessage(TextUtil.fixColors("&7" + flag.toString() + "&8: " + (flagValue ? ("&a" + flagValue) : ("&c" + flagValue))));
+				player.sendMessage(TextUtil.fixColors("&7" + flag.toString() + "&8: " + (flagValue ? "&atrue" : "&cfalse")));
 			}
 		} else {
 			new MessageBuilder(Message.ERROR_UNSPECIFIED).send(player);
@@ -133,7 +133,7 @@ public class PlotFlagCommand extends Subcommand {
 	private void setFlagValue(Player player, String flagName, String flagValue, Plot plot) {
 		if(plot != null){
 			if(plot.getOwnerNickname().equals(player.getName())){
-				Flag flag = Flag.valueOf(flagName.toUpperCase());
+				Flag flag = Flag.getByName(flagName.toUpperCase());
 //				TODO: Proper checking if flag exists before taking value of it
 				if(flag != null){
 					if(flagValue.equalsIgnoreCase("true") || flagValue.equalsIgnoreCase("false")){
@@ -155,4 +155,10 @@ public class PlotFlagCommand extends Subcommand {
 			new MessageBuilder(Message.NULL_PLOT).send(player);
 		}
 	}
+
+	@Override
+	public List<String> getTabCompletion(CommandSender sender, String[] args) {
+		return List.of();
+	}
+
 }

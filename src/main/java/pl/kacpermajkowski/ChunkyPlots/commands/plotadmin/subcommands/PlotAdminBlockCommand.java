@@ -5,7 +5,9 @@ import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
-public class PlotAdminBlockCommand extends Subcommand {
+import java.util.List;
+
+public class PlotAdminBlockCommand implements Subcommand {
     @Override
     public String getName() {
         return "block";
@@ -32,5 +34,10 @@ public class PlotAdminBlockCommand extends Subcommand {
             player.getInventory().addItem(PlotManager.getInstance().getPlotItem());
             player.sendMessage("Otrzymałeś blok działki!");
         }
+    }
+
+    @Override
+    public List<String> getTabCompletion(CommandSender sender, String[] args) {
+        return List.of();
     }
 }

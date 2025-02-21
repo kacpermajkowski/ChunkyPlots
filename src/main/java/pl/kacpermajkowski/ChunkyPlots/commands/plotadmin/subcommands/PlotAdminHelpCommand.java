@@ -6,8 +6,9 @@ import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class PlotAdminHelpCommand extends Subcommand {
+public class PlotAdminHelpCommand implements Subcommand {
     ArrayList<Subcommand> subcommands;
 
     @Override
@@ -33,6 +34,11 @@ public class PlotAdminHelpCommand extends Subcommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         sendHelpMessage(sender);
+    }
+
+    @Override
+    public List<String> getTabCompletion(CommandSender sender, String[] args) {
+        return List.of();
     }
 
     public void sendHelpMessage(CommandSender sender){

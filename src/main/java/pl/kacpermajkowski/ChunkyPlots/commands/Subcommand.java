@@ -2,15 +2,19 @@ package pl.kacpermajkowski.ChunkyPlots.commands;
 
 import org.bukkit.command.CommandSender;
 
-public abstract class Subcommand{
+import java.util.List;
 
-	public abstract String getName();
+public interface Subcommand{
 
-	public abstract String getDescription();
+	String getName();
 
-	public abstract String getSyntax();
+	String getDescription();
 
-	public abstract String getPermission();
+	String getSyntax();
 
-	public abstract void execute(CommandSender sender, String[] args);
+	String getPermission();
+
+	void execute(CommandSender sender, String[] args);
+
+	List<String> getTabCompletion(CommandSender sender, String[] args);
 }

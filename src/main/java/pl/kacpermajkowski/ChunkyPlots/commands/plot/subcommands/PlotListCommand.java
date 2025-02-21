@@ -8,7 +8,9 @@ import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
-public class PlotListCommand extends Subcommand {
+import java.util.List;
+
+public class PlotListCommand implements Subcommand {
 	@Override
 	public String getName() {
 		return "list";
@@ -44,5 +46,10 @@ public class PlotListCommand extends Subcommand {
 			player.sendMessage("");
 			player.sendMessage("");
 		}
+	}
+
+	@Override
+	public List<String> getTabCompletion(CommandSender sender, String[] args) {
+		return List.of();
 	}
 }

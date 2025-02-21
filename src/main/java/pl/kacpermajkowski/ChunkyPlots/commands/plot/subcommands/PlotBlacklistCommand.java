@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PlotBlacklistCommand extends Subcommand {
+public class PlotBlacklistCommand implements Subcommand {
 	@Override
 	public String getName() {
 		return "blacklist";
@@ -67,6 +67,7 @@ public class PlotBlacklistCommand extends Subcommand {
 			}
 		}
 	}
+
 	private void addPlayerToBlacklist(Player player, String userName, Plot plot){
 		if(plot != null) {
 			if(plot.getOwnerNickname().equals(player.getName())){
@@ -129,6 +130,12 @@ public class PlotBlacklistCommand extends Subcommand {
 		new MessageBuilder(Message.NULL_GROUP).send(player);
 		return plots;
 
+	}
+
+
+	@Override
+	public List<String> getTabCompletion(CommandSender sender, String[] args) {
+		return List.of();
 	}
 }
 

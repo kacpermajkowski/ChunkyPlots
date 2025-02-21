@@ -13,7 +13,9 @@ import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.manager.*;
 import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
-public class PlotVisitCommand extends Subcommand {
+import java.util.List;
+
+public class PlotVisitCommand implements Subcommand {
 	@Override
 	public String getName() {
 		return "visit";
@@ -93,6 +95,12 @@ public class PlotVisitCommand extends Subcommand {
 			}
 		}
 	}
+
+	@Override
+	public List<String> getTabCompletion(CommandSender sender, String[] args) {
+		return List.of();
+	}
+
 	private void createVisitPoint(Player player, String name, String description, Plot plot){
 		if(plot != null) {
 			for (VisitPoint visitPoint : VisitManager.getInstance().getVisitPoints()) {

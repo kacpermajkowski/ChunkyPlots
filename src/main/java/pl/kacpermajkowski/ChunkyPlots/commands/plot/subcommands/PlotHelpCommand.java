@@ -7,9 +7,17 @@ import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class PlotHelpCommand extends Subcommand {
-	ArrayList<Subcommand> subcommands;
+public class PlotHelpCommand implements Subcommand {
+	private List<Subcommand> subcommands;
+
+	public PlotHelpCommand() {
+		subcommands = null;
+	}
+	PlotHelpCommand(List<Subcommand> subcommands) {
+		this.subcommands = subcommands;
+	}
 
 	@Override
 	public String getName() {
@@ -36,6 +44,11 @@ public class PlotHelpCommand extends Subcommand {
 		sendHelpMessage(sender);
 	}
 
+	@Override
+	public List<String> getTabCompletion(CommandSender sender, String[] args) {
+		return List.of();
+	}
+
 	public void sendHelpMessage(CommandSender sender){
 		if(subcommands != null) {
 			new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().send(sender);
@@ -48,7 +61,7 @@ public class PlotHelpCommand extends Subcommand {
 		}
 	}
 
-	public void updateSubcommandList(ArrayList<Subcommand> subcommands) {
+	public void setSubcommands(List<Subcommand> subcommands) {
 		this.subcommands = subcommands;
 	}
 }

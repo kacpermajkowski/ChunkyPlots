@@ -1,8 +1,8 @@
 package pl.kacpermajkowski.ChunkyPlots;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotCommandManager;
-import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.PlotAdminCommandManager;
+import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotCommand;
+import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.PlotAdminCommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerJoinListener;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerLeftListener;
@@ -61,10 +61,10 @@ public class ChunkyPlots extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new VehicleDamageListener(),this);
 		this.getServer().getPluginManager().registerEvents(new VehicleEnterListener(),this);
 	}
-	private void registerCommands(){
-		getCommand("plot").setExecutor(new PlotCommandManager());
-		getCommand("plotadmin").setExecutor(new PlotAdminCommandManager());
 
+	private void registerCommands() {
+		getCommand("plot").setExecutor(PlotCommand.getInstance());
+		getCommand("plotadmin").setExecutor(PlotAdminCommand.getInstance());
 	}
 
 	public static ChunkyPlots getInstance(){

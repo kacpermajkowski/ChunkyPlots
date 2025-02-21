@@ -10,7 +10,9 @@ import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
-public class PlotInfoCommand extends Subcommand {
+import java.util.List;
+
+public class PlotInfoCommand implements Subcommand {
 	@Override
 	public String getName() {
 		return "info";
@@ -49,5 +51,10 @@ public class PlotInfoCommand extends Subcommand {
 				player.sendMessage(TextUtil.fixColors( "&9-----------{ " + Config.getInstance().getPrefix() + " &9}-----------"));
 			} else player.sendMessage(TextUtil.fixColors(Config.getInstance().getMessage(Message.NULL_PLOT)));
 		}
+	}
+
+	@Override
+	public List<String> getTabCompletion(CommandSender sender, String[] args) {
+		return List.of();
 	}
 }

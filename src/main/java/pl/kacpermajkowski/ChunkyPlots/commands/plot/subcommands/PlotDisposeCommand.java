@@ -13,7 +13,7 @@ import pl.kacpermajkowski.ChunkyPlots.manager.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlotDisposeCommand extends Subcommand {
+public class PlotDisposeCommand implements Subcommand {
 
 	@Override
 	public String getName() {
@@ -67,5 +67,10 @@ public class PlotDisposeCommand extends Subcommand {
 		} else {
 			new MessageBuilder(Message.SENDER_NOT_PLAYER).send(sender);
 		}
+	}
+
+	@Override
+	public List<String> getTabCompletion(CommandSender sender, String[] args) {
+		return List.of();
 	}
 }

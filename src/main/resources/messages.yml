@@ -5,6 +5,7 @@ messages:
   help_command_item: "&a{subcommandSyntax} &8- &7{subcommandDescription}"
   help_command_error: "&cKomenda pomocy nie została poprawnie zainicjalizowana w pluginie."
   sender_not_player: "&cTa komenda może zostać wywołana tylko przez gracza!"
+  insufficient_permissions: "&cNie masz uprawnień, aby korzystać z tej komendy!"
 
   # Plot related messages
   null_plot: "&cDziałka na której stoisz lub której koordynaty wpisałeś nie istnieje!"

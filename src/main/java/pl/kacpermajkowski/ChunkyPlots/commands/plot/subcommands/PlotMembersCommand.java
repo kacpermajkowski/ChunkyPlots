@@ -13,7 +13,7 @@ import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
 import java.util.List;
 
-public class PlotMembersCommand extends Subcommand {
+public class PlotMembersCommand implements Subcommand {
 	@Override
 	public String getName() {
 		return "members";
@@ -123,5 +123,10 @@ public class PlotMembersCommand extends Subcommand {
 			String rawMessage = Config.getInstance().getMessage(Message.NULL_PLOT);
 			TextUtil.sendMessage(player, rawMessage);
 		}
+	}
+
+	@Override
+	public List<String> getTabCompletion(CommandSender sender, String[] args) {
+		return List.of();
 	}
 }

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PlotGroupCommand extends Subcommand {
+public class PlotGroupCommand implements Subcommand {
 	@Override
 	public String getName() {
 		return "group";
@@ -195,5 +195,10 @@ public class PlotGroupCommand extends Subcommand {
 		new MessageBuilder(Message.NULL_GROUP).groupName(groupName).send(player);
 		return plots;
 
+	}
+
+	@Override
+	public List<String> getTabCompletion(CommandSender sender, String[] args) {
+		return List.of();
 	}
 }
