@@ -69,6 +69,7 @@ public class PlotDenyCommand implements PlotSubcommand {
 
         if(plot.isPlayerOwner(playerToBlacklist)) {
             messageBuilder.message(Message.CANNOT_ADD_OWNER_TO_BLACKLIST).send(player);
+            return;
         }
 
         if(plot.getBlacklist().contains(player.getUniqueId())) {
