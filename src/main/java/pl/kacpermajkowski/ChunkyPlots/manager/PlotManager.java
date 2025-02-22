@@ -184,7 +184,7 @@ public class PlotManager {
 
 	private void assignPlotToUserDefaultGroup(Plot plot, User user){
 		for(Group group:user.getGroups()){
-			if(group.getName().equals("all")) group.plots.add(plot.getUUID());
+			if(group.getName().equals("all")) group.add(plot);
 		}
 	}
 

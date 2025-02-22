@@ -35,7 +35,7 @@ public class User {
 	}
 	public Group getGroup(String groupName){
 		for(Group group:groups){
-			if(group.name.equals(groupName)) {
+			if(group.getName().equals(groupName)) {
 				return group;
 			}
 		}
@@ -43,7 +43,7 @@ public class User {
 	}
 	public boolean hasGroup(String groupName){
 		for(Group group:groups){
-			if(group.name.equals(groupName)) {
+			if(group.getName().equals(groupName)) {
 				return true;
 			}
 		}

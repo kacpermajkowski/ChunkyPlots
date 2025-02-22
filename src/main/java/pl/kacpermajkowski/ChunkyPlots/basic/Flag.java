@@ -1,5 +1,6 @@
 package pl.kacpermajkowski.ChunkyPlots.basic;
 
+@Deprecated
 public enum Flag {
 	PLACE_STRANGER,
 	PLACE_MEMBER,

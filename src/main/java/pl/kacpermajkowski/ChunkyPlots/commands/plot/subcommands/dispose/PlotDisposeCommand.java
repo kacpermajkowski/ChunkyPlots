@@ -51,7 +51,7 @@ public class PlotDisposeCommand implements PlotSubcommand {
 
 					User user = UserManager.getInstance().getUser(player.getUniqueId());
 					for(Group group:user.getGroups()){
-						group.plots.remove(plot.getUUID());
+						group.remove(plot);
 					}
 
 					List<VisitPoint> visitPointsToDelete = new ArrayList<>();
