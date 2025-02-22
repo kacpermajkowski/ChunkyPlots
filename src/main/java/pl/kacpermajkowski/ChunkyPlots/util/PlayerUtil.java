@@ -5,7 +5,7 @@ import org.bukkit.OfflinePlayer;
 
 import javax.annotation.Nullable;
 
-public class OfflinePlayerUtil {
+public class PlayerUtil {
 
     /**
      * Returns an OfflinePlayer object if the player has previously joined the server

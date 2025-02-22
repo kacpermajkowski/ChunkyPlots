@@ -8,11 +8,10 @@ import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.util.OfflinePlayerUtil;
+import pl.kacpermajkowski.ChunkyPlots.util.PlayerUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class PlotAddCommand implements PlotSubcommand {
     @Override
@@ -58,7 +57,7 @@ public class PlotAddCommand implements PlotSubcommand {
         messageBuilder = messageBuilder.username(nameToWhitelist);
         OfflinePlayer playerToWhitelist;
         try {
-            playerToWhitelist = OfflinePlayerUtil.getOfflinePlayer(nameToWhitelist);
+            playerToWhitelist = PlayerUtil.getOfflinePlayer(nameToWhitelist);
         } catch (IllegalArgumentException e) {
             messageBuilder.message(Message.ERROR_UNSPECIFIED).send(playerOwner);
             return;

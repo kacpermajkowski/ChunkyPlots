@@ -8,7 +8,7 @@ import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.util.OfflinePlayerUtil;
+import pl.kacpermajkowski.ChunkyPlots.util.PlayerUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public class PlotRemoveCommand implements PlotSubcommand {
         messageBuilder = messageBuilder.username(nameToUnwhitelist);
         OfflinePlayer playerToUnwhitelist;
         try {
-            playerToUnwhitelist = OfflinePlayerUtil.getOfflinePlayer(nameToUnwhitelist);
+            playerToUnwhitelist = PlayerUtil.getOfflinePlayer(nameToUnwhitelist);
         } catch (IllegalArgumentException e) {
             messageBuilder.message(Message.ERROR_UNSPECIFIED).send(playerOwner);
             return;
