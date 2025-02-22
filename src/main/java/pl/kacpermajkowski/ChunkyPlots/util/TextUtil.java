@@ -33,11 +33,6 @@ public class TextUtil {
         sender.sendMessage(fixColors(Config.getInstance().getPrefix() + Config.getInstance().getPrefixSpacer() + s));
     }
     @Deprecated
-    public static String replacePlaceholders(String message, VisitPoint visitPoint){
-        message = message.replace("{visitPointName}", visitPoint.getName());
-        return message;
-    }
-    @Deprecated
     public static String replacePlaceholders(String message, Player player){
         message = message.replace("{user}", player.getName());
         return message;
@@ -63,12 +58,6 @@ public class TextUtil {
     public static String replacePlaceholders(String message, Plot plot, User user){
         message = replacePlaceholders(message, plot);
         message = replacePlaceholders(message, user);
-        return message;
-    }
-    @Deprecated
-    public static String replacePlaceholders(String message, VisitPoint visitPoint, Player player){
-        message = replacePlaceholders(message, player);
-        message = replacePlaceholders(message, visitPoint);
         return message;
     }
 

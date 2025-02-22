@@ -7,7 +7,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
-import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
@@ -46,11 +45,11 @@ public class EntityDamageProtection implements Listener {
         }
 
         if(victim instanceof Player){
-            return victimPlot.getFlags().get(Flag.PVP);
+            return true;
         } else if(victim instanceof Monster){
-            return victimPlot.getFlags().get(Flag.PVE);
+            return false;
         }
-        return PlotPermissionUtil.canPlayerAffectPlot(player, victimPlot, Flag.ENTITY_DAMAGE_MEMBER, Flag.ENTITY_DAMAGE_STRANGER);
+        return PlotPermissionUtil.canPlayerAffectPlot(player, victimPlot);
     }
 
     public boolean canProjectileDamageEntity(Projectile projectile, Entity victim) {
@@ -67,11 +66,8 @@ public class EntityDamageProtection implements Listener {
 
     public boolean canMonsterDamageEntity(Monster monster, Entity victim) {
         Plot victimPlot = PlotManager.getInstance().getPlot(victim.getLocation());
-        if(victim instanceof Player){
-            return victimPlot.getFlags().get(Flag.PVE);
-        } else {
-            return victimPlot.getFlags().get(Flag.EVE);
-        }
+        return true;
+        //TODO: wither?
     }
 
     public boolean canFireworkDamageEntity(Firework firework, Entity victim) {

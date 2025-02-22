@@ -4,7 +4,6 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBurnEvent;
-import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
@@ -18,21 +17,11 @@ public class BlockBurnProtection implements Listener {
  	}
 
 	private boolean blockCanBeBurntByFire(Block block, Block fire) {
-		if(fire != null) {
-			Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
-			Plot firePlot = PlotManager.getInstance().getPlot(fire.getChunk());
-			if(blockPlot != null) {
-				if(firePlot != null) {
-					if (blockPlot.hasTheSameOwnerAs(firePlot)) {
-						return true;
-					} else {
-						return !blockPlot.getFlags().get(Flag.EXTERNAL_FIRE_PROTECTION);
-					}
-				} else {
-					return false;
-				}
-			}
-		}
-		return true;
+		if(fire == null) return false;
+		Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
+		Plot firePlot = PlotManager.getInstance().getPlot(fire.getChunk());
+		if(blockPlot == null) return true;
+		if(firePlot == null) return false;
+		return blockPlot.hasTheSameOwnerAs(firePlot);
 	}
 }

@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
-import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
@@ -75,7 +74,7 @@ public class ExplodeProtection implements Listener {
 		Player summoner = witherSummoners.get(uuid);
 
 		if(summoner != null){
-			return PlotPermissionUtil.canPlayerAffectPlot(summoner, blockPlot, Flag.BREAK_MEMBER, Flag.BREAK_STRANGER);
+			return PlotPermissionUtil.canPlayerAffectPlot(summoner, blockPlot);
 		} else {
 			return false;
 		}
@@ -94,7 +93,7 @@ public class ExplodeProtection implements Listener {
 			if (tntSource.isValid()) {
 				Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
 				if (tntSource instanceof Player player) {
-					return PlotPermissionUtil.canPlayerAffectPlot(player, blockPlot, Flag.EXPLODE_MEMBER, Flag.EXPLODE_STRANGER);
+					return PlotPermissionUtil.canPlayerAffectPlot(player, blockPlot);
 				}
 			}
 		}

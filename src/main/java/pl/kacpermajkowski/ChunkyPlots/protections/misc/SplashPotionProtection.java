@@ -10,7 +10,6 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
-import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
@@ -42,7 +41,7 @@ public class SplashPotionProtection implements Listener {
 		Player player = (Player) event.getPotion().getShooter();
 		List<Plot> affectedEntitesPlots = getAffectedEntitiesPlotList(event);
 		for(Plot plot:affectedEntitesPlots) {
-			if (!PlotPermissionUtil.canPlayerAffectPlot(player, plot, Flag.SPLASH_POTION_MEMBER, Flag.SPLASH_POTION_STRANGER)){
+			if (!PlotPermissionUtil.canPlayerAffectPlot(player, plot)){
 				return false;
 			}
 		}
@@ -108,7 +107,7 @@ public class SplashPotionProtection implements Listener {
 		Plot plot = PlotManager.getInstance().getPlot(event.getHitBlock().getLocation());
 
 		if(plot != null) {
-			return PlotPermissionUtil.canPlayerAffectPlot(player, plot, Flag.SPLASH_POTION_MEMBER, Flag.SPLASH_POTION_STRANGER);
+			return PlotPermissionUtil.canPlayerAffectPlot(player, plot);
 		} else {
 			return true;
 		}

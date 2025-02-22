@@ -16,14 +16,9 @@ public class MessageBuilder {
 
     private String userName = "";
     private String groupName = "";
-    private String visitPointName = "";
 
     private String subcommandSyntax = "";
     private String subcommandDescription = "";
-
-    private String flagName = "";
-    private Flag flagType;
-    private String flagValue = "";
 
     private boolean prependPrefix = true;
 
@@ -78,41 +73,6 @@ public class MessageBuilder {
         return this;
     }
 
-    public MessageBuilder visitPoint(VisitPoint visitPoint) {
-        this.visitPointName = visitPoint.getName();
-        return this;
-    }
-    public MessageBuilder visitPointName(String visitPointName){
-        this.visitPointName = visitPointName;
-        return this;
-    }
-
-    public MessageBuilder flagName(String flagName) {
-        this.flagName = flagName;
-        return this;
-    }
-
-    public MessageBuilder flag(Flag flag) {
-        this.flagType = flag;
-        return this;
-    }
-
-    public MessageBuilder flag(Flag flagType, boolean flagValue) {
-        this.flagType = flagType;
-        this.flagValue = String.valueOf(flagValue);
-        return this;
-    }
-
-    public MessageBuilder flagValue(boolean flagValue) {
-        this.flagValue = String.valueOf(flagValue);
-        return this;
-    }
-
-    public MessageBuilder flagValue(String flagValue) {
-        this.flagValue = flagValue;
-        return this;
-    }
-
     public MessageBuilder subcommand(Subcommand subcommand) {
         this.subcommandSyntax = subcommand.getSyntax();
         this.subcommandDescription = subcommand.getDescription();
@@ -139,9 +99,6 @@ public class MessageBuilder {
         message = message.replace("{world}", worldName);
         message = message.replace("{worldName}", worldName);
 
-        message = message.replace("{visitPointName}", visitPointName);
-        message = message.replace("{visitPoint}", visitPointName);
-
         message = message.replace("{groupName}", groupName);
         message = message.replace("{group}", groupName);
 
@@ -151,19 +108,10 @@ public class MessageBuilder {
         message = message.replace("{subcommandSyntax}", subcommandSyntax);
         message = message.replace("{subcommandDescription}", subcommandDescription);
 
-        if(flagType != null){
-            message = message.replace("{flagType}",  flagType.toString());
-            message = message.replace("{flagValue}",  String.valueOf(flagValue));
-        }
-
-        message = message.replace("{flagName}", flagName);
-
         return TextUtil.fixColors(message);
     }
 
     public void send(CommandSender receiver) {
         receiver.sendMessage(build());
     }
-
-
 }

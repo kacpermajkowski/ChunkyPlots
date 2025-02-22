@@ -4,7 +4,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
-import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 
 import java.io.File;
@@ -30,9 +29,6 @@ public class Config {
 
 	// messages.yml options
 	private HashMap<Message, String> messages;
-
-	// flags.yml options
-	private HashMap<Flag, Boolean> defaultFlags;
 
 	private Config(){
 		loadFileConfigurations();
@@ -67,8 +63,6 @@ public class Config {
 			loadPlotItemLore();
 
 			loadMessages();
-
-			loadDefaultFlagValues();
 		} catch (InvalidConfigException e){
 			ChunkyPlots plugin = ChunkyPlots.getInstance();
 			Logger logger = plugin.getLogger();
@@ -136,18 +130,6 @@ public class Config {
 		}
 	}
 
-	// flags.yml loaders
-	private void loadDefaultFlagValues() throws InvalidConfigException {
-		this.defaultFlags = new HashMap<>();
-		for(Flag flag : Flag.values()){
-			String flagKey = flag.name().toUpperCase();
-			if(!this.flagConfig.contains("default-flags." + flagKey))
-				throw new InvalidConfigException("Flag '" + flagKey + "' does not have a default value set in default_flags.yml");
-
-			this.defaultFlags.put(flag, this.flagConfig.getBoolean("default-flags." + flagKey));
-		}
-	}
-
 	public static void reload(){
 		instance = new Config();
 	}
@@ -183,13 +165,5 @@ public class Config {
 	// messages.yml getters
 	public String getMessage(Message type){
 		return messageConfig.getString("messages." + type.name().toLowerCase());
-	}
-
-	// flags.yml getters
-	public boolean getDefaultFlagValue(Flag flag){
-		return defaultFlags.get(flag);
-	}
-	public HashMap<Flag, Boolean> getDefaultFlags() {
-		return new HashMap<>(defaultFlags);
 	}
 }

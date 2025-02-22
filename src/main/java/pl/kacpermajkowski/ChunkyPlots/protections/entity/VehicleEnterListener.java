@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
-import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
@@ -21,7 +20,7 @@ public class VehicleEnterListener implements Listener {
 
         if(entered instanceof Player player) {
             if(eventPlot != null) {
-                if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot, Flag.VEHICLE_ENTER_MEMBER, Flag.VEHICLE_ENTER_STRANGER)) {
+                if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot)) {
                     event.setCancelled(true);
                 }
             }

@@ -29,7 +29,6 @@ public class ChunkyPlots extends JavaPlugin {
 		Config.getInstance();
 		PlotManager.getInstance();
 		UserManager.getInstance();
-		VisitManager.getInstance();
 		CraftingManager.getInstance();
 
 		registerListeners();

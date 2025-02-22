@@ -54,14 +54,6 @@ public class PlotDisposeCommand implements PlotSubcommand {
 						group.remove(plot);
 					}
 
-					List<VisitPoint> visitPointsToDelete = new ArrayList<>();
-					for (VisitPoint visitPoint : VisitManager.getInstance().getVisitPoints()) {
-						if (visitPoint.getPlotUUID().equals(plot.getUUID())) visitPointsToDelete.add(visitPoint);
-					}
-					for (VisitPoint visitPoint : visitPointsToDelete) {
-						VisitManager.getInstance().deleteVisitPoint(visitPoint);
-						new MessageBuilder(Message.VISIT_POINT_PLOT_DELETED).visitPoint(visitPoint).send(player);
-					}
 				} else new MessageBuilder(Message.NOT_OWNER).send(player);
 			} else new MessageBuilder(Message.NULL_PLOT).plotID(plotID).send(player);
 		} else {

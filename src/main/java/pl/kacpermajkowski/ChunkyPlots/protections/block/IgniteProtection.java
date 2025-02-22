@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockIgniteEvent;
-import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
@@ -60,7 +59,7 @@ public class IgniteProtection implements Listener {
 
 		if (destinationBlockPlot != null) {
 			if (ignitingEntity instanceof Player player) {
-				return PlotPermissionUtil.canPlayerAffectPlot(player, destinationBlockPlot, Flag.IGNITE_MEMBER, Flag.IGNITE_STRANGER);
+				return PlotPermissionUtil.canPlayerAffectPlot(player, destinationBlockPlot);
 			} else if (ignitingEntity instanceof EnderCrystal enderCrystal) {
 				return canEnderCrystalIgnitePlot(enderCrystal, destinationBlockPlot);
 			} else {

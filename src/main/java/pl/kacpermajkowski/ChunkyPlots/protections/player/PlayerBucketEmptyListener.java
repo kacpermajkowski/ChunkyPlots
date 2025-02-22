@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
@@ -18,7 +17,7 @@ public class PlayerBucketEmptyListener implements Listener {
 		final Plot eventPlot = PlotManager.getInstance().getPlot(block.getChunk());
 
 		if(eventPlot != null) {
-			if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot, Flag.PLACE_MEMBER, Flag.PLACE_STRANGER)) {
+			if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot)) {
 				event.setCancelled(true);
 			}
 		}

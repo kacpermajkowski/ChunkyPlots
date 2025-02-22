@@ -8,7 +8,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
-import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
@@ -24,7 +23,7 @@ public class BlockPlaceListener implements Listener {
         final Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
 
         if(blockPlot != null){
-            if(!PlotPermissionUtil.canPlayerAffectPlot(player, blockPlot, Flag.PLACE_MEMBER, Flag.PLACE_STRANGER)){
+            if(!PlotPermissionUtil.canPlayerAffectPlot(player, blockPlot)){
                 event.setCancelled(true);
                 String message = Config.getInstance().getMessage(Message.NOT_PERMITTED);
                 TextUtil.sendMessage(player, message);

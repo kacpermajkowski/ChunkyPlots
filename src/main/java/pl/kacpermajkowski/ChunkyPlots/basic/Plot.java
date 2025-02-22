@@ -15,7 +15,6 @@ public class Plot {
 	private UUID ownerUUID;
 	private final HashSet<UUID> blacklist = new HashSet<UUID>();
 	private final HashSet<UUID> whitelist = new HashSet<UUID>();
-	private HashMap<Flag, Boolean> flags = new HashMap<Flag, Boolean>(Config.getInstance().getDefaultFlags());
 	private final int chunkX;
 	private final int chunkZ;
 	private final String worldName;
@@ -33,7 +32,6 @@ public class Plot {
 		this.uuid = uuid;
 	}
 
-	public void setFlag(Flag flag, boolean value){ flags.put(flag, value); }
 	public void whitelistPlayer(OfflinePlayer player){
 		whitelistPlayer(player.getUniqueId());
 	}
@@ -74,9 +72,6 @@ public class Plot {
 	}
 	public String getOwnerName(){
 		return Bukkit.getOfflinePlayer(ownerUUID).getName();
-	}
-	public Map<Flag, Boolean> getFlags() {
-		return Collections.unmodifiableMap(flags);
 	}
 	public int getChunkX() {
 		return chunkX;

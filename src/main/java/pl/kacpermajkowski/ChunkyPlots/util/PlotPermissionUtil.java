@@ -2,39 +2,15 @@ package pl.kacpermajkowski.ChunkyPlots.util;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import pl.kacpermajkowski.ChunkyPlots.basic.Flag;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
 import java.util.List;
 
 public class PlotPermissionUtil {
-	public static boolean canPlayerAffectPlot(Player player, Plot plot, Flag memberFlag, Flag strangerFlag){
-		if (plot == null){
-			return true;
-		} else if(plot.isPlayerOwner(player)){
-			return true;
-		} else if(plot.isPlayerWhitelisted(player)){
-			return canMemberAffectPlot(plot, memberFlag);
-		} else {
-			return canStrangerAffectPlot(plot, strangerFlag);
-		}
-	}
-
-	public static boolean canMemberAffectPlot(Plot plot, Flag memberFlag) {
-		if(memberFlag == null) {
-			return true;
-		} else {
-			return plot.getFlags().get(memberFlag);
-		}
-	}
-
-	public static boolean canStrangerAffectPlot(Plot plot, Flag strangerFlag) {
-		if(strangerFlag == null) {
-			return false;
-		} else {
-			return plot.getFlags().get(strangerFlag);
-		}
+	public static boolean canPlayerAffectPlot(Player player, Plot plot){
+		if (plot == null) return true;
+		else return plot.isPlayerOwner(player) || plot.isPlayerWhitelisted(player);
 	}
 
 	public static boolean canBlockAffectPlot(Block block, Plot plot){
