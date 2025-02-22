@@ -1,11 +1,11 @@
-package pl.kacpermajkowski.ChunkyPlots.config.lang;
+package pl.kacpermajkowski.ChunkyPlots.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import pl.kacpermajkowski.ChunkyPlots.basic.*;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 
 public class MessageBuilder {
     private Message message;

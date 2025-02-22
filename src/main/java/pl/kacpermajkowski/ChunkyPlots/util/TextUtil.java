@@ -5,9 +5,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.basic.*;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
-import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
 import java.util.ArrayList;
 import java.util.List;

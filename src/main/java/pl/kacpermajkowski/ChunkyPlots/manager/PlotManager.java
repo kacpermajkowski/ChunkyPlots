@@ -3,9 +3,6 @@ package pl.kacpermajkowski.ChunkyPlots.manager;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +10,7 @@ import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.*;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
-import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
+import pl.kacpermajkowski.ChunkyPlots.util.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.util.InventoryUtil;
 
 import java.io.File;

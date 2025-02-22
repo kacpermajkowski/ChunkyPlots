@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
-import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
+import pl.kacpermajkowski.ChunkyPlots.util.MessageBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;

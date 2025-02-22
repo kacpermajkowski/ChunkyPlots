@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Frog;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,7 +12,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
-import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
+import pl.kacpermajkowski.ChunkyPlots.util.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
 public class PlayerEntryProtection implements Listener {
