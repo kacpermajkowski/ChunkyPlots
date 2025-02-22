@@ -12,7 +12,7 @@ import java.util.*;
 public class Plot {
 	private UUID ownerUUID;
 	private final HashSet<UUID> blacklist = new HashSet<UUID>();
-	private final HashSet<UUID> members = new HashSet<UUID>();
+	private final HashSet<UUID> whitelist = new HashSet<UUID>();
 	private HashMap<Flag, Boolean> flags = new HashMap<Flag, Boolean>(Config.getInstance().getDefaultFlags());
 	private final int chunkX;
 	private final int chunkZ;
@@ -32,6 +32,40 @@ public class Plot {
 	}
 
 	public void setFlag(Flag flag, boolean value){ flags.put(flag, value); }
+	public void whitelistPlayer(OfflinePlayer player){
+		whitelistPlayer(player.getUniqueId());
+	}
+	public void whitelistPlayer(UUID playerUUID){
+		if(whitelist.contains(playerUUID)) return;
+		if(blacklist.contains(playerUUID)){
+			throw new IllegalArgumentException("Cannot add a blacklisted player to whitelist");
+		}
+		whitelist.add(playerUUID);
+	}
+	public void blacklistPlayer(OfflinePlayer player){
+		blacklistPlayer(player.getUniqueId());
+	}
+	public void blacklistPlayer(UUID playerUUID){
+		if(blacklist.contains(playerUUID)) return;
+		if(whitelist.contains(playerUUID)){
+			throw new IllegalArgumentException("Cannot add a whitelisted player to blacklist");
+		}
+		blacklist.add(playerUUID);
+	}
+	public void unwhitelistPlayer(OfflinePlayer player){
+		unwhitelistPlayer(player.getUniqueId());
+	}
+	public void unwhitelistPlayer(UUID playerUUID){
+		if(!whitelist.contains(playerUUID)) return;
+		whitelist.remove(playerUUID);
+	}
+	public void unblacklistPlayer(OfflinePlayer player){
+		unblacklistPlayer(player.getUniqueId());
+	}
+	public void unblacklistPlayer(UUID playerUUID){
+		if(!blacklist.contains(playerUUID)) return;
+		blacklist.remove(playerUUID);
+	}
 
 	public UUID getOwnerUUID(){
 		return ownerUUID;
@@ -39,8 +73,8 @@ public class Plot {
 	public String getOwnerName(){
 		return Bukkit.getOfflinePlayer(ownerUUID).getName();
 	}
-	public HashMap<Flag, Boolean> getFlags() {
-		return flags;
+	public Map<Flag, Boolean> getFlags() {
+		return Collections.unmodifiableMap(flags);
 	}
 	public int getChunkX() {
 		return chunkX;
@@ -54,27 +88,27 @@ public class Plot {
 	public UUID getUUID(){
 		return uuid;
 	}
+	@Deprecated
 	public String getID(){
 		return chunkX + ";" + chunkZ;
 	}
-	public HashSet<UUID> getBlacklist(){
-		return blacklist;
+	public Set<UUID> getBlacklist(){
+		return Collections.unmodifiableSet(blacklist);
 	}
-	public HashSet<UUID> getMembers(){
-		return members;
+	public Set<UUID> getWhitelist(){
+		return Collections.unmodifiableSet(whitelist);
 	}
-
 
 
 	public boolean isLocationInside(Location location){
 		return location.getChunk().getX() == chunkX && location.getChunk().getZ() == chunkZ;
 	}
 
-	public boolean isPlayerMember(UUID playerUUID){
-		return members.contains(playerUUID);
+	public boolean isPlayerWhitelisted(UUID playerUUID){
+		return whitelist.contains(playerUUID);
 	}
-	public boolean isPlayerMember(OfflinePlayer player){
-		return members.contains(player.getUniqueId());
+	public boolean isPlayerWhitelisted(OfflinePlayer player){
+		return whitelist.contains(player.getUniqueId());
 	}
 
 	public boolean isPlayerBlacklisted(UUID playerUUID){

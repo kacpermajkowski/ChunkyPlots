@@ -2,12 +2,10 @@ package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.info;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
-import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
@@ -45,8 +43,12 @@ public class PlotInfoCommand implements PlotSubcommand {
 				player.sendMessage(TextUtil.fixColors( "&aChunk X: &f" + plot.getChunkX()));
 				player.sendMessage(TextUtil.fixColors( "&aChunk Z: &f" + plot.getChunkZ()));
 				player.sendMessage(TextUtil.fixColors( "&aŚwiat: &f" + plot.getWorldName()));
-				player.sendMessage(TextUtil.fixColors( "&aCzłonkowie: &f" + plot.getMembers().toString()));
-				player.sendMessage(TextUtil.fixColors( "&aZablokowani: &f" + plot.getBlacklist().toString()));
+				player.sendMessage(TextUtil.fixColors( "&aCzłonkowie: &f" + plot.getWhitelist().stream().map((uuid) ->
+					Bukkit.getOfflinePlayer(uuid).getName()
+				).toList()));
+				player.sendMessage(TextUtil.fixColors( "&aZablokowani: &f" + plot.getBlacklist().stream().map((uuid) ->
+						Bukkit.getOfflinePlayer(uuid).getName()
+				).toList()));
 				Location location = player.getWorld().getChunkAt(plot.getChunkX(), plot.getChunkZ()).getBlock(8, 64, 8).getLocation();
 				player.sendMessage(TextUtil.fixColors( "&aLokalizacja: &7X:&f" + location.getBlockX() + "  &7Y:&f" + location.getBlockY() + "  &7Z:&f" + location.getBlockZ()));
 				player.sendMessage(TextUtil.fixColors( "&aUUID: &f" + plot.getUUID()));
@@ -56,7 +58,7 @@ public class PlotInfoCommand implements PlotSubcommand {
 	}
 
 	@Override
-	public List<String> getTabCompletion(CommandSender sender, String[] args) {
+	public List<String> getTabCompletion(Player player, String[] args) {
 		return List.of();
 	}
 }

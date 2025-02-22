@@ -14,7 +14,7 @@ public class PlotPermissionUtil {
 			return true;
 		} else if(plot.isPlayerOwner(player)){
 			return true;
-		} else if(plot.isPlayerMember(player)){
+		} else if(plot.isPlayerWhitelisted(player)){
 			return canMemberAffectPlot(plot, memberFlag);
 		} else {
 			return canStrangerAffectPlot(plot, strangerFlag);

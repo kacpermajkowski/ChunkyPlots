@@ -45,7 +45,7 @@ public class PlotHelpCommand implements PlotSubcommand {
 	}
 
 	@Override
-	public List<String> getTabCompletion(CommandSender sender, String[] args) {
+	public List<String> getTabCompletion(Player player, String[] args) {
 		return List.of();
 	}
 

@@ -22,23 +22,28 @@ messages:
   not_permitted: "&cNie masz uprawnień, aby to zrobić!"
 
   # User related messages
-  null_user: "&cGracz o nicku &f{userName} &cnigdy nie był na serwerze!"
+  null_user: "&cGracz o nicku &f{user} &cnigdy nie był na serwerze!"
 
   # Member related messages
   added_member_to_plot: "&aDodałeś gracza &f{user} &ado działki!"
-  removed_member_from_plot: "&cUsunąłeś gracza &f{user} &cz działki"
-  cannot_add_owner_as_member: "&cNie można dodać właściciela działki jako jej członka"
-  player_is_already_a_member: "&cGracz &r{user} &cjest już dodany do działki"
+  removed_member_from_plot: "&cUsunąłeś gracza &f{user} &cz działki."
+  cannot_add_owner_as_member: "&cNie można dodać właściciela działki jako jej członka."
+  cannot_add_blacklisted_player_as_member: "&cNie można dodać gracza &f{user}&c do białej listy, gdyż znajduje się on na czarnej liście!"
+  player_is_already_a_member: "&cGracz &r{user} &cjest już dodany do działki."
+  player_is_not_whitelisted: "&cGracz &r{user} &cnie jest na białej liście."
   added_member_to_group: "&aPomyślnie dodano &f{user} &ajako członka grupy działek!"
   removed_member_from_group: "&cPomyślnie usunięto &f{user} &ajako członka grupy działek!"
 
   # Blacklist related messages
-  blacklist_added_to_plot: "&aDodano gracza &r{user} &ado czarnej listy działki"
-  blacklist_removed_from_plot: "&aUsunięto gracza &r{user} &az czarnej listy działki"
-  cannot_add_owner_to_blacklist: "&cNie można dodać właściciela działki do whitelisty"
-  player_is_already_blacklisted: "&cGracz &r{user} &cznajduje się już na whiteliście"
+  blacklist_added_to_plot: "&aZabroniono graczowi &r{user} &awstępu na działkę."
+  blacklist_removed_from_plot: "&aPrzywrócono graczowi &r{user} &awstęp na działkę"
+  cannot_add_owner_to_blacklist: "&cNie można zabronić wstępu na działkę jej właścicielowi!"
+  player_is_already_blacklisted: "&cGracz &r{user} &cma już zakaz wstępu na działkę."
+  player_is_not_blacklisted: "&cGracz &r{user} &cnie ma zakazu wstępu na działkę."
+  player_was_whitelisted: "&cGracz &r{user} &cznajdował się na białej liście, więc został z niej usunięty!"
   blacklist_added_to_group: "&aPomyślnie dodano &f{user} &ado czarnej listy grupy działek!"
   blacklist_removed_from_group: "&cPomyślnie usunięto &f{user} &az czarnej listy grupy działek!"
+  cannot_enter_plot: "&cNie możesz wejść na działkę gracza &f{user}&c, ponieważ jesteś na czarnej liście!"
 
   # Flag related messages
   null_flag: "&cFlaga o nazwie &r{flagName}&c nie istnieje."
@@ -77,7 +82,7 @@ messages:
   created_visit_point: "&aUtworzono punkt wizyt o nazwie &r{visitPointName}"
   visit_point_not_inside_plot: "&cPunkt wizyt nie znajduje się wewnątrz działki!"
   visit_point_already_exists: "&cPunkt wizyt o nazwie &r{visitPointName}&c już istnieje"
-  default_visit_point_description: "&aOto punkt wizyt gracza &f{userName}"
+  default_visit_point_description: "&aOto punkt wizyt gracza &f{user}"
 
   deleted_visit_point: "&cPomyślnie usunięto punkt o nazwie &r{visitPointName}"
   not_visit_point_owner: "&cNie możesz tego zrobić, bo nie jesteś właścicielem punktu!"

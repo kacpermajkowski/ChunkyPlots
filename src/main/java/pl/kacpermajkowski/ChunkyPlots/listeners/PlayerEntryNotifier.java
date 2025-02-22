@@ -13,7 +13,7 @@ import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.manager.UserManager;
 import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
-public class PlayerMoveListener implements Listener {
+public class PlayerEntryNotifier implements Listener {
     @EventHandler
     public void onPlayerMove(final PlayerMoveEvent event) {
         final Location from = event.getFrom();
@@ -29,45 +29,40 @@ public class PlayerMoveListener implements Listener {
             final Plot previousPlot = plotManager.getPlot(from.getChunk());
             final Plot newPlot = plotManager.getPlot(to.getChunk());
 
-            if(user != null) {
-                if(newPlot != null && newPlot.getBlacklist().contains(user.getName())) event.setCancelled(true);
-                if (!user.isInsidePlot()) {
-                    if(newPlot != null) {
-                        if(!newPlot.getBlacklist().contains(player.getName())) {
-                            sendEnterMessages(player, newPlot);
-                            user.setInsidePlot(true);
-                        } else event.setCancelled(true);
-                    }
-                } else {
-                    if(previousPlot != null) {
-                        if (newPlot != null) {
-                            if (!newPlot.equals(previousPlot)) {
-                                if (!newPlot.hasTheSameOwnerAs(previousPlot)) {
-                                    sendEnterMessages(player, newPlot);
-                                    user.setInsidePlot(true);
-                                }
+            if(user == null) return;
+            if (!user.isInsidePlot()) {
+                if(newPlot == null) return;
+                if(newPlot.isPlayerBlacklisted(player)) return;
+                sendEntryMessages(player, newPlot);
+                user.setIsInsidePlot(true);
+            } else {
+                if(previousPlot != null) {
+                    if (newPlot != null) {
+                        if (!newPlot.equals(previousPlot)) {
+                            if (!newPlot.hasTheSameOwnerAs(previousPlot)) {
+                                sendEntryMessages(player, newPlot);
+                                user.setIsInsidePlot(true);
                             }
-                        } else {
-                            sendLeaveMessages(player, previousPlot);
-                            user.setInsidePlot(false);
                         }
                     } else {
-                        if(newPlot == null){
-                            TextUtil.sendMessage(player, "&cDziałka, na której stałeś została usunięta!");
-                            user.setInsidePlot(false);
-                        } else {
-                            if (!newPlot.hasTheSameOwnerAs(previousPlot)) {
-                                sendEnterMessages(player, newPlot);
-                                user.setInsidePlot(true);
-                            }
-                        }
+                        sendLeaveMessages(player, previousPlot);
+                        user.setIsInsidePlot(false);
+                    }
+                } else {
+                    if(newPlot == null){
+                        TextUtil.sendMessage(player, "&cDziałka, na której stałeś została usunięta!");
+                        user.setIsInsidePlot(false);
+                    } else {
+                        if (newPlot.hasTheSameOwnerAs(previousPlot)) return;
+                        sendEntryMessages(player, newPlot);
+                        user.setIsInsidePlot(true);
                     }
                 }
             }
         }
     }
 
-    private void sendEnterMessages(Player player, Plot newPlot){
+    private void sendEntryMessages(Player player, Plot newPlot){
         TextUtil.sendMessage(player, Config.getInstance().getMessage(Message.ENTERED_PLOT).replace("{plotOwnerName}", newPlot.getOwnerName()));
     }
     private void sendLeaveMessages(Player player, Plot previousPlot){

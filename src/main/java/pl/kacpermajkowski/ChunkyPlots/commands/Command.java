@@ -73,7 +73,7 @@ public abstract class Command<T extends Command<T>> implements TabExecutor {
 			}
 
 		} else if (args.length >= 2) {
-			Subcommand subcommand = getSubcommand(args[1]);
+			Subcommand subcommand = getSubcommand(args[0]);
 			if (subcommand != null) {
 				autocomParams = subcommand.getTabCompletion(sender, Arrays.copyOfRange(args, 1, args.length));
 			}

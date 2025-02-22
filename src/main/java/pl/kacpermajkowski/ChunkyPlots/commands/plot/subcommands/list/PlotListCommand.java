@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
@@ -35,8 +37,7 @@ public class PlotListCommand implements PlotSubcommand {
 	@Override
 	public void execute(Player sender, String[] args) {
 		if(sender instanceof Player player){
-			player.sendMessage("");
-			player.sendMessage("");
+			new MessageBuilder(Message.WIDE_HEADER).send(player);
 			TextUtil.sendNoPrefixMessage(player, "&eID Działki &9» &ePrzybliżone koordynaty działki");
 			for(Plot plot:PlotManager.getInstance().getPlots()){
 				if(plot.isPlayerOwner(player)) {
@@ -44,13 +45,12 @@ public class PlotListCommand implements PlotSubcommand {
 					TextUtil.sendNoPrefixMessage(player,"&8(&6" + plot.getID() + "&8)" + " &a» &7X:&f" + location.getBlockX() + "  &7Y:&f" + location.getBlockY() + "  &7Z:&f" + location.getBlockZ());
 				}
 			}
-			player.sendMessage("");
-			player.sendMessage("");
+			new MessageBuilder(Message.WIDE_HEADER).send(player);
 		}
 	}
 
 	@Override
-	public List<String> getTabCompletion(CommandSender sender, String[] args) {
+	public List<String> getTabCompletion(Player player, String[] args) {
 		return List.of();
 	}
 }
