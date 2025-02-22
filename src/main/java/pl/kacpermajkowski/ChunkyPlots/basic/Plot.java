@@ -1,5 +1,7 @@
 package pl.kacpermajkowski.ChunkyPlots.basic;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -130,5 +132,23 @@ public class Plot {
 		} else {
 			return ownerUUID.equals(plot.getOwnerUUID());
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+
+		if (!(o instanceof Plot plot)) return false;
+
+        return new EqualsBuilder().append(chunkX, plot.chunkX).append(chunkZ, plot.chunkZ).append(worldName, plot.worldName).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(137, 13)
+				.append(chunkX)
+				.append(chunkZ)
+				.append(worldName)
+				.toHashCode();
 	}
 }
