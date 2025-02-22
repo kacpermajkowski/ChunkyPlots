@@ -39,7 +39,7 @@ public class PlayerEntryProtection implements Listener {
 
             player.teleport(closestBorderPoint);
         } else {
-            Vector pushVector = new Vector(xDirection, 0.2, zDirection);
+            Vector pushVector = new Vector(xDirection, event.getTo().getDirection().getY() + 0.2, zDirection);
             player.setVelocity(pushVector);
             new MessageBuilder(Message.CANNOT_ENTER_PLOT).username(toPlot.getOwnerName()).send(player);
         }
