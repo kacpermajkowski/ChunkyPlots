@@ -6,7 +6,7 @@ import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.PlotAdminCommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerJoinListener;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerLeftListener;
-import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerEntryNotifier;
+import pl.kacpermajkowski.ChunkyPlots.listeners.PlotTransitionNotifier;
 import pl.kacpermajkowski.ChunkyPlots.manager.*;
 import pl.kacpermajkowski.ChunkyPlots.protections.block.*;
 import pl.kacpermajkowski.ChunkyPlots.protections.entity.*;
@@ -53,7 +53,7 @@ public class ChunkyPlots extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerLeftListener(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerLeashEntityProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new PlayerEntryNotifier(),this);
+		this.getServer().getPluginManager().registerEvents(new PlotTransitionNotifier(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerEntryProtection(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerShearEntityProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new LecternBookProtection(),this);

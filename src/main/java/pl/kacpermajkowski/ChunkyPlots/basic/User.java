@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class User {
 	private final UUID playerUUID;
-	private boolean isBypassingRestrictions, isInsidePlot, isTeleportOnCooldown, isTeleporting = false;
+	private boolean isBypassingRestrictions, isTeleportOnCooldown, isTeleporting = false;
 	private List<Group> groups = new ArrayList<>();
 
 	public User(UUID playerUUID) {
@@ -56,14 +56,6 @@ public class User {
 
 	public void setBypassingRestrictions(boolean bypassingRestrictions) {
 		isBypassingRestrictions = bypassingRestrictions;
-	}
-
-	public boolean isInsidePlot() {
-		return isInsidePlot;
-	}
-
-	public void setIsInsidePlot(boolean insidePlot) {
-		isInsidePlot = insidePlot;
 	}
 
 	public boolean isTeleportOnCooldown() {
