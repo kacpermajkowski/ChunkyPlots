@@ -22,7 +22,7 @@ public class PlotTransitionNotifier implements Listener {
         final User user = UserManager.getInstance().getUser(player);
         if(user == null) return; //TODO: should probably throw some kind of illegal state exception
 
-        final Plot fromPlot = PlotManager.getInstance().getPlot(event.getFrom());
+        final Plot fromPlot = user.getCurrentPlot();
         final Plot toPlot = PlotManager.getInstance().getPlot(to);
 
         if(fromPlot == toPlot) return;
@@ -32,13 +32,17 @@ public class PlotTransitionNotifier implements Listener {
     }
 
     private void handleLeavingPlot(Player player, Plot fromPlot) {
-        if(!fromPlot.isPlayerBlacklisted(player))
-        sendLeaveMessage(player, fromPlot);
+        if(!fromPlot.isPlayerBlacklisted(player)) {
+            sendLeaveMessage(player, fromPlot);
+            UserManager.getInstance().getUser(player).setCurrentPlot(null);
+        }
     }
 
     private void handleEnteringPlot(Player player, Plot toPlot) {
-        if(!toPlot.isPlayerBlacklisted(player))
+        if(!toPlot.isPlayerBlacklisted(player)) {
             sendEntryMessage(player, toPlot);
+            UserManager.getInstance().getUser(player).setCurrentPlot(toPlot);
+        }
     }
 
     private void handleSwitchingPlots(Player player, Plot fromPlot, Plot toPlot) {
