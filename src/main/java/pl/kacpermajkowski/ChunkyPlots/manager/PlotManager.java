@@ -1,10 +1,17 @@
 package pl.kacpermajkowski.ChunkyPlots.manager;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.ItemStack;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.basic.*;
@@ -19,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class PlotManager {
+public class PlotManager implements Listener {
 	private static PlotManager instance;
 
 	private final List<Plot> plots = new ArrayList<Plot>();
@@ -43,67 +50,59 @@ public class PlotManager {
 				enchantments,
 				false);
 	}
+
 	private void loadPlots(){
-//		File[] files = plotDirectory.listFiles();
-//		if(files != null) {
-//			for (File file : files) {
-//				FileConfiguration plotData = YamlConfiguration.loadConfiguration(file);
-//				if (file != null) {
-//					String ownerUUIDstring = plotData.getString("ownerUUID");
-//					UUID ownerUUID = UUID.fromString(ownerUUIDstring);
-//					int chunkX = plotData.getInt("chunkX");
-//					int chunkZ = plotData.getInt("chunkZ");
-//					String worldName = plotData.getString("worldName");
-//					List<String> members = plotData.getStringList("members");
-//					List<String> blacklist = plotData.getStringList("blacklist");;
-//					HashMap<String, Boolean> flagsToConvert = new HashMap<>();
-//					ConfigurationSection flagSection = plotData.getConfigurationSection("flags");
-//					for(String s:flagSection.getKeys(false)){
-//						flagsToConvert.put(s, flagSection.getBoolean(s));
-//					}
-//					HashMap<Flag, Boolean> flags = new HashMap<>();
-//					for(String s:flagsToConvert.keySet()){
-//						flags.put(Flag.valueOf(s),flagsToConvert.get(s));
-//					}
-//
-//					Plot plot = new Plot(ownerUUID, chunkX, chunkZ, worldName, UUID.fromString(file.getName()));
-//					for (String playerUUIDString : blacklist){
-//						plot.getBlacklist().add(UUID.fromString(playerUUIDString));
-//					}
-//					for (String playerUUIDString : members){
-//						plot.getMembers().add(UUID.fromString(playerUUIDString));
-//					}
-//					for (Flag flag : flags.keySet()){
-//						plot.getFlags().put(flag, flags.get(flag));
-//					}
-//					plots.add(plot);
-//				}
-//			}
-//		}
+		File[] files = plotDirectory.listFiles();
+		if(files != null) {
+			for (File file : files) {
+				FileConfiguration plotData = YamlConfiguration.loadConfiguration(file);
+				if (file != null) {
+					String ownerUUIDstring = plotData.getString("owner.uuid");
+					UUID ownerUUID = UUID.fromString(ownerUUIDstring);
+					int chunkX = plotData.getInt("chunk.x");
+					int chunkZ = plotData.getInt("chunk.z");
+					String worldName = plotData.getString("world-name");
+					List<String> whitelist = plotData.getStringList("whitelist");
+					List<String> blacklist = plotData.getStringList("blacklist");;
+
+					Plot plot = new Plot(ownerUUID, chunkX, chunkZ, worldName, UUID.fromString(file.getName()));
+					for (String playerUUIDString : blacklist){
+						plot.blacklistPlayer(UUID.fromString(playerUUIDString));
+					}
+					for (String playerUUIDString : whitelist){
+						plot.whitelistPlayer(UUID.fromString(playerUUIDString));
+					}
+
+					plots.add(plot);
+				}
+			}
+		}
 	}
+
+	@EventHandler
+	public void onPluginDisable(PluginDisableEvent e){
+		savePlots();
+	}
+
 	public void savePlots(){
 		for(Plot plot:plots) {
 			savePlot(plot);
 		}
 	}
 	public void savePlot(Plot plot) {
-//		try {
-//			File file = new File(ChunkyPlots.getInstance().getDataFolder() + "/plots/" + plot.getUUID());
-//			FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
-//			fc.set("ownerUUID", plot.getOwnerUUID());
-//			fc.set("chunkX", plot.getChunkX());
-//			fc.set("chunkZ", plot.getChunkZ());
-//			fc.set("worldName", plot.getWorldName());
-//			fc.set("members", plot.getMembers());
-//			fc.set("blacklist", plot.getBlacklist());
-//			ConfigurationSection flagSection = fc.createSection("flags");
-//			for(Flag flag:plot.getFlags().keySet()){
-//				flagSection.set(flag.name(), plot.getFlags().get(flag));
-//			}
-//			fc.save(file);
-//		} catch (Exception e){
-//			e.printStackTrace();
-//		}
+		try {
+			File file = new File(ChunkyPlots.getInstance().getDataFolder() + "/plots/" + plot.getUUID());
+			FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
+			fc.set("owner.uuid", plot.getOwnerUUID().toString());
+			fc.set("chunk.x", plot.getChunkX());
+			fc.set("chunk.z", plot.getChunkZ());
+			fc.set("world-name", plot.getWorldName());
+			fc.set("whitelist", plot.getWhitelist().stream().map(UUID::toString).toList());
+			fc.set("blacklist", plot.getBlacklist().stream().map(UUID::toString).toList());
+			fc.save(file);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	public ItemStack getPlotItem() {
@@ -157,37 +156,23 @@ public class PlotManager {
 		File f = new File(plotDirectory.getPath() + "/" + plot.getUUID());
 		f.delete();
 	}
-	public boolean isInsidePlot(Location location){
-		for(Plot plot:plots) {
-			if (location.getChunk().getX() == plot.getChunkX() && location.getChunk().getZ() == plot.getChunkZ())
-				return true;
-		}
-		return false;
-	}
 
 	public void claimPlot(Player player, Block block){
 		Chunk chunk = block.getChunk();
 		String plotID = chunk.getX() + ";" + chunk.getZ();
-		if(getPlot(chunk) == null){
-			Plot plot = new Plot(player, chunk);
-			User user = UserManager.getInstance().getUser(player.getUniqueId());
-
-			assignPlotToUserDefaultGroup(plot, user);
-			plots.add(plot);
-			savePlot(plot);
-			new MessageBuilder(Message.PLOT_CREATED).plot(plot).send(player);
-		} else new MessageBuilder(Message.PLOT_ALREADY_EXISTS).plotID(plotID).send(player);
-	}
-
-	private void assignPlotToUserDefaultGroup(Plot plot, User user){
-		for(Group group:user.getGroups()){
-			if(group.getName().equals("all")) group.add(plot);
+		if(getPlot(chunk) != null) {
+			new MessageBuilder(Message.PLOT_ALREADY_EXISTS).plotID(plotID).send(player);
 		}
+		Plot plot = new Plot(player, chunk);
+		plots.add(plot);
+		savePlot(plot);
+		new MessageBuilder(Message.PLOT_CREATED).plot(plot).send(player);
 	}
 
 	public static PlotManager getInstance(){
 		if(instance == null){
 			instance = new PlotManager();
+			Bukkit.getServer().getPluginManager().registerEvents(instance, ChunkyPlots.getInstance());
 		}
 		return instance;
 	}

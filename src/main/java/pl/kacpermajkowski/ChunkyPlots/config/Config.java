@@ -41,8 +41,7 @@ public class Config {
 
 		ChunkyPlots.getInstance().saveDefaultConfig();
 		List<File> files = List.of(
-				new File(dataFolder, "messages.yml"),
-				new File(dataFolder, "default_flags.yml")
+				new File(dataFolder, "messages.yml")
 		);
 		for (File file : files) {
 			if(!file.exists())
@@ -51,7 +50,6 @@ public class Config {
 
 		this.config = ChunkyPlots.getInstance().getConfig();
 		this.messageConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "messages.yml"));
-		this.flagConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "default_flags.yml"));
 	}
 	private void loadConfigValues() {
 		try {

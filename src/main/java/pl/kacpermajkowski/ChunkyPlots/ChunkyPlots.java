@@ -4,8 +4,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.PlotAdminCommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerJoinListener;
-import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerLeftListener;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlotTransitionNotifier;
 import pl.kacpermajkowski.ChunkyPlots.manager.*;
 import pl.kacpermajkowski.ChunkyPlots.protections.block.*;
@@ -50,8 +48,6 @@ public class ChunkyPlots extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new PlayerBucketEmptyListener(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerInteractAtEntityListener(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(),this);
-		this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(),this);
-		this.getServer().getPluginManager().registerEvents(new PlayerLeftListener(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerLeashEntityProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new PlotTransitionNotifier(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerEntryProtection(), this);
