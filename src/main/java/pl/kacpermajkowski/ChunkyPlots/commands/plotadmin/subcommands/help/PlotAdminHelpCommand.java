@@ -3,7 +3,7 @@ package pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.help;
 import org.bukkit.command.CommandSender;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
+import pl.kacpermajkowski.ChunkyPlots.messages.TextUtil;
 
 import java.util.ArrayList;
 import java.util.List;

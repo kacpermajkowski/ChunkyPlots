@@ -5,10 +5,10 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
-import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
-import pl.kacpermajkowski.ChunkyPlots.util.MessageBuilder;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.messages.TextUtil;
 
 import java.util.List;
 

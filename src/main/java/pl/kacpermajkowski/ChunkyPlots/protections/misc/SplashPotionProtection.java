@@ -10,9 +10,9 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
-import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +41,7 @@ public class SplashPotionProtection implements Listener {
 		Player player = (Player) event.getPotion().getShooter();
 		List<Plot> affectedEntitesPlots = getAffectedEntitiesPlotList(event);
 		for(Plot plot:affectedEntitesPlots) {
-			if (!PlotPermissionUtil.canPlayerAffectPlot(player, plot)){
+			if (!ProtectionUtil.canPlayerAffectPlot(player, plot)){
 				return false;
 			}
 		}
@@ -75,9 +75,9 @@ public class SplashPotionProtection implements Listener {
 		return plots;
 	}
 	private boolean canPlotSplashPotion(final Plot plot, final  PotionSplashEvent event){
-		List<Plot> affectedEntitesPlots = getAffectedEntitiesPlotList(event);
+		final List<Plot> affectedEntitesPlots = getAffectedEntitiesPlotList(event);
 		if(plot != null) {
-			return PlotPermissionUtil.canPlotAffectPlots(plot, affectedEntitesPlots);
+			return plot.hasTheSameOwnerAs(affectedEntitesPlots);
 		} else {
 			return affectedEntitesPlots.isEmpty();
 		}
@@ -107,40 +107,38 @@ public class SplashPotionProtection implements Listener {
 		Plot plot = PlotManager.getInstance().getPlot(event.getHitBlock().getLocation());
 
 		if(plot != null) {
-			return PlotPermissionUtil.canPlayerAffectPlot(player, plot);
+			return ProtectionUtil.canPlayerAffectPlot(player, plot);
 		} else {
 			return true;
 		}
 	}
 	private boolean canBlockSplashLingeringPotion(LingeringPotionSplashEvent event) {
-		ProjectileSource shooter = event.getEntity().getShooter();
-		BlockProjectileSource blockProjectileSource = (BlockProjectileSource) shooter;
-		Block block = blockProjectileSource.getBlock();
+		final BlockProjectileSource blockProjectileSource = (BlockProjectileSource) event.getEntity().getShooter();
+		if(blockProjectileSource == null) return false;
 
-		Location splashLocation = event.getHitBlock().getLocation();
-		Plot plot = PlotManager.getInstance().getPlot(splashLocation);
+		final Block blockShooter = blockProjectileSource.getBlock();
+		final Location splashLocation = event.getHitBlock() == null ? event.getHitBlock().getLocation() : event.getHitEntity().getLocation();
 
-		if(plot != null) {
-			return PlotPermissionUtil.canBlockAffectPlot(block, plot);
-		} else {
+		final Plot sourcePlot = PlotManager.getInstance().getPlot(blockShooter);
+		final Plot eventPlot = PlotManager.getInstance().getPlot(splashLocation);
+
+		if(eventPlot == null) {
 			return true;
 		}
+
+		return sourcePlot.hasTheSameOwnerAs(eventPlot);
 	}
 	private boolean canLivingEntitySplashLingeringPotion(LingeringPotionSplashEvent event) {
-		ProjectileSource shooter = event.getEntity().getShooter();
-		LivingEntity livingEntity = (LivingEntity) shooter;
-		Plot shooterPlot = PlotManager.getInstance().getPlot(livingEntity.getLocation());
+		final ProjectileSource shooter = event.getEntity().getShooter();
+		final LivingEntity livingEntity = (LivingEntity) shooter;
+		final Plot sourcePlot = PlotManager.getInstance().getPlot(livingEntity.getLocation());
 
-		Location splashLocation = event.getHitBlock().getLocation();
-		Plot plot = PlotManager.getInstance().getPlot(splashLocation);
-		if(plot != null){
-			if(shooterPlot != null) {
-				return plot.hasTheSameOwnerAs(shooterPlot);
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
+		final Location splashLocation = event.getHitBlock() == null ? event.getHitBlock().getLocation() : event.getHitEntity().getLocation();
+		final Plot eventPlot = PlotManager.getInstance().getPlot(splashLocation);
+
+		if(eventPlot == null) return true;
+		if(sourcePlot == null) return false;
+
+		return eventPlot.hasTheSameOwnerAs(sourcePlot);
 	}
 }

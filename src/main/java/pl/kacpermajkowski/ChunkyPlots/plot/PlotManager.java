@@ -1,10 +1,9 @@
-package pl.kacpermajkowski.ChunkyPlots.manager;
+package pl.kacpermajkowski.ChunkyPlots.plot;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -14,11 +13,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.ItemStack;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
-import pl.kacpermajkowski.ChunkyPlots.basic.*;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
-import pl.kacpermajkowski.ChunkyPlots.util.MessageBuilder;
-import pl.kacpermajkowski.ChunkyPlots.util.InventoryUtil;
+import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
+import pl.kacpermajkowski.ChunkyPlots.crafting.InventoryUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -147,6 +145,9 @@ public class PlotManager implements Listener {
 		return null;
 	}
 	public Plot getPlot(Location location){
+		if(location == null)
+			return null;
+
 		Chunk chunk = location.getChunk();
 		return getPlot(chunk);
 	}
@@ -156,6 +157,7 @@ public class PlotManager implements Listener {
 		File f = new File(plotDirectory.getPath() + "/" + plot.getUUID());
 		f.delete();
 	}
+
 
 	public void claimPlot(Player player, Block block){
 		Chunk chunk = block.getChunk();

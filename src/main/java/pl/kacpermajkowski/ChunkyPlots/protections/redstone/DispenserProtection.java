@@ -5,8 +5,8 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
-import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 
 public class DispenserProtection implements Listener {
 	@EventHandler

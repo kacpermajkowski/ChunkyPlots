@@ -3,12 +3,12 @@ package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.whitelist;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
-import pl.kacpermajkowski.ChunkyPlots.util.MessageBuilder;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.util.PlayerUtil;
+import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.utils.PlayerUtil;
 
 import java.util.ArrayList;
 import java.util.List;

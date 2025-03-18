@@ -9,9 +9,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
-import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,18 +53,25 @@ public class ExplodeProtection implements Listener {
 	}
 
 	private boolean canEntityExplodeBlock(Entity entity, Block block) {
-		if(entity instanceof Wither wither){
-			return canWitherExplodeBlock(wither, block);
-		} else if(entity instanceof WitherSkull witherSkull){
-			return canWitherSkullExplodeBlock(witherSkull, block);
-		} else if(entity instanceof TNTPrimed tntPrimed){
-			return canTNTPrimedExplodeBlock(tntPrimed, block);
-		} else if(entity instanceof ExplosiveMinecart explosiveMinecart){
-			return canExplosiveMinecraftExplodeBlock(explosiveMinecart, block);
-		} else if(entity instanceof EnderCrystal enderCrystal){
-			return canEnderCrystalExplodeBlock(enderCrystal, block);
-		} else {
-			return false;
+		switch (entity.getType()){
+			case EntityType.WITHER -> {
+				return canWitherExplodeBlock((Wither) entity, block);
+			}
+			case EntityType.WITHER_SKULL -> {
+				return canWitherSkullExplodeBlock((WitherSkull) entity, block);
+			}
+			case EntityType.TNT -> {
+				return canTNTPrimedExplodeBlock((TNTPrimed) entity, block);
+			}
+			case EntityType.TNT_MINECART -> {
+				return canExplosiveMinecraftExplodeBlock((ExplosiveMinecart) entity, block);
+			}
+			case EntityType.END_CRYSTAL -> {
+				return canEnderCrystalExplodeBlock((EnderCrystal) entity, block);
+			}
+			default -> {
+				return false;
+			}
 		}
 	}
 
@@ -74,7 +81,7 @@ public class ExplodeProtection implements Listener {
 		Player summoner = witherSummoners.get(uuid);
 
 		if(summoner != null){
-			return PlotPermissionUtil.canPlayerAffectPlot(summoner, blockPlot);
+			return ProtectionUtil.canPlayerAffectPlot(summoner, blockPlot);
 		} else {
 			return false;
 		}
@@ -93,7 +100,7 @@ public class ExplodeProtection implements Listener {
 			if (tntSource.isValid()) {
 				Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
 				if (tntSource instanceof Player player) {
-					return PlotPermissionUtil.canPlayerAffectPlot(player, blockPlot);
+					return ProtectionUtil.canPlayerAffectPlot(player, blockPlot);
 				}
 			}
 		}

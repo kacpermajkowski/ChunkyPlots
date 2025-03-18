@@ -1,17 +1,13 @@
-package pl.kacpermajkowski.ChunkyPlots.manager;
+package pl.kacpermajkowski.ChunkyPlots.crafting;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
-import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.util.InventoryUtil;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class CraftingManager {

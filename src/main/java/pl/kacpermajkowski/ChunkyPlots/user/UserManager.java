@@ -1,9 +1,8 @@
-package pl.kacpermajkowski.ChunkyPlots.manager;
+package pl.kacpermajkowski.ChunkyPlots.user;
 
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -12,10 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
-import org.yaml.snakeyaml.Yaml;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
-import pl.kacpermajkowski.ChunkyPlots.basic.Group;
-import pl.kacpermajkowski.ChunkyPlots.basic.User;
 
 import java.io.File;
 import java.io.IOException;

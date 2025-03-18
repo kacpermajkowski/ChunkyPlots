@@ -1,7 +1,9 @@
-package pl.kacpermajkowski.ChunkyPlots.basic;
+package pl.kacpermajkowski.ChunkyPlots.user;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import pl.kacpermajkowski.ChunkyPlots.plot.group.Group;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 
 import java.util.ArrayList;
 import java.util.Collections;

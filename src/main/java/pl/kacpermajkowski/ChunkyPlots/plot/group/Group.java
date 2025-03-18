@@ -1,7 +1,8 @@
-package pl.kacpermajkowski.ChunkyPlots.basic;
+package pl.kacpermajkowski.ChunkyPlots.plot.group;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 
 import java.util.ArrayList;
 import java.util.Collections;

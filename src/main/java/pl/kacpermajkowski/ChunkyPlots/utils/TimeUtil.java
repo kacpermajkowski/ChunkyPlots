@@ -1,4 +1,4 @@
-package pl.kacpermajkowski.ChunkyPlots.util;
+package pl.kacpermajkowski.ChunkyPlots.utils;
 
 import org.bukkit.Bukkit;
 
