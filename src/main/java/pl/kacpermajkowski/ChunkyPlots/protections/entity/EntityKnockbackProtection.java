@@ -19,7 +19,7 @@ import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
 public class EntityKnockbackProtection implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onEntityKnockback(EntityKnockbackEvent event){
+    public void onEntityKnockback(EntityKnockbackByEntityEvent event){
         Entity affectedEntity = event.getEntity();
         Plot affectedPlot = PlotManager.getInstance().getPlot(affectedEntity.getLocation());
         if(affectedPlot == null) return;
