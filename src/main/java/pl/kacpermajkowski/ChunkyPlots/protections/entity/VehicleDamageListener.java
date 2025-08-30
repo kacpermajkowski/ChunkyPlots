@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
@@ -11,7 +12,7 @@ import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
 public class VehicleDamageListener implements Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onVehicleDamage(final VehicleDamageEvent event){
         final Entity attacker = event.getAttacker();
 

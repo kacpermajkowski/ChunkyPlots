@@ -3,6 +3,7 @@ package pl.kacpermajkowski.ChunkyPlots.protections.entity;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
@@ -13,7 +14,7 @@ import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
 public class EntityDamageProtection implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntity(final EntityDamageByEntityEvent event){
         final Entity attacker = event.getDamager();
         final Entity victim = event.getEntity();

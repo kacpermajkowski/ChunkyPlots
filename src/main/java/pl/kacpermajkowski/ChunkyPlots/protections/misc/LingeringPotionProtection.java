@@ -3,6 +3,7 @@ package pl.kacpermajkowski.ChunkyPlots.protections.misc;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.projectiles.ProjectileSource;
@@ -12,7 +13,7 @@ import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
 public class LingeringPotionProtection implements Listener {
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onAreaEffectCloudApply(AreaEffectCloudApplyEvent event){
 		if(!canEffectBeApplied(event)){
 			event.setCancelled(true);

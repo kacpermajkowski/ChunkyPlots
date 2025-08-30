@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
@@ -16,7 +17,7 @@ import pl.kacpermajkowski.ChunkyPlots.util.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
 public class PlayerEntryProtection implements Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if(event.getTo() == null || event.getFrom().distance(event.getTo()) == 0) return;

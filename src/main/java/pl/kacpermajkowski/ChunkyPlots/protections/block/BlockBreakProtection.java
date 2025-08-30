@@ -9,7 +9,7 @@ import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
 public class BlockBreakProtection implements Listener {
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(final BlockBreakEvent event){
 		if(!canPlayerDestroyBlock(event)){
 			event.setCancelled(true);

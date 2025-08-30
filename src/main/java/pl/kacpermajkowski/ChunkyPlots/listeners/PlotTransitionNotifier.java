@@ -3,6 +3,7 @@ package pl.kacpermajkowski.ChunkyPlots.listeners;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
@@ -13,7 +14,7 @@ import pl.kacpermajkowski.ChunkyPlots.manager.UserManager;
 import pl.kacpermajkowski.ChunkyPlots.util.MessageBuilder;
 
 public class PlotTransitionNotifier implements Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerMove(final PlayerMoveEvent event) {
         final Location to = event.getTo();
         if (to == null) return;

@@ -3,6 +3,7 @@ package pl.kacpermajkowski.ChunkyPlots.protections.redstone;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
@@ -16,13 +17,13 @@ import java.util.UUID;
 
 public class PistonProtection implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPistonExtend(final BlockPistonExtendEvent event){
         if(!canPistonAffectBlocks(event.getBlock(), event.getDirection(), event.getBlocks())){
             event.setCancelled(true);
         }
     }
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPistonRetract(final BlockPistonRetractEvent event){
         if(!canPistonAffectBlocks(event.getBlock(), event.getDirection(), event.getBlocks())){
             event.setCancelled(true);

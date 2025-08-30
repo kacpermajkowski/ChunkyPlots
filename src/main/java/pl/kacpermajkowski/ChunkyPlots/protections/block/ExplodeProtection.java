@@ -5,6 +5,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -21,21 +22,21 @@ public class ExplodeProtection implements Listener {
 	private final HashMap<UUID, Player> witherSummoners = new HashMap<>();
 	private Player lastWitherBlockPlacer;
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityExplode(final EntityExplodeEvent event){
 		if(!canEntityExplodeBlocks(event.getEntity(), event.blockList())){
 			event.setCancelled(true);
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onEntitySpawn(final EntitySpawnEvent event){
 		if(event.getEntity() instanceof Wither){
 			witherSummoners.put(event.getEntity().getUniqueId(), lastWitherBlockPlacer);
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBlockPlace(final BlockPlaceEvent event){
 		Material blockMaterial = event.getBlockPlaced().getType();
 		if(blockMaterial.equals(Material.SOUL_SAND) || blockMaterial.equals(Material.WITHER_SKELETON_SKULL)){

@@ -16,7 +16,7 @@ import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 import pl.kacpermajkowski.ChunkyPlots.util.TextUtil;
 
 public class BlockPlaceListener implements Listener {
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(final BlockPlaceEvent event){
         final Block block = event.getBlock();
         final Player player = event.getPlayer();

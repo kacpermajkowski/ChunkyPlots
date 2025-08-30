@@ -3,13 +3,14 @@ package pl.kacpermajkowski.ChunkyPlots.protections.redstone;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
 import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 
 public class DispenserProtection implements Listener {
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDispense(BlockDispenseEvent event){
 		if(!canBlockDispense(event)){
 			event.setCancelled(true);
