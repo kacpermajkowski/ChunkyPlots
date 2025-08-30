@@ -19,9 +19,7 @@ public class EntityDamageProtection implements Listener {
         final Entity attacker = event.getDamager();
         final Entity victim = event.getEntity();
 
-        if(!canEntityDamageEntity(attacker, victim)){
-            event.setCancelled(true);
-        }
+        event.setCancelled(!canEntityDamageEntity(attacker, victim));
     }
 
     public boolean canEntityDamageEntity(Entity attacker, Entity victim) {
@@ -47,8 +45,8 @@ public class EntityDamageProtection implements Listener {
 
         if(victim instanceof Player){
             return true;
-        } else if(victim instanceof Monster){
-            return false;
+        } else if(victim instanceof Monster monster){
+            return monster.getRemoveWhenFarAway() || ProtectionUtil.canPlayerAffectPlot(player, victimPlot);
         }
         return ProtectionUtil.canPlayerAffectPlot(player, victimPlot);
     }
