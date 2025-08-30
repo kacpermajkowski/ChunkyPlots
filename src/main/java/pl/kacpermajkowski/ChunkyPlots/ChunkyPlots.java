@@ -14,9 +14,10 @@ import pl.kacpermajkowski.ChunkyPlots.protections.misc.LingeringPotionProtection
 import pl.kacpermajkowski.ChunkyPlots.protections.misc.SplashPotionProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerBucketEmptyListener;
 import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerEntryProtection;
-import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerInteractAtEntityListener;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.EntityInteractionProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerInteractListener;
 import pl.kacpermajkowski.ChunkyPlots.protections.redstone.DispenserProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.redstone.HopperProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.redstone.PistonProtection;
 
 public class ChunkyPlots extends JavaPlugin {
@@ -45,10 +46,11 @@ public class ChunkyPlots extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new PistonProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(),this);
 		this.getServer().getPluginManager().registerEvents(new DispenserProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new HopperProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new EntityDamageProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new ExplodeProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerBucketEmptyListener(),this);
-		this.getServer().getPluginManager().registerEvents(new PlayerInteractAtEntityListener(),this);
+		this.getServer().getPluginManager().registerEvents(new EntityInteractionProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerLeftListener(),this);
