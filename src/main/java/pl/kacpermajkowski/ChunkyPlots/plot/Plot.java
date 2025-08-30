@@ -1,4 +1,4 @@
-package pl.kacpermajkowski.ChunkyPlots.basic;
+package pl.kacpermajkowski.ChunkyPlots.plot;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -7,7 +7,6 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import pl.kacpermajkowski.ChunkyPlots.config.Config;
 
 import java.util.*;
 
@@ -124,9 +123,24 @@ public class Plot {
 	public boolean hasTheSameOwnerAs(Plot plot){
 		if(plot == null) {
 			return false;
-		} else {
-			return ownerUUID.equals(plot.getOwnerUUID());
 		}
+
+		return ownerUUID.equals(plot.getOwnerUUID());
+	}
+
+	/**
+	 *
+	 * @param plots - null or a collection of Plot objects
+	 * @return false if collection is empty or null, true if all plots in a collection have the same owner
+	 */
+	public boolean hasTheSameOwnerAs(Collection<Plot> plots){
+		if(plots == null) return false;
+		if(plots.isEmpty()) return false;
+		for(Plot plot : plots){
+			if(plot == null) return false;
+			if(!hasTheSameOwnerAs(plot)) return false;
+		}
+		return true;
 	}
 
 	@Override

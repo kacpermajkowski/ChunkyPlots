@@ -7,9 +7,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.projectiles.ProjectileSource;
-import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 
 public class LingeringPotionProtection implements Listener {
 
@@ -35,9 +35,9 @@ public class LingeringPotionProtection implements Listener {
 		return true;
 	}
 
-	private boolean canShooterApplyEffectToEntityStandingOnPlot(ProjectileSource shooter, Plot plotEntityIsStandingOn) {
+	private boolean canShooterApplyEffectToEntityStandingOnPlot(ProjectileSource shooter, Plot entityPlot) {
 		if(shooter instanceof Player player){
-			return PlotPermissionUtil.canPlayerAffectPlot(player, plotEntityIsStandingOn);
+			return ProtectionUtil.canPlayerAffectPlot(player, entityPlot);
 		}
 		return false;
 	}

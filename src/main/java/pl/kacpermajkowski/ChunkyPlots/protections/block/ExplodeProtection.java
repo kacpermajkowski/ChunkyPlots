@@ -10,9 +10,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
-import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +77,7 @@ public class ExplodeProtection implements Listener {
 		Player summoner = witherSummoners.get(uuid);
 
 		if(summoner != null){
-			return PlotPermissionUtil.canPlayerAffectPlot(summoner, blockPlot);
+			return ProtectionUtil.canPlayerAffectPlot(summoner, blockPlot);
 		} else {
 			return false;
 		}
@@ -96,7 +96,7 @@ public class ExplodeProtection implements Listener {
 			if (tntSource.isValid()) {
 				Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
 				if (tntSource instanceof Player player) {
-					return PlotPermissionUtil.canPlayerAffectPlot(player, blockPlot);
+					return ProtectionUtil.canPlayerAffectPlot(player, blockPlot);
 				}
 			}
 		}

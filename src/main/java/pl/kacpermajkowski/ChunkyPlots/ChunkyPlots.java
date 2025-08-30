@@ -4,10 +4,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.PlotAdminCommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
-import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerJoinListener;
-import pl.kacpermajkowski.ChunkyPlots.listeners.PlayerLeftListener;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlotTransitionNotifier;
-import pl.kacpermajkowski.ChunkyPlots.manager.*;
+import pl.kacpermajkowski.ChunkyPlots.crafting.*;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotBlockPlaceListener;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.protections.block.*;
 import pl.kacpermajkowski.ChunkyPlots.protections.entity.*;
 import pl.kacpermajkowski.ChunkyPlots.protections.misc.LingeringPotionProtection;
@@ -19,6 +19,7 @@ import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerInteractListener;
 import pl.kacpermajkowski.ChunkyPlots.protections.redstone.DispenserProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.redstone.HopperProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.redstone.PistonProtection;
+import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 
 public class ChunkyPlots extends JavaPlugin {
 	private static ChunkyPlots instance;
@@ -48,14 +49,11 @@ public class ChunkyPlots extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(),this);
 		this.getServer().getPluginManager().registerEvents(new DispenserProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new HopperProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new EntityDamageProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new EntityKnockbackProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new ExplodeProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerBucketEmptyListener(),this);
 		this.getServer().getPluginManager().registerEvents(new EntityInteractionProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(),this);
-		this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(),this);
-		this.getServer().getPluginManager().registerEvents(new PlayerLeftListener(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerLeashEntityProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new PlotTransitionNotifier(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerEntryProtection(), this);
@@ -64,7 +62,10 @@ public class ChunkyPlots extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new PlayerUnleashEntityProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new SplashPotionProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new VehicleDamageListener(),this);
+		this.getServer().getPluginManager().registerEvents(new EntityDamageProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new VehicleEnterListener(),this);
+
+		this.getServer().getPluginManager().registerEvents(new PlotBlockPlaceListener(), this);
 	}
 
 	private void registerCommands() {

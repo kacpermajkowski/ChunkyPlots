@@ -2,11 +2,14 @@ package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.dispose;
 
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
-import pl.kacpermajkowski.ChunkyPlots.basic.*;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
-import pl.kacpermajkowski.ChunkyPlots.util.MessageBuilder;
-import pl.kacpermajkowski.ChunkyPlots.manager.*;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.plot.group.Group;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.user.User;
+import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
+import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 
 import java.util.List;
 

@@ -11,10 +11,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
-import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
-import pl.kacpermajkowski.ChunkyPlots.util.MessageBuilder;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 
 public class PlayerEntryProtection implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)

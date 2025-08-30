@@ -3,7 +3,7 @@ package pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 
 import java.util.List;
 

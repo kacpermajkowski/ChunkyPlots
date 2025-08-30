@@ -1,9 +1,10 @@
-package pl.kacpermajkowski.ChunkyPlots.util;
+package pl.kacpermajkowski.ChunkyPlots.crafting;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import pl.kacpermajkowski.ChunkyPlots.messages.TextUtil;
 
 import java.util.HashMap;
 import java.util.List;

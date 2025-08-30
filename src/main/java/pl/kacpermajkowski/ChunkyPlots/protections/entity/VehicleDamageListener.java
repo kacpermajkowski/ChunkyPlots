@@ -7,9 +7,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
-import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 
 public class VehicleDamageListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -20,11 +20,7 @@ public class VehicleDamageListener implements Listener {
         final Plot eventPlot = PlotManager.getInstance().getPlot(vehicleLocation.getChunk());
 
         if(attacker instanceof Player player) {
-            if(eventPlot != null) {
-                if (!PlotPermissionUtil.canPlayerAffectPlot(player, eventPlot)) {
-                    event.setCancelled(true);
-                }
-            }
+            event.setCancelled(!ProtectionUtil.canPlayerAffectPlot(player, eventPlot));
         }
     }
 }

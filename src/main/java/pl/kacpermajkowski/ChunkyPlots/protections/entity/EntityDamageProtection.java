@@ -8,9 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
-import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 
 public class EntityDamageProtection implements Listener {
 
@@ -32,10 +32,10 @@ public class EntityDamageProtection implements Listener {
         } else if(attacker instanceof Monster monster){
             return canMonsterDamageEntity(monster, victim);
         } else {
-			if(attacker instanceof TNTPrimed tntPrimed){
-				return canTntDamageEntity(tntPrimed, victim);
-			}
-		}
+            if(attacker instanceof TNTPrimed tntPrimed){
+                return canTntDamageEntity(tntPrimed, victim);
+            }
+        }
         return false;
     }
 
@@ -50,7 +50,7 @@ public class EntityDamageProtection implements Listener {
         } else if(victim instanceof Monster){
             return false;
         }
-        return PlotPermissionUtil.canPlayerAffectPlot(player, victimPlot);
+        return ProtectionUtil.canPlayerAffectPlot(player, victimPlot);
     }
 
     public boolean canProjectileDamageEntity(Projectile projectile, Entity victim) {
@@ -60,7 +60,7 @@ public class EntityDamageProtection implements Listener {
         } else if(projectileSource instanceof BlockProjectileSource blockProjectileSource){
             Plot victimPlot = PlotManager.getInstance().getPlot(victim.getLocation());
             Block block = blockProjectileSource.getBlock();
-            return PlotPermissionUtil.canBlockAffectPlot(block, victimPlot);
+            return ProtectionUtil.canBlockAffectPlot(block, victimPlot);
         }
         return false;
     }

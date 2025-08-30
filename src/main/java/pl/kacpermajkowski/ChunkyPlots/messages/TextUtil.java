@@ -1,10 +1,11 @@
-package pl.kacpermajkowski.ChunkyPlots.util;
+package pl.kacpermajkowski.ChunkyPlots.messages;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import pl.kacpermajkowski.ChunkyPlots.basic.*;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.user.User;
 
 import java.util.ArrayList;
 import java.util.List;

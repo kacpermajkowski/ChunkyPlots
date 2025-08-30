@@ -1,27 +1,21 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.block;
 
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
-import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 
 public class BlockBreakProtection implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(final BlockBreakEvent event){
-		if(!canPlayerDestroyBlock(event)){
-			event.setCancelled(true);
-		}
-	}
+		final Plot eventPlot = PlotManager.getInstance().getPlot(event.getBlock());
+		final Player player = event.getPlayer();
 
-	private boolean canPlayerDestroyBlock(BlockBreakEvent event) {
-		Plot blockPlot = PlotManager.getInstance().getPlot(event.getBlock().getChunk());
-		if(blockPlot != null){
-			return PlotPermissionUtil.canPlayerAffectPlot(event.getPlayer(), blockPlot);
-		} else {
-			return true;
-		}
+		event.setCancelled(!ProtectionUtil.canPlayerAffectPlot(player, eventPlot));
 	}
 }
