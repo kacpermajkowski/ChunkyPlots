@@ -64,6 +64,8 @@ public class ExplodeProtection implements Listener {
 			return canExplosiveMinecraftExplodeBlock(explosiveMinecart, block);
 		} else if(entity instanceof EnderCrystal enderCrystal){
 			return canEnderCrystalExplodeBlock(enderCrystal, block);
+		} else if(entity instanceof WindCharge windCharge) {
+			return true;
 		} else {
 			return false;
 		}
@@ -102,13 +104,18 @@ public class ExplodeProtection implements Listener {
 	}
 
 	private boolean canExplosiveMinecraftExplodeBlock(ExplosiveMinecart explosiveMinecart, Block block) {
-		//TODO: Check if exploding tntminecart is the same thing as tntprimed and if it isn't handle it here
-		return false;
-	}
+		//ExplodingMinecart cannot be ignited by a player, only by entity cramming or by activation rail,
+		// so for now they can only be exploded only outside any plots.
+		Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
+        return blockPlot == null;
+		//TODO: Possibly allow tnt minecart to explode when it's ignited by an activation rail on a plot it's trying to explode
+    }
 
 	private boolean canEnderCrystalExplodeBlock(EnderCrystal enderCrystal, Block block) {
 		Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
 		Plot crystalPlot = PlotManager.getInstance().getPlot(enderCrystal.getLocation().getChunk());
+		if(blockPlot == null) return true;
+		if(crystalPlot == null) return false;
 		return blockPlot.hasTheSameOwnerAs(crystalPlot);
 	}
 }

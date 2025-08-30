@@ -11,7 +11,7 @@ import pl.kacpermajkowski.ChunkyPlots.basic.Plot;
 import pl.kacpermajkowski.ChunkyPlots.manager.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.util.PlotPermissionUtil;
 
-public class PlayerInteractEntityListener implements Listener {
+public class EntityInteractionProtection implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteractAtEntity(PlayerInteractEntityEvent event){
 		Entity clickedEntity = event.getRightClicked();
