@@ -121,11 +121,8 @@ public class Plot {
 		return ownerUUID.equals(player.getUniqueId());
 	}
 	public boolean hasTheSameOwnerAs(Plot plot){
-		if(plot == null) {
-			return false;
-		}
-
-		return ownerUUID.equals(plot.getOwnerUUID());
+		if(plot == null) return false;
+		else return ownerUUID.equals(plot.getOwnerUUID());
 	}
 
 	/**

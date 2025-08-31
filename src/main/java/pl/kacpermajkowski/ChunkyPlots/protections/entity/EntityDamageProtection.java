@@ -46,9 +46,9 @@ public class EntityDamageProtection implements Listener {
         if(victim instanceof Player){
             return true;
         } else if(victim instanceof Monster monster){
-            return monster.getRemoveWhenFarAway() || ProtectionUtil.canPlayerAffectPlot(player, victimPlot);
+            return monster.getRemoveWhenFarAway() || ProtectionUtil.canPlayerAffect(player, victimPlot);
         }
-        return ProtectionUtil.canPlayerAffectPlot(player, victimPlot);
+        return ProtectionUtil.canPlayerAffect(player, victimPlot);
     }
 
     public boolean canProjectileDamageEntity(Projectile projectile, Entity victim) {
@@ -58,7 +58,7 @@ public class EntityDamageProtection implements Listener {
         } else if(projectileSource instanceof BlockProjectileSource blockProjectileSource){
             Plot victimPlot = PlotManager.getInstance().getPlot(victim.getLocation());
             Block block = blockProjectileSource.getBlock();
-            return ProtectionUtil.canBlockAffectPlot(block, victimPlot);
+            return ProtectionUtil.canBlockAffect(block, victimPlot);
         }
         return false;
     }

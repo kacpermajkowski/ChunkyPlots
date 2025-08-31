@@ -37,7 +37,7 @@ public class LingeringPotionProtection implements Listener {
 
 	private boolean canShooterApplyEffectToEntityStandingOnPlot(ProjectileSource shooter, Plot entityPlot) {
 		if(shooter instanceof Player player){
-			return ProtectionUtil.canPlayerAffectPlot(player, entityPlot);
+			return ProtectionUtil.canPlayerAffect(player, entityPlot);
 		}
 		return false;
 	}

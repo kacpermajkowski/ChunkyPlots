@@ -13,6 +13,7 @@ public class PlotBlockPlaceListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockPlace(BlockPlaceEvent event){
         if(event.isCancelled()) return;
+        
         if(!isBlockAPlotBlock(event.getItemInHand())) return;
         if(!canPlotBeCreated(event)) return;
 

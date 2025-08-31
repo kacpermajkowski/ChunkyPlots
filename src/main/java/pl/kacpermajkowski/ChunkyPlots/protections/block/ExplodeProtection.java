@@ -77,7 +77,7 @@ public class ExplodeProtection implements Listener {
 		Player summoner = witherSummoners.get(uuid);
 
 		if(summoner != null){
-			return ProtectionUtil.canPlayerAffectPlot(summoner, blockPlot);
+			return ProtectionUtil.canPlayerAffect(summoner, blockPlot);
 		} else {
 			return false;
 		}
@@ -96,7 +96,7 @@ public class ExplodeProtection implements Listener {
 			if (tntSource.isValid()) {
 				Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
 				if (tntSource instanceof Player player) {
-					return ProtectionUtil.canPlayerAffectPlot(player, blockPlot);
+					return ProtectionUtil.canPlayerAffect(player, blockPlot);
 				}
 			}
 		}

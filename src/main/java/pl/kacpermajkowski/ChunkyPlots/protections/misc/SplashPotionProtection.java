@@ -42,7 +42,7 @@ public class SplashPotionProtection implements Listener {
 		Player player = (Player) event.getPotion().getShooter();
 		List<Plot> affectedEntitesPlots = getAffectedEntitiesPlotList(event);
 		for(Plot plot:affectedEntitesPlots) {
-			if (!ProtectionUtil.canPlayerAffectPlot(player, plot)){
+			if (!ProtectionUtil.canPlayerAffect(player, plot)){
 				return false;
 			}
 		}
@@ -108,7 +108,7 @@ public class SplashPotionProtection implements Listener {
 		Plot plot = PlotManager.getInstance().getPlot(event.getHitBlock().getLocation());
 
 		if(plot != null) {
-			return ProtectionUtil.canPlayerAffectPlot(player, plot);
+			return ProtectionUtil.canPlayerAffect(player, plot);
 		} else {
 			return true;
 		}

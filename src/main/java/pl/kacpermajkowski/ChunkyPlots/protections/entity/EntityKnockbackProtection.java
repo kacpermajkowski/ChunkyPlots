@@ -1,6 +1,5 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.entity;
 
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -9,8 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityKnockbackByEntityEvent;
-import org.bukkit.event.entity.EntityKnockbackEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
@@ -26,16 +23,16 @@ public class EntityKnockbackProtection implements Listener {
 
         Entity sourceEntity = event.getSourceEntity();
         if(sourceEntity instanceof Player player){
-            if(!ProtectionUtil.canPlayerAffectPlot(player, affectedPlot))
+            if(!ProtectionUtil.canPlayerAffect(player, affectedPlot))
                 event.setCancelled(true);
         } else if (sourceEntity instanceof WindCharge windCharge){
             ProjectileSource shooter = windCharge.getShooter();
             if(shooter instanceof Player player){
-                if(!ProtectionUtil.canPlayerAffectPlot(player, affectedPlot))
+                if(!ProtectionUtil.canPlayerAffect(player, affectedPlot))
                     event.setCancelled(true);
             } else if(shooter instanceof BlockProjectileSource bps){
                 Block block = bps.getBlock();
-                if(!ProtectionUtil.canBlockAffectPlot(block, affectedPlot))
+                if(!ProtectionUtil.canBlockAffect(block, affectedPlot))
                     event.setCancelled(true);
             }
         }

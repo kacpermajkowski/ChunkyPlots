@@ -20,7 +20,7 @@ public class VehicleEnterListener implements Listener {
         final Plot eventPlot = PlotManager.getInstance().getPlot(vehicleLocation.getChunk());
 
         if(entered instanceof Player player) {
-            event.setCancelled(!ProtectionUtil.canPlayerAffectPlot(player, eventPlot));
+            event.setCancelled(!ProtectionUtil.canPlayerAffect(player, eventPlot));
         }
     }
 }

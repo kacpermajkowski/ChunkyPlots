@@ -20,7 +20,7 @@ public class VehicleDamageListener implements Listener {
         final Plot eventPlot = PlotManager.getInstance().getPlot(vehicleLocation.getChunk());
 
         if(attacker instanceof Player player) {
-            event.setCancelled(!ProtectionUtil.canPlayerAffectPlot(player, eventPlot));
+            event.setCancelled(!ProtectionUtil.canPlayerAffect(player, eventPlot));
         }
     }
 }

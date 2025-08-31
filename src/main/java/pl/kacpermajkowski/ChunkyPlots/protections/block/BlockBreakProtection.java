@@ -1,6 +1,5 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.block;
 
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,6 +15,6 @@ public class BlockBreakProtection implements Listener {
 		final Plot eventPlot = PlotManager.getInstance().getPlot(event.getBlock());
 		final Player player = event.getPlayer();
 
-		event.setCancelled(!ProtectionUtil.canPlayerAffectPlot(player, eventPlot));
+		event.setCancelled(!ProtectionUtil.canPlayerAffect(player, eventPlot));
 	}
 }

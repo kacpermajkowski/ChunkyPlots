@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
@@ -23,6 +24,11 @@ public abstract class ProtectionUtil {
 
     public static boolean canPlayerAffect(Player player, Block block){
         Plot plot = PlotManager.getInstance().getPlot(block);
+        return canPlayerAffect(player, plot);
+    }
+
+    public static boolean canPlayerAffect(Player player, BlockState state){
+        Plot plot = PlotManager.getInstance().getPlot(state);
         return canPlayerAffect(player, plot);
     }
 

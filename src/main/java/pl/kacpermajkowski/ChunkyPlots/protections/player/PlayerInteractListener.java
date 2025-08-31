@@ -18,7 +18,7 @@ public class PlayerInteractListener implements Listener {
 		final Plot eventPlot;
 		if(block != null) {
 			eventPlot = PlotManager.getInstance().getPlot(block.getChunk());
-			event.setCancelled(!ProtectionUtil.canPlayerAffectPlot(player, eventPlot));
+			event.setCancelled(!ProtectionUtil.canPlayerAffect(player, eventPlot));
 		}
 	}
 }

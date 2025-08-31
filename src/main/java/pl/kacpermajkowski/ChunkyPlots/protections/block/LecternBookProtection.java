@@ -17,6 +17,6 @@ public class LecternBookProtection implements Listener {
 		final Player player = event.getPlayer();
 		final Plot eventPlot = PlotManager.getInstance().getPlot(lecternLocation.getChunk());
 
-		event.setCancelled(!ProtectionUtil.canPlayerAffectPlot(player, eventPlot));
+		event.setCancelled(!ProtectionUtil.canPlayerAffect(player, eventPlot));
 	}
 }

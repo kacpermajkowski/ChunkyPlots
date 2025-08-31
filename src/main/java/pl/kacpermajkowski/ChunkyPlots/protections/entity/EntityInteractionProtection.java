@@ -7,7 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
@@ -20,6 +19,6 @@ public class EntityInteractionProtection implements Listener {
 		Location clickedEntityLocation = clickedEntity.getLocation();
 		Plot eventPlot = PlotManager.getInstance().getPlot(clickedEntityLocation);
 
-		event.setCancelled(!ProtectionUtil.canPlayerAffectPlot(player, eventPlot));
+		event.setCancelled(!ProtectionUtil.canPlayerAffect(player, eventPlot));
 	}
 }

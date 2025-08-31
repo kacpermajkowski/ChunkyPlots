@@ -17,6 +17,6 @@ public class PlayerUnleashEntityProtection implements Listener {
 		final Player player = event.getPlayer();
 		final Plot eventPlot = PlotManager.getInstance().getPlot(entityLocation);
 
-		event.setCancelled(!ProtectionUtil.canPlayerAffectPlot(player, eventPlot));
+		event.setCancelled(!ProtectionUtil.canPlayerAffect(player, eventPlot));
 	}
 }

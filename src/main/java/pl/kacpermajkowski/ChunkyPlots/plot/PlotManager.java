@@ -3,10 +3,13 @@ package pl.kacpermajkowski.ChunkyPlots.plot;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -111,6 +114,7 @@ public class PlotManager implements Listener {
 	}
 
 	public Plot getPlot(Block block){
+		if(block == null) return null;
 		return getPlot(block.getChunk());
 	}
 	public Plot getPlot(Chunk chunk){
@@ -150,6 +154,14 @@ public class PlotManager implements Listener {
 
 		Chunk chunk = location.getChunk();
 		return getPlot(chunk);
+	}
+	public Plot getPlot(Entity entity){
+		if(entity == null) return null;
+		return getPlot(entity.getLocation());
+	}
+	public Plot getPlot(BlockState state){
+		if(state == null) return null;
+		return getPlot(state.getBlock());
 	}
 
 	public void disposePlot(Plot plot){

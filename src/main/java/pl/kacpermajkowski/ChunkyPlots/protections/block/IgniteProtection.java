@@ -62,7 +62,7 @@ public class IgniteProtection implements Listener {
 			return true;
 		}
 		if (ignitingEntity instanceof Player player) {
-			return ProtectionUtil.canPlayerAffectPlot(player, destinationBlockPlot);
+			return ProtectionUtil.canPlayerAffect(player, destinationBlockPlot);
 		} else if (ignitingEntity instanceof EnderCrystal enderCrystal) {
 			return canEnderCrystalIgnitePlot(enderCrystal, destinationBlockPlot);
 		} else {

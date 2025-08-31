@@ -15,7 +15,6 @@ import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 
 
 public class StructureOvergrowProtection implements Listener {
-    //TODO: Verify whether event.getLocation() points to a sapling that triggered the growth
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onStructureGrow(StructureGrowEvent event) {
         Plot triggerPlot = PlotManager.getInstance().getPlot(event.getLocation());
