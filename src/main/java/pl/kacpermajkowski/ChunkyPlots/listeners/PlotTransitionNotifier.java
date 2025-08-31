@@ -53,9 +53,9 @@ public class PlotTransitionNotifier implements Listener {
     }
 
     private void sendEntryMessage(Player player, Plot newPlot){
-        new MessageBuilder(Message.ENTERED_PLOT).plot(newPlot).send(player);
+        new MessageBuilder(Message.ENTERED_PLOT).plot(newPlot).sendAll(player);
     }
     private void sendLeaveMessage(Player player, Plot previousPlot){
-        new MessageBuilder(Message.LEFT_PLOT).plot(previousPlot).send(player);
+        new MessageBuilder(Message.LEFT_PLOT).plot(previousPlot).sendAll(player);
     }
 }

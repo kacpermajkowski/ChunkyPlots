@@ -39,17 +39,17 @@ public class PlotAddCommand implements PlotSubcommand {
         MessageBuilder messageBuilder = new MessageBuilder().subcommand(this);
 
         if(args.length != 1) {
-            messageBuilder.message(Message.COMMAND_USAGE).send(playerOwner);
+            messageBuilder.message(Message.COMMAND_USAGE).sendChat(playerOwner);
             return;
         }
 
         Plot plot = PlotManager.getInstance().getPlot(playerOwner.getLocation());
         if(plot == null) {
-            messageBuilder.message(Message.NULL_PLOT).send(playerOwner);
+            messageBuilder.message(Message.NULL_PLOT).sendChat(playerOwner);
             return;
         }
         if(!plot.isPlayerOwner(playerOwner)){
-            messageBuilder.message(Message.NOT_OWNER).send(playerOwner);
+            messageBuilder.message(Message.NOT_OWNER).sendChat(playerOwner);
             return;
         }
 
@@ -59,31 +59,31 @@ public class PlotAddCommand implements PlotSubcommand {
         try {
             playerToWhitelist = PlayerUtil.getOfflinePlayer(nameToWhitelist);
         } catch (IllegalArgumentException e) {
-            messageBuilder.message(Message.ERROR_UNSPECIFIED).send(playerOwner);
+            messageBuilder.message(Message.ERROR_UNSPECIFIED).sendChat(playerOwner);
             return;
         }
         if(playerToWhitelist == null) {
-            messageBuilder.message(Message.NULL_USER).send(playerOwner);
+            messageBuilder.message(Message.NULL_USER).sendChat(playerOwner);
             return;
         }
 
         if(plot.isPlayerWhitelisted(playerToWhitelist)) {
-            messageBuilder.message(Message.PLAYER_IS_ALREADY_A_MEMBER).send(playerOwner);
+            messageBuilder.message(Message.PLAYER_IS_ALREADY_A_MEMBER).sendChat(playerOwner);
             return;
         }
 
         if(plot.isPlayerOwner(playerToWhitelist)) {
-            messageBuilder.message(Message.CANNOT_ADD_OWNER_AS_MEMBER).send(playerOwner);
+            messageBuilder.message(Message.CANNOT_ADD_OWNER_AS_MEMBER).sendChat(playerOwner);
             return;
         }
 
         if(plot.isPlayerBlacklisted(playerToWhitelist)) {
-            messageBuilder.message(Message.CANNOT_ADD_BLACKLISTED_PLAYER_AS_MEMBER).send(playerOwner);
+            messageBuilder.message(Message.CANNOT_ADD_BLACKLISTED_PLAYER_AS_MEMBER).sendChat(playerOwner);
             return;
         }
 
         plot.whitelistPlayer(playerToWhitelist.getUniqueId());
-        messageBuilder.message(Message.ADDED_MEMBER_TO_PLOT).send(playerOwner);
+        messageBuilder.message(Message.ADDED_MEMBER_TO_PLOT).sendChat(playerOwner);
     }
 
 

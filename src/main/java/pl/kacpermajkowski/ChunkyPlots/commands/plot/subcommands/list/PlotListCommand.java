@@ -35,7 +35,7 @@ public class PlotListCommand implements PlotSubcommand {
 	@Override
 	public void execute(Player sender, String[] args) {
 		if(sender instanceof Player player){
-			new MessageBuilder(Message.WIDE_HEADER).send(player);
+			new MessageBuilder(Message.WIDE_HEADER).sendChat(player);
 			TextUtil.sendNoPrefixMessage(player, "&eID Działki &9» &ePrzybliżone koordynaty działki");
 			for(Plot plot:PlotManager.getInstance().getPlots()){
 				if(plot.isPlayerOwner(player)) {
@@ -43,7 +43,7 @@ public class PlotListCommand implements PlotSubcommand {
 					TextUtil.sendNoPrefixMessage(player,"&8(&6" + plot.getID() + "&8)" + " &a» &7X:&f" + location.getBlockX() + "  &7Y:&f" + location.getBlockY() + "  &7Z:&f" + location.getBlockZ());
 				}
 			}
-			new MessageBuilder(Message.WIDE_HEADER).send(player);
+			new MessageBuilder(Message.WIDE_HEADER).sendChat(player);
 		}
 	}
 

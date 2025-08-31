@@ -40,17 +40,17 @@ public class PlotRemoveCommand implements PlotSubcommand {
         MessageBuilder messageBuilder = new MessageBuilder().subcommand(this);
 
         if(args.length != 1) {
-            messageBuilder.message(Message.COMMAND_USAGE).send(playerOwner);
+            messageBuilder.message(Message.COMMAND_USAGE).sendChat(playerOwner);
             return;
         }
 
         Plot plot = PlotManager.getInstance().getPlot(playerOwner.getLocation());
         if(plot == null) {
-            messageBuilder.message(Message.NULL_PLOT).send(playerOwner);
+            messageBuilder.message(Message.NULL_PLOT).sendChat(playerOwner);
             return;
         }
         if(!plot.isPlayerOwner(playerOwner)){
-            messageBuilder.message(Message.NOT_OWNER).send(playerOwner);
+            messageBuilder.message(Message.NOT_OWNER).sendChat(playerOwner);
             return;
         }
 
@@ -60,21 +60,21 @@ public class PlotRemoveCommand implements PlotSubcommand {
         try {
             playerToUnwhitelist = PlayerUtil.getOfflinePlayer(nameToUnwhitelist);
         } catch (IllegalArgumentException e) {
-            messageBuilder.message(Message.ERROR_UNSPECIFIED).send(playerOwner);
+            messageBuilder.message(Message.ERROR_UNSPECIFIED).sendChat(playerOwner);
             return;
         }
         if(playerToUnwhitelist == null) {
-            messageBuilder.message(Message.NULL_USER).send(playerOwner);
+            messageBuilder.message(Message.NULL_USER).sendChat(playerOwner);
             return;
         }
 
         if(!plot.isPlayerWhitelisted(playerToUnwhitelist)) {
-            messageBuilder.message(Message.PLAYER_IS_NOT_WHITELISTED).username(nameToUnwhitelist).send(playerOwner);
+            messageBuilder.message(Message.PLAYER_IS_NOT_WHITELISTED).username(nameToUnwhitelist).sendChat(playerOwner);
             return;
         }
 
         plot.unwhitelistPlayer(playerToUnwhitelist.getUniqueId());
-        messageBuilder.message(Message.REMOVED_MEMBER_FROM_PLOT).send(playerOwner);
+        messageBuilder.message(Message.REMOVED_MEMBER_FROM_PLOT).sendChat(playerOwner);
     }
 
 

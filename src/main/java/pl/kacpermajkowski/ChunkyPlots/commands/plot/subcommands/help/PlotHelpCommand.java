@@ -51,13 +51,13 @@ public class PlotHelpCommand implements PlotSubcommand {
 
 	public void sendHelpMessage(CommandSender sender){
 		if(subcommands != null) {
-			new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().send(sender);
+			new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().sendChat(sender);
 			for(Subcommand s: subcommands){
-				new MessageBuilder(Message.HELP_COMMAND_ITEM).noPrependedPrefix().subcommand(s).send(sender);
+				new MessageBuilder(Message.HELP_COMMAND_ITEM).noPrependedPrefix().subcommand(s).sendChat(sender);
 			}
-			new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().send(sender);
+			new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().sendChat(sender);
 		} else {
-			new MessageBuilder(Message.HELP_COMMAND_ERROR).send(sender);
+			new MessageBuilder(Message.HELP_COMMAND_ERROR).sendChat(sender);
 		}
 	}
 

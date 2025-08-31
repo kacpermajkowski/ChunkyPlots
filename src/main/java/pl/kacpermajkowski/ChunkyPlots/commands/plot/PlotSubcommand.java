@@ -14,7 +14,7 @@ public interface PlotSubcommand extends Subcommand {
         if (sender instanceof Player) {
             execute((Player) sender, args);
         } else {
-            new MessageBuilder(Message.SENDER_NOT_PLAYER).send(sender);
+            new MessageBuilder(Message.SENDER_NOT_PLAYER).sendChat(sender);
         }
     }
 

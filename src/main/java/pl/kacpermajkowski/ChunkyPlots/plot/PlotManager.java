@@ -163,12 +163,12 @@ public class PlotManager implements Listener {
 		Chunk chunk = block.getChunk();
 		String plotID = chunk.getX() + ";" + chunk.getZ();
 		if(getPlot(chunk) != null) {
-			new MessageBuilder(Message.PLOT_ALREADY_EXISTS).plotID(plotID).send(player);
+			new MessageBuilder(Message.PLOT_ALREADY_EXISTS).plotID(plotID).sendChat(player);
 		}
 		Plot plot = new Plot(player, chunk);
 		plots.add(plot);
 		savePlot(plot);
-		new MessageBuilder(Message.PLOT_CREATED).plot(plot).send(player);
+		new MessageBuilder(Message.PLOT_CREATED).plot(plot).sendChat(player);
 	}
 
 	public static PlotManager getInstance(){

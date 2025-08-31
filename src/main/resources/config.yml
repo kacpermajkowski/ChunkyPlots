@@ -7,6 +7,13 @@ use-message-prefix: true
 # Prefix spacer is placed between prefix and message sent by the plugin
 prefix-spacer: " &8&l» &7"
 
+# Determines where the interaction messages will be sent to the player.
+# CHAT - simply shows the messages in the chat
+# ACTIONBAR - message will pop up as small text above the hotbar
+# BOSSBAR - message will show up at the top as dragon's HP bar
+# Write out all the options you want active, comma-separated within the braces
+interaction-message-display: [ACTIONBAR]
+
 plot-item:
   material: "NOTE_BLOCK"
   name: "&6&lBLOK DZIALKI"
@@ -14,6 +21,8 @@ plot-item:
     - "&7Ten blok umozliwi ci zajecie chunku"
     - "&7tak, aby nikt obcy nie mogl"
     - "&7zniszczyc ci dzialki"
+
+
 
 
 

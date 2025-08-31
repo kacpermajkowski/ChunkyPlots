@@ -2,9 +2,6 @@ package pl.kacpermajkowski.ChunkyPlots.protections.player;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -43,7 +40,7 @@ public class PlayerEntryProtection implements Listener {
         } else {
             Vector pushVector = new Vector(xDirection, event.getTo().getDirection().getY() + 0.2, zDirection);
             player.setVelocity(pushVector);
-            new MessageBuilder(Message.CANNOT_ENTER_PLOT).username(toPlot.getOwnerName()).send(player);
+            new MessageBuilder(Message.CANNOT_ENTER_PLOT).username(toPlot.getOwnerName()).sendChat(player);
         }
     }
 }

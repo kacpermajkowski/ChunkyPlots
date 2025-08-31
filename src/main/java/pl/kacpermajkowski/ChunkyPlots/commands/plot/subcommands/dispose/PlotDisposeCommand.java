@@ -47,17 +47,17 @@ public class PlotDisposeCommand implements PlotSubcommand {
 				if(plot.getOwnerUUID().equals(player.getUniqueId())) {
 					PlotManager.getInstance().disposePlot(plot);
 					player.getInventory().addItem(PlotManager.getInstance().getPlotItem());
-					new MessageBuilder(Message.PLOT_DELETED).plotID(plotID).world(plot.getWorldName()).send(player);
+					new MessageBuilder(Message.PLOT_DELETED).plotID(plotID).world(plot.getWorldName()).sendChat(player);
 
 					User user = UserManager.getInstance().getUser(player.getUniqueId());
 					for(Group group:user.getGroups()){
 						group.remove(plot);
 					}
 
-				} else new MessageBuilder(Message.NOT_OWNER).send(player);
-			} else new MessageBuilder(Message.NULL_PLOT).plotID(plotID).send(player);
+				} else new MessageBuilder(Message.NOT_OWNER).sendChat(player);
+			} else new MessageBuilder(Message.NULL_PLOT).plotID(plotID).sendChat(player);
 		} else {
-			new MessageBuilder(Message.SENDER_NOT_PLAYER).send(sender);
+			new MessageBuilder(Message.SENDER_NOT_PLAYER).sendChat(sender);
 		}
 	}
 

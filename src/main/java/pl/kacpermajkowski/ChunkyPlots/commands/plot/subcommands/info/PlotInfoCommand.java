@@ -38,7 +38,7 @@ public class PlotInfoCommand implements PlotSubcommand {
 		if(sender instanceof Player player) {
  			Plot plot = PlotManager.getInstance().getPlot(player.getLocation().getChunk());
 			if (plot != null) {
-				new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().send(player);
+				new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().sendChat(player);
 				player.sendMessage(TextUtil.fixColors( "&aWłaściciel: &f" + Bukkit.getOfflinePlayer(plot.getOwnerUUID()).getName()));
 				player.sendMessage(TextUtil.fixColors( "&aChunk X: &f" + plot.getChunkX()));
 				player.sendMessage(TextUtil.fixColors( "&aChunk Z: &f" + plot.getChunkZ()));
@@ -52,8 +52,8 @@ public class PlotInfoCommand implements PlotSubcommand {
 				Location location = player.getWorld().getChunkAt(plot.getChunkX(), plot.getChunkZ()).getBlock(8, 64, 8).getLocation();
 				player.sendMessage(TextUtil.fixColors( "&aLokalizacja: &7X:&f" + location.getBlockX() + "  &7Y:&f" + location.getBlockY() + "  &7Z:&f" + location.getBlockZ()));
 				player.sendMessage(TextUtil.fixColors( "&aUUID: &f" + plot.getUUID()));
-				new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().send(player);
-			} else new MessageBuilder(Message.NULL_PLOT).send(sender);
+				new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().sendChat(player);
+			} else new MessageBuilder(Message.NULL_PLOT).sendChat(sender);
 		}
 	}
 

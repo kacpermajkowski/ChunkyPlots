@@ -8,7 +8,9 @@ import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class Config {
@@ -26,6 +28,8 @@ public class Config {
 	private Material plotItemMaterial;
 	private String plotItemName;
 	private List<String> plotItemLore;
+
+	private Set<MessageDisplayType> messageDisplayTypes;
 
 	// messages.yml options
 	private HashMap<Message, String> messages;
@@ -59,6 +63,7 @@ public class Config {
 			loadPlotItemMaterial();
 			loadPlotItemName();
 			loadPlotItemLore();
+			loadMessageDisplayTypes();
 
 			loadMessages();
 		} catch (InvalidConfigException e){
@@ -113,6 +118,22 @@ public class Config {
 		this.plotItemLore = this.config.getStringList("plot-item.lore");
 	}
 
+	private void loadMessageDisplayTypes() throws InvalidConfigException {
+		List<String> messageDisplayTypeStrings = this.config.getStringList("interaction-message-display");
+		if(messageDisplayTypeStrings == null)
+			throw new InvalidConfigException("'interaction-message-display' in 'config.yml' is not set");
+
+		this.messageDisplayTypes = new HashSet<>();
+		for(String messageDisplayType : messageDisplayTypeStrings){
+			try {
+				messageDisplayTypes.add(MessageDisplayType.valueOf(messageDisplayType.toUpperCase()));
+			} catch (IllegalArgumentException ignored) {}
+		}
+		if(messageDisplayTypes.isEmpty()){
+			throw new InvalidConfigException("'interaction-message-display' in 'config.yml' cannot be an empty list");
+		}
+	}
+
 	// messages.yml loaders
 	private void loadMessages(){
 		ChunkyPlots plugin = ChunkyPlots.getInstance();
@@ -159,6 +180,8 @@ public class Config {
 	public List<String> getPlotItemLore() {
 		return plotItemLore;
 	}
+
+	public Set<MessageDisplayType> getMessageDisplayTypes() { return messageDisplayTypes; }
 
 	// messages.yml getters
 	public String getMessage(Message type){

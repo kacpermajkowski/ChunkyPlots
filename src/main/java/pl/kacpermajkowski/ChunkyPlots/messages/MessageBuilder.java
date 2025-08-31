@@ -2,12 +2,16 @@ package pl.kacpermajkowski.ChunkyPlots.messages;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
+import pl.kacpermajkowski.ChunkyPlots.config.MessageDisplayType;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.group.Group;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.user.User;
+
+import java.util.Set;
 
 public class MessageBuilder {
     private Message message;
@@ -113,7 +117,33 @@ public class MessageBuilder {
         return TextUtil.fixColors(message);
     }
 
-    public void send(CommandSender receiver) {
+    public void sendChat(CommandSender receiver) {
         receiver.sendMessage(build());
+    }
+
+    public void sendActionBar(Player player) {
+        TextUtil.sendActionBarMessage(player, build());
+    }
+
+    public void sendBossBar(Player player) {
+        TextUtil.sendBossBarMessage(player, build());
+    }
+
+    public void sendAll(CommandSender receiver) {
+        Set<MessageDisplayType> types = Config.getInstance().getMessageDisplayTypes();
+        if(!(receiver instanceof Player player)){
+            sendChat(receiver);
+            return;
+        }
+
+        if(types.contains(MessageDisplayType.CHAT)){
+            sendChat(receiver);
+        }
+        if(types.contains(MessageDisplayType.ACTIONBAR)){
+            sendActionBar(player);
+        }
+        if(types.contains(MessageDisplayType.BOSSBAR)){
+            sendBossBar(player);
+        }
     }
 }

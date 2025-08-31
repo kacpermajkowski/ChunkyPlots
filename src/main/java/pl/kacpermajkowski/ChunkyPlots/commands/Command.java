@@ -17,7 +17,7 @@ public abstract class Command<T extends Command<T>> implements TabExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String s, String[] args) {
 		if(!(sender instanceof Player)){
-			new MessageBuilder(Message.SENDER_NOT_PLAYER).send(sender);
+			new MessageBuilder(Message.SENDER_NOT_PLAYER).sendChat(sender);
 			return true;
 		}
 
@@ -28,12 +28,12 @@ public abstract class Command<T extends Command<T>> implements TabExecutor {
 
 		Subcommand subcommand = getSubcommand(args[0]);
 		if(subcommand == null) {
-			new MessageBuilder(Message.SUBCOMMAND_NOT_FOUND).send(sender);
+			new MessageBuilder(Message.SUBCOMMAND_NOT_FOUND).sendChat(sender);
 			return true;
 		}
 
 		if (!sender.hasPermission(subcommand.getPermission())) {
-			new MessageBuilder(Message.INSUFFICIENT_PERMISSIONS).send(sender);
+			new MessageBuilder(Message.INSUFFICIENT_PERMISSIONS).sendChat(sender);
 			return true;
 		}
 
