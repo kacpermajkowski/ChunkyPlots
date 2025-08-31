@@ -12,24 +12,23 @@ import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public abstract class ProtectionUtil {
-    public static boolean canPlayerAffectPlot(Player player, Plot plot){
+    public static boolean canPlayerAffect(Player player, Plot plot){
         if (player == null) return false;
         if (plot == null) return true;
 
         else return plot.isPlayerOwner(player) || plot.isPlayerWhitelisted(player);
     }
 
-    public static boolean canPlayerAffectBlock(Player player, Block block){
+    public static boolean canPlayerAffect(Player player, Block block){
         Plot plot = PlotManager.getInstance().getPlot(block);
-        return canPlayerAffectPlot(player, plot);
+        return canPlayerAffect(player, plot);
     }
 
-    public static boolean canPlayerAffectEntity(Player player, Entity entity){
+    public static boolean canPlayerAffect(Player player, Entity entity){
         Plot plot = PlotManager.getInstance().getPlot(entity);
-        return canPlayerAffectPlot(player, plot);
+        return canPlayerAffect(player, plot);
     }
 
     public static boolean canPlayerAffectPlots(Player player, List<Plot> plots){
@@ -37,7 +36,7 @@ public abstract class ProtectionUtil {
         if(plots == null || plots.isEmpty()) return true;
 
         for(Plot affectedPlot:plots){
-            if(!canPlayerAffectPlot(player, affectedPlot)) return false;
+            if(!canPlayerAffect(player, affectedPlot)) return false;
         }
         return true;
     }
@@ -71,14 +70,14 @@ public abstract class ProtectionUtil {
         return plot.hasTheSameOwnerAs(affectedPlot);
     }
 
-    public static boolean canBlockAffectPlot(Block block, Plot affectedPlot){
+    public static boolean canBlockAffect(Block block, Plot affectedPlot){
         Plot blockPlot = PlotManager.getInstance().getPlot(block);
         return canPlotAffectPlot(blockPlot, affectedPlot);
     }
 
-    public static boolean canBlockAffectBlock(Block block, Block affectedBlock){
+    public static boolean canBlockAffect(Block block, Block affectedBlock){
         Plot affectedPlot = PlotManager.getInstance().getPlot(affectedBlock);
-        return canBlockAffectPlot(block, affectedPlot);
+        return canBlockAffect(block, affectedPlot);
     }
 
     public static boolean canPlotAffectPlots(Plot plot, List<Plot> plots){
