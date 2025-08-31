@@ -1,5 +1,6 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.block;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -14,6 +15,7 @@ import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -24,9 +26,11 @@ public class ExplodeProtection implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityExplode(final EntityExplodeEvent event){
-		if(!canEntityExplodeBlocks(event.getEntity(), event.blockList())){
-			event.setCancelled(true);
+		List<Block> blockToSave = new ArrayList<>();
+		for(Block block : event.blockList()){
+			if(!canEntityExplodeBlock(event.getEntity(), block)) blockToSave.add(block);
 		}
+		event.blockList().removeAll(blockToSave);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -92,14 +96,14 @@ public class ExplodeProtection implements Listener {
 
 	private boolean canTNTPrimedExplodeBlock(TNTPrimed tntPrimed, Block block) {
 		Entity tntSource = tntPrimed.getSource();
+		Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
 		if(tntSource != null) {
 			if (tntSource.isValid()) {
-				Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
 				if (tntSource instanceof Player player) {
 					return ProtectionUtil.canPlayerAffect(player, blockPlot);
 				}
 			}
-		}
+		} else return blockPlot == null;
 		return false;
 	}
 
