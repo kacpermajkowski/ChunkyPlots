@@ -5,22 +5,63 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class ProtectionUtil {
+    public static boolean canPlayerAffectPlot(Player player, Plot plot){
+        if (player == null) return false;
+        if (plot == null) return true;
+
+        else return plot.isPlayerOwner(player) || plot.isPlayerWhitelisted(player);
+    }
+
     public static boolean canPlayerAffectBlock(Player player, Block block){
         Plot plot = PlotManager.getInstance().getPlot(block);
         return canPlayerAffectPlot(player, plot);
     }
 
-    public static boolean canPlayerAffectPlot(Player player, Plot plot){
-        if (plot == null) return true;
-        if (player == null) return false;
-        else return plot.isPlayerOwner(player) || plot.isPlayerWhitelisted(player);
+    public static boolean canPlayerAffectEntity(Player player, Entity entity){
+        Plot plot = PlotManager.getInstance().getPlot(entity);
+        return canPlayerAffectPlot(player, plot);
+    }
+
+    public static boolean canPlayerAffectPlots(Player player, List<Plot> plots){
+        if(player == null) return false;
+        if(plots == null || plots.isEmpty()) return true;
+
+        for(Plot affectedPlot:plots){
+            if(!canPlayerAffectPlot(player, affectedPlot)) return false;
+        }
+        return true;
+    }
+
+    public static boolean canPlayerAffectBlocks(Player player, List<Block> blocks){
+        if(player == null) return false;
+        if(blocks == null || blocks.isEmpty()) return true;
+
+        List<Plot> plots = new ArrayList<>();
+        for(Block block : blocks){
+            plots.add(PlotManager.getInstance().getPlot(block));
+        }
+        return canPlayerAffectPlots(player, plots);
+    }
+
+    public static boolean canPlayerAffectEntities(Player player, List<Entity> entities){
+        if(player == null) return false;
+        if(entities == null || entities.isEmpty()) return true;
+
+        List<Plot> plots = new ArrayList<>();
+        for(Entity entity : entities){
+            plots.add(PlotManager.getInstance().getPlot(entity));
+        }
+        return canPlayerAffectPlots(player, plots);
     }
 
     public static boolean canPlotAffectPlot(Plot plot, Plot affectedPlot){
@@ -31,19 +72,12 @@ public abstract class ProtectionUtil {
     }
 
     public static boolean canBlockAffectPlot(Block block, Plot affectedPlot){
-        if (affectedPlot == null) return true;
-        else if (block == null) return false;
-
         Plot blockPlot = PlotManager.getInstance().getPlot(block);
         return canPlotAffectPlot(blockPlot, affectedPlot);
     }
 
     public static boolean canBlockAffectBlock(Block block, Block affectedBlock){
-        if(affectedBlock == null) return true;
-        else if(block == null) return false;
-
         Plot affectedPlot = PlotManager.getInstance().getPlot(affectedBlock);
-
         return canBlockAffectPlot(block, affectedPlot);
     }
 
