@@ -58,16 +58,15 @@ public class IgniteProtection implements Listener {
 		Chunk blockChunk = block.getChunk();
 		Plot destinationBlockPlot = PlotManager.getInstance().getPlot(blockChunk);
 
-		if (destinationBlockPlot != null) {
-			if (ignitingEntity instanceof Player player) {
-				return ProtectionUtil.canPlayerAffectPlot(player, destinationBlockPlot);
-			} else if (ignitingEntity instanceof EnderCrystal enderCrystal) {
-				return canEnderCrystalIgnitePlot(enderCrystal, destinationBlockPlot);
-			} else {
-				return false;
-			}
-		} else {
+		if (destinationBlockPlot == null) {
 			return true;
+		}
+		if (ignitingEntity instanceof Player player) {
+			return ProtectionUtil.canPlayerAffectPlot(player, destinationBlockPlot);
+		} else if (ignitingEntity instanceof EnderCrystal enderCrystal) {
+			return canEnderCrystalIgnitePlot(enderCrystal, destinationBlockPlot);
+		} else {
+			return false;
 		}
 	}
 
