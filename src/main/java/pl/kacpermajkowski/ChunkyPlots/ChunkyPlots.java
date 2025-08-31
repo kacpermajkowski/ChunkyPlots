@@ -9,6 +9,7 @@ import pl.kacpermajkowski.ChunkyPlots.crafting.*;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotBlockPlaceListener;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.protections.block.*;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.explosion.*;
 import pl.kacpermajkowski.ChunkyPlots.protections.entity.*;
 import pl.kacpermajkowski.ChunkyPlots.protections.misc.LingeringPotionProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.misc.SplashPotionProtection;
@@ -19,6 +20,7 @@ import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerInteractListener;
 import pl.kacpermajkowski.ChunkyPlots.protections.redstone.DispenserProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.redstone.HopperProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.redstone.PistonProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.redstone.ShriekerProtection;
 import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 
 public class ChunkyPlots extends JavaPlugin {
@@ -38,37 +40,52 @@ public class ChunkyPlots extends JavaPlugin {
 	}
 
 	private void registerListeners(){
+//		misc
 		this.getServer().getPluginManager().registerEvents(new LingeringPotionProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new StructureOvergrowProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new SplashPotionProtection(),this);
+
+//		block - explosion
+		this.getServer().getPluginManager().registerEvents(new EnderCrystalProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new ExplodeProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new TNTMinecartProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new TNTProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new WitherProtection(),this);
+
+//		block
 		this.getServer().getPluginManager().registerEvents(new BlockBreakProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new BlockBurnProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new IgniteProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new BlockFromToListener(),this);
-		this.getServer().getPluginManager().registerEvents(new BlockSpreadListener(),this);
-		this.getServer().getPluginManager().registerEvents(new PistonProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new BlockPlaceListener(),this);
+		this.getServer().getPluginManager().registerEvents(new BlockSpreadListener(),this);
+		this.getServer().getPluginManager().registerEvents(new FertilizedGrassOvergrowthProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new IgniteProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new LecternBookProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new StructureOvergrowProtection(),this);
+
+//		entity
+		this.getServer().getPluginManager().registerEvents(new BoatSpamProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new EntityDamageProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new EntityInteractionProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new EntityKnockbackProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new PlayerLeashEntityProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new PlayerShearEntityProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new PlayerUnleashEntityProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new VehicleDamageListener(),this);
+		this.getServer().getPluginManager().registerEvents(new VehicleEnterListener(),this);
+
+//		player
+		this.getServer().getPluginManager().registerEvents(new PlayerBucketEmptyListener(),this);
+		this.getServer().getPluginManager().registerEvents(new PlayerEntryProtection(), this);
+		this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(),this);
+
+//		redstone
 		this.getServer().getPluginManager().registerEvents(new DispenserProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new HopperProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new EntityKnockbackProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new ExplodeProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new PlayerBucketEmptyListener(),this);
-		this.getServer().getPluginManager().registerEvents(new EntityInteractionProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(),this);
-		this.getServer().getPluginManager().registerEvents(new PlayerLeashEntityProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new PistonProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new ShriekerProtection(),this);
+
+//		regular listeners
 		this.getServer().getPluginManager().registerEvents(new PlotTransitionNotifier(),this);
-		this.getServer().getPluginManager().registerEvents(new PlayerEntryProtection(), this);
-		this.getServer().getPluginManager().registerEvents(new PlayerShearEntityProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new LecternBookProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new PlayerUnleashEntityProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new SplashPotionProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new VehicleDamageListener(),this);
-		this.getServer().getPluginManager().registerEvents(new EntityDamageProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new VehicleEnterListener(),this);
-		this.getServer().getPluginManager().registerEvents(new BoatSpamProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new ShriekerTriggerProtection(),this);
-		this.getServer().getPluginManager().registerEvents(new FertilizedGrassOvergrowthProtection(),this);
-
-
 		this.getServer().getPluginManager().registerEvents(new PlotBlockPlaceListener(), this);
 	}
 

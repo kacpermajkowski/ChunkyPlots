@@ -1,4 +1,4 @@
-package pl.kacpermajkowski.ChunkyPlots.protections.block;
+package pl.kacpermajkowski.ChunkyPlots.protections.redstone;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -12,7 +12,7 @@ import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 
-public class ShriekerTriggerProtection implements Listener {
+public class ShriekerProtection implements Listener {
     //TODO: Add a way to disable it in config cuz its prolly a resource hog
 
     Block lastBlock = null;
