@@ -151,20 +151,16 @@ public class ShriekerTriggerProtection implements Listener {
         Plot destPlot = PlotManager.getInstance().getPlot(event.getBlock());
         if(destPlot == null) return;
 
-        Bukkit.broadcastMessage("1");
         Entity entity = event.getEntity();
         if(entity instanceof Player player) {
-            Bukkit.broadcastMessage("2");
             if(ProtectionUtil.canPlayerAffect(player, destPlot)) return;
         } else if (entity != null) {
             Plot entityPlot = PlotManager.getInstance().getPlot(entity);
-
             if(entityPlot != null && entityPlot.hasTheSameOwnerAs(destPlot)) return;
         } else if (lastBlock != null) {
             if(ProtectionUtil.canBlockAffect(lastBlock, destPlot)) return;
         }
 
-        Bukkit.broadcastMessage("4");
         event.setCancelled(true);
     }
 }
