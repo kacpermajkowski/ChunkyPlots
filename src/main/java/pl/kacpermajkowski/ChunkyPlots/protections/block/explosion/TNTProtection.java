@@ -1,5 +1,6 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.block.explosion;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -11,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.TNTPrimeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
+import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
@@ -31,6 +33,9 @@ public class TNTProtection implements Listener {
         Entity entity = event.getEntity();
         if(!(entity instanceof TNTPrimed tnt)) return;
         tntEntitySources.put(tnt, lastTntPrimedSource);
+        Bukkit.getScheduler().runTaskLater(ChunkyPlots.getInstance(), () -> {
+            tntEntitySources.remove(tnt);
+        }, tnt.getFuseTicks()* 2L);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
