@@ -147,7 +147,6 @@ public class ShriekerProtection implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onVibrationSpawn(BlockReceiveGameEvent event) {
-        Bukkit.broadcastMessage(event.getBlock().getType().name());
         Plot destPlot = PlotManager.getInstance().getPlot(event.getBlock());
         if(destPlot == null) return;
 
