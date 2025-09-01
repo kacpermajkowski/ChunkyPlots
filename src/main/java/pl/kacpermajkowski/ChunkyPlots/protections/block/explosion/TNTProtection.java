@@ -23,7 +23,7 @@ import java.util.List;
 
 public class TNTProtection implements Listener {
     Block lastTntPrimedSource = null;
-    HashMap<TNTPrimed, Block> tntEntitySources = new HashMap<>();
+    HashMap<TNTPrimed, Block> tntBlockSources = new HashMap<>();
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTntPrimed(TNTPrimeEvent event) {
         lastTntPrimedSource = event.getBlock();
@@ -32,9 +32,9 @@ public class TNTProtection implements Listener {
     public void onTntSpawn(EntitySpawnEvent event) {
         Entity entity = event.getEntity();
         if(!(entity instanceof TNTPrimed tnt)) return;
-        tntEntitySources.put(tnt, lastTntPrimedSource);
+        tntBlockSources.put(tnt, lastTntPrimedSource);
         Bukkit.getScheduler().runTaskLater(ChunkyPlots.getInstance(), () -> {
-            tntEntitySources.remove(tnt);
+            tntBlockSources.remove(tnt);
         }, tnt.getFuseTicks()* 2L);
     }
 
@@ -58,7 +58,7 @@ public class TNTProtection implements Listener {
         Entity tntSource = tntPrimed.getSource();
         Plot blockPlot = PlotManager.getInstance().getPlot(block);
         if(tntSource == null) {
-            Block blockSource = tntEntitySources.get(tntPrimed);
+            Block blockSource = tntBlockSources.get(tntPrimed);
             if(blockPlot == null) return true;
             else if(blockSource != null) {
                 return ProtectionUtil.canBlockAffect(blockSource, block);

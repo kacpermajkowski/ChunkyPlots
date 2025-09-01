@@ -11,6 +11,7 @@ import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.protections.block.*;
 import pl.kacpermajkowski.ChunkyPlots.protections.block.explosion.*;
 import pl.kacpermajkowski.ChunkyPlots.protections.entity.*;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.ProjectileHitProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.misc.LingeringPotionProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.misc.SplashPotionProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerBucketEmptyListener;
@@ -70,6 +71,7 @@ public class ChunkyPlots extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new PlayerLeashEntityProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerShearEntityProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new PlayerUnleashEntityProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new ProjectileHitProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new VehicleDamageListener(),this);
 		this.getServer().getPluginManager().registerEvents(new VehicleEnterListener(),this);
 
