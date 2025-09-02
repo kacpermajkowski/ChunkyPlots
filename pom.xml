@@ -6,7 +6,7 @@
 
     <groupId>ChunkyPlots</groupId>
     <artifactId>ChunkyPlots</artifactId>
-    <version>DEV-25w35</version>
+    <version>DEV-25w36</version>
     <packaging>jar</packaging>
 
     <name>ChunkyPlots</name>
