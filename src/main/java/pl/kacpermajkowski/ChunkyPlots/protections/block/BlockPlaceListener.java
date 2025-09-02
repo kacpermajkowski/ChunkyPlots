@@ -17,6 +17,7 @@ public class BlockPlaceListener implements Listener {
         final Player player = event.getPlayer();
         final Plot eventPlot = PlotManager.getInstance().getPlot(event.getBlockPlaced());
 
-        event.setCancelled(!ProtectionUtil.canPlayerAffect(player, eventPlot));
+        if(ProtectionUtil.canPlayerAffect(player, eventPlot)) return;
+        event.setCancelled(true);
     }
 }

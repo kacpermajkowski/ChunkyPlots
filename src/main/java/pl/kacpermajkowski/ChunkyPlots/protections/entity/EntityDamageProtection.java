@@ -1,11 +1,15 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.entity;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
@@ -19,7 +23,8 @@ public class EntityDamageProtection implements Listener {
         final Entity attacker = event.getDamager();
         final Entity victim = event.getEntity();
 
-        event.setCancelled(!canEntityDamageEntity(attacker, victim));
+        if(canEntityDamageEntity(attacker, victim)) return;
+        event.setCancelled(true);
     }
 
     public boolean canEntityDamageEntity(Entity attacker, Entity victim) {
@@ -29,10 +34,8 @@ public class EntityDamageProtection implements Listener {
             return canProjectileDamageEntity(projectile, victim);
         } else if(attacker instanceof Monster monster){
             return canMonsterDamageEntity(monster, victim);
-        } else {
-            if(attacker instanceof TNTPrimed tntPrimed){
-                return canTntDamageEntity(tntPrimed, victim);
-            }
+        } else if(attacker instanceof TNTPrimed tntPrimed){
+            return canTntDamageEntity(tntPrimed, victim);
         }
         return false;
     }
