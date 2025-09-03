@@ -18,10 +18,7 @@ import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerBucketEmptyListen
 import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerEntryProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.entity.EntityInteractionProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerInteractListener;
-import pl.kacpermajkowski.ChunkyPlots.protections.redstone.DispenserProtection;
-import pl.kacpermajkowski.ChunkyPlots.protections.redstone.HopperProtection;
-import pl.kacpermajkowski.ChunkyPlots.protections.redstone.PistonProtection;
-import pl.kacpermajkowski.ChunkyPlots.protections.redstone.ShriekerProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.redstone.*;
 import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 
 public class ChunkyPlots extends JavaPlugin {
@@ -84,6 +81,7 @@ public class ChunkyPlots extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new DispenserProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new HopperProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new PistonProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new RedstoneSignalProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new ShriekerProtection(),this);
 
 //		regular listeners
