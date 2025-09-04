@@ -1,5 +1,6 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.entity;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

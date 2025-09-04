@@ -69,13 +69,6 @@ public abstract class ProtectionUtil {
         return canPlayerAffectPlots(player, plots);
     }
 
-    public static boolean canPlotAffectPlot(Plot plot, Plot affectedPlot){
-        if(affectedPlot == null) return true;
-        else if(plot == null) return false;
-
-        return plot.hasTheSameOwnerAs(affectedPlot);
-    }
-
     public static boolean canBlockAffect(Block block, Plot affectedPlot){
         Plot blockPlot = PlotManager.getInstance().getPlot(block);
         return canPlotAffectPlot(blockPlot, affectedPlot);
@@ -84,6 +77,30 @@ public abstract class ProtectionUtil {
     public static boolean canBlockAffect(Block block, Block affectedBlock){
         Plot affectedPlot = PlotManager.getInstance().getPlot(affectedBlock);
         return canBlockAffect(block, affectedPlot);
+    }
+
+    public static boolean canBlockAffect(Block block, BlockState affectedBlock){
+        Plot plot = PlotManager.getInstance().getPlot(affectedBlock);
+        return canBlockAffect(block, plot);
+    }
+
+    public static boolean canBlockAffectEntity(Block block, Entity entity){
+        Plot blockPlot = PlotManager.getInstance().getPlot(block);
+        Plot entityPlot = PlotManager.getInstance().getPlot(entity);
+        return canPlotAffectPlot(blockPlot, entityPlot);
+    }
+
+    public static boolean canEntityAffect(Entity entity, Entity affectedEntity){
+        Plot entityPlot = PlotManager.getInstance().getPlot(entity);
+        Plot affectedPlot = PlotManager.getInstance().getPlot(affectedEntity);
+        return canPlotAffectPlot(entityPlot, affectedPlot);
+    }
+
+    public static boolean canPlotAffectPlot(Plot plot, Plot affectedPlot){
+        if(affectedPlot == null) return true;
+        else if(plot == null) return false;
+
+        return plot.hasTheSameOwnerAs(affectedPlot);
     }
 
     public static boolean canPlotAffectPlots(Plot plot, List<Plot> plots){
