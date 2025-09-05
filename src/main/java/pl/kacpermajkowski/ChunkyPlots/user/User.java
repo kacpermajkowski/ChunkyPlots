@@ -1,5 +1,7 @@
 package pl.kacpermajkowski.ChunkyPlots.user;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import pl.kacpermajkowski.ChunkyPlots.plot.group.Group;
@@ -11,25 +13,41 @@ import java.util.List;
 import java.util.UUID;
 
 public class User {
+    @Getter
 	private final UUID playerUUID;
-	private Plot currentPlot;
-	private boolean isBypassingRestrictions, isTeleportOnCooldown, isTeleporting = false;
-	private List<Group> groups = new ArrayList<>();
+    private final List<Group> groups = new ArrayList<>();
 
-	public User(UUID playerUUID) {
+	@Setter
+    @Getter
+    private Plot currentPlot;
+	@Setter
+    @Getter
+    private boolean isBypassingRestrictions = false;
+    @Setter
+    @Getter
+    private boolean isTeleportOnCooldown = false;
+    @Setter
+    @Getter
+    private boolean isTeleporting = false;
+
+	public User(final UUID playerUUID) {
 		this.playerUUID = playerUUID;
 		groups.add(new Group("all"));
 	}
 	public User(OfflinePlayer player) {
 		this(player.getUniqueId());
 	}
-	public UUID getPlayerUUID() {
-		return playerUUID;
-	}
-	public String getName(){ return Bukkit.getServer().getOfflinePlayer(playerUUID).getName(); }
+
+    // USER NAME
+	public String getName(){
+        return Bukkit.getServer().getOfflinePlayer(playerUUID).getName();
+    }
+
+    // GROUPS
 	public List<Group> getGroups(){
 		return Collections.unmodifiableList(groups);
 	}
+
 	public void createGroup(String groupName){
 		groups.add(new Group(groupName));
 	}
@@ -44,6 +62,7 @@ public class User {
 		}
 		return null;
 	}
+
 	public boolean hasGroup(String groupName){
 		for(Group group:groups){
 			if(group.getName().equals(groupName)) {
@@ -51,37 +70,5 @@ public class User {
 			}
 		}
 		return false;
-	}
-
-	public boolean isBypassingRestrictions() {
-		return isBypassingRestrictions;
-	}
-
-	public void setBypassingRestrictions(boolean bypassingRestrictions) {
-		isBypassingRestrictions = bypassingRestrictions;
-	}
-
-	public Plot getCurrentPlot(){
-		return currentPlot;
-	}
-
-	public void setCurrentPlot(Plot currentPlot) {
-		this.currentPlot = currentPlot;
-	}
-
-	public boolean isTeleportOnCooldown() {
-		return isTeleportOnCooldown;
-	}
-
-	public void setTeleportOnCooldown(boolean teleportOnCooldown) {
-		this.isTeleportOnCooldown = teleportOnCooldown;
-	}
-
-	public boolean isTeleporting() {
-		return isTeleporting;
-	}
-
-	public void setTeleporting(boolean teleporting) {
-		isTeleporting = teleporting;
 	}
 }
