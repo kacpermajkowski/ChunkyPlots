@@ -130,6 +130,10 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
 <!--        <repository>-->
 <!--            <id>papermc</id>-->
 <!--            <url>https://repo.papermc.io/repository/maven-public/</url>-->
@@ -159,6 +163,11 @@
             <artifactId>lombok</artifactId>
             <version>1.18.38</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Redned235.ConfigLib</groupId>
+            <artifactId>spigot</artifactId>
+            <version>master-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
