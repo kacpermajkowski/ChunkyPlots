@@ -1,9 +1,11 @@
 package pl.kacpermajkowski.ChunkyPlots;
 
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.PlotAdminCommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
+import pl.kacpermajkowski.ChunkyPlots.exceptions.InvalidStateException;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlotTransitionNotifier;
 import pl.kacpermajkowski.ChunkyPlots.crafting.*;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotBlockPlaceListener;
@@ -22,19 +24,17 @@ import pl.kacpermajkowski.ChunkyPlots.protections.redstone.*;
 import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 
 public class ChunkyPlots extends JavaPlugin {
-	private static ChunkyPlots instance;
-
 	@Override
 	public void onEnable(){
-		instance = this;
-
+        //initializing singletons
 		Config.getInstance();
+
 		PlotManager.getInstance();
 		UserManager.getInstance();
 		CraftingManager.getInstance();
 
 		registerListeners();
-		registerCommands();
+        tryRegisterCommands();
 	}
 
 	private void registerListeners(){
@@ -90,12 +90,32 @@ public class ChunkyPlots extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new PlotBlockPlaceListener(), this);
 	}
 
-	private void registerCommands() {
-		getCommand("plot").setExecutor(PlotCommand.getInstance());
-		getCommand("plotadmin").setExecutor(PlotAdminCommand.getInstance());
+    private void tryRegisterCommands(){
+        try {
+            registerCommands();
+        } catch (InvalidStateException e) {
+            getLogger().severe("Couldn't start the plugin because of invalid plugin or server state");
+            getLogger().severe("Reason: " + e.getMessage());
+            getServer().getPluginManager().disablePlugin(this);
+        }
+    }
+
+	private void registerCommands() throws InvalidStateException {
+		requireCommand("plot").setExecutor(PlotCommand.getInstance());
+		requireCommand("plotadmin").setExecutor(PlotAdminCommand.getInstance());
 	}
 
-	public static ChunkyPlots getInstance(){
-		return instance;
+    private PluginCommand requireCommand(String commandName) throws InvalidStateException {
+        PluginCommand cmd = getCommand(commandName);
+        if(cmd == null) {
+            throw new InvalidStateException(
+                    "Command 'plot' was not registered with the server, so the plugin couldn't hook up to it. " +
+                    "This is probably a plugin.yml configuration issue. Please report this to the plugin developer.");
+        }
+        return cmd;
+    }
+
+	public static ChunkyPlots instance(){
+		return getPlugin(ChunkyPlots.class);
 	}
 }
