@@ -3,7 +3,6 @@ package pl.kacpermajkowski.ChunkyPlots.plot;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -32,7 +31,7 @@ public class PlotManager implements Listener {
 
 	private final List<Plot> plots = new ArrayList<Plot>();
 	private ItemStack plotItem;
-	private File plotDirectory = new File(ChunkyPlots.getInstance().getDataFolder() + "/plots");
+	private File plotDirectory = new File(ChunkyPlots.instance().getDataFolder() + "/plots");
 
 	private PlotManager(){
 		loadPlots();
@@ -92,7 +91,7 @@ public class PlotManager implements Listener {
 	}
 	public void savePlot(Plot plot) {
 		try {
-			File file = new File(ChunkyPlots.getInstance().getDataFolder() + "/plots/" + plot.getUUID());
+			File file = new File(ChunkyPlots.instance().getDataFolder() + "/plots/" + plot.getUUID());
 			FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
 			fc.set("owner.uuid", plot.getOwnerUUID().toString());
 			fc.set("chunk.x", plot.getChunkX());
@@ -186,7 +185,7 @@ public class PlotManager implements Listener {
 	public static PlotManager getInstance(){
 		if(instance == null){
 			instance = new PlotManager();
-			Bukkit.getServer().getPluginManager().registerEvents(instance, ChunkyPlots.getInstance());
+			Bukkit.getServer().getPluginManager().registerEvents(instance, ChunkyPlots.instance());
 		}
 		return instance;
 	}

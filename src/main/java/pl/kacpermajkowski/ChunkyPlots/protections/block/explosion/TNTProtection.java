@@ -33,7 +33,7 @@ public class TNTProtection implements Listener {
         Entity entity = event.getEntity();
         if(!(entity instanceof TNTPrimed tnt)) return;
         tntBlockSources.put(tnt, lastTntPrimedSource);
-        Bukkit.getScheduler().runTaskLater(ChunkyPlots.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(ChunkyPlots.instance(), () -> {
             tntBlockSources.remove(tnt);
         }, tnt.getFuseTicks()* 2L);
     }

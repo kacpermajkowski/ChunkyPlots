@@ -51,7 +51,7 @@ public class TextUtil {
 
         bossBar.addPlayer(player);
 
-        task = Bukkit.getScheduler().runTaskLater(ChunkyPlots.getInstance(), () -> {
+        task = Bukkit.getScheduler().runTaskLater(ChunkyPlots.instance(), () -> {
             bossBar.removePlayer(player);
         }, 60);
     }

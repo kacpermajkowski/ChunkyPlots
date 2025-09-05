@@ -114,12 +114,12 @@ public abstract class ProtectionUtil {
     }
 
     //Written by chatgpt - it needs optimalization probably, but i don't think it's called very often
-    public static Location getSafeBorderPoint(Player player, Chunk chunk) {
+    public static Location getSafeBorderPoint(Entity entity, Chunk chunk) {
         int chunkX = chunk.getX() * 16;
         int chunkZ = chunk.getZ() * 16;
-        World world = player.getWorld();
+        World world = entity.getWorld();
 
-        Location playerLoc = player.getLocation();
+        Location playerLoc = entity.getLocation();
         double minDistance = Double.MAX_VALUE;
         Location closestPoint = null;
 
@@ -151,10 +151,10 @@ public abstract class ProtectionUtil {
         }
 
         // Ensure the location is safe
-        return findSafeLocation(closestPoint, player);
+        return findSafeLocation(closestPoint);
     }
 
-    private static Location findSafeLocation(Location loc, Player player) {
+    private static Location findSafeLocation(Location loc) {
         World world = loc.getWorld();
 
         // Search within a 2-block range for a safe position

@@ -40,19 +40,19 @@ public class Config {
 	}
 
 	private void loadFileConfigurations() {
-		File dataFolder = ChunkyPlots.getInstance().getDataFolder();
+		File dataFolder = ChunkyPlots.instance().getDataFolder();
 		dataFolder.mkdirs();
 
-		ChunkyPlots.getInstance().saveDefaultConfig();
+		ChunkyPlots.instance().saveDefaultConfig();
 		List<File> files = List.of(
 				new File(dataFolder, "messages.yml")
 		);
 		for (File file : files) {
 			if(!file.exists())
-				ChunkyPlots.getInstance().saveResource(file.getName(), false);
+				ChunkyPlots.instance().saveResource(file.getName(), false);
 		}
 
-		this.config = ChunkyPlots.getInstance().getConfig();
+		this.config = ChunkyPlots.instance().getConfig();
 		this.messageConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "messages.yml"));
 	}
 	private void loadConfigValues() {
@@ -67,7 +67,7 @@ public class Config {
 
 			loadMessages();
 		} catch (InvalidConfigException e){
-			ChunkyPlots plugin = ChunkyPlots.getInstance();
+			ChunkyPlots plugin = ChunkyPlots.instance();
 			Logger logger = plugin.getLogger();
 
 			logger.severe("Couldn't start the plugin because of invalid configuration");
@@ -80,20 +80,20 @@ public class Config {
 	private void loadIsUsingMessagePrefix() {
 		this.isUsingMessagePrefix = config.getBoolean("use-message-prefix");
 		if(config.getString("use-message-prefix") == null){
-			ChunkyPlots.getInstance().getLogger().warning("'use-message-prefix' in 'config.yml' is not set. Prefix will not be displayed.");
+			ChunkyPlots.instance().getLogger().warning("'use-message-prefix' in 'config.yml' is not set. Prefix will not be displayed.");
 		}
 	}
 	private void loadPrefix(){
 		this.prefix = this.config.getString("prefix");
 		if(this.prefix == null){
-			ChunkyPlots.getInstance().getLogger().warning("'prefix' in 'config.yml' is not set. Using empty string instead.");
+			ChunkyPlots.instance().getLogger().warning("'prefix' in 'config.yml' is not set. Using empty string instead.");
 			this.prefix = "";
 		}
 	}
 	private void loadPrefixSpacer(){
 		this.prefixSpacer = this.config.getString("prefix-spacer");
 		if(prefixSpacer == null){
-			ChunkyPlots.getInstance().getLogger().warning("'prefix-spacer' in 'config.yml' is not set. Using empty string instead.");
+			ChunkyPlots.instance().getLogger().warning("'prefix-spacer' in 'config.yml' is not set. Using empty string instead.");
 			this.prefixSpacer = "";
 		}
 	}
@@ -136,7 +136,7 @@ public class Config {
 
 	// messages.yml loaders
 	private void loadMessages(){
-		ChunkyPlots plugin = ChunkyPlots.getInstance();
+		ChunkyPlots plugin = ChunkyPlots.instance();
 		Logger logger = plugin.getLogger();
 
 		messages = new HashMap<>();

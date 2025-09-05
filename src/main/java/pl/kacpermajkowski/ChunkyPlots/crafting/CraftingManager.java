@@ -30,7 +30,7 @@ public class CraftingManager {
 	}
 
 	private ShapedRecipe createPlotBlockRecipe(){
-		NamespacedKey key = new NamespacedKey(ChunkyPlots.getInstance(), "plot_block");
+		NamespacedKey key = new NamespacedKey(ChunkyPlots.instance(), "plot_block");
 		ShapedRecipe recipe = new ShapedRecipe(key, PlotManager.getInstance().getPlotItem());
 		recipe.shape("fff", "fef", "fgf");
 		recipe.setIngredient('f', Material.OAK_FENCE);

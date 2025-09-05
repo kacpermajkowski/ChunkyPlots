@@ -109,7 +109,7 @@ public class UserManager implements Listener {
 	}
 
 	private File getUserDirectory(){
-		File userDirectory = new File(ChunkyPlots.getInstance().getDataFolder() + "/users");
+		File userDirectory = new File(ChunkyPlots.instance().getDataFolder() + "/users");
 		if(!userDirectory.exists())
 			userDirectory.mkdirs();
 		return userDirectory;
@@ -128,7 +128,7 @@ public class UserManager implements Listener {
 	public static UserManager getInstance(){
 		if(instance == null) {
 			instance = new UserManager();
-			Bukkit.getServer().getPluginManager().registerEvents(instance, ChunkyPlots.getInstance());
+			Bukkit.getServer().getPluginManager().registerEvents(instance, ChunkyPlots.instance());
 		}
 		return instance;
 	}

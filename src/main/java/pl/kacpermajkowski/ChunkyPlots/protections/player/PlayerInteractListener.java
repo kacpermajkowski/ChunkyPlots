@@ -3,7 +3,6 @@ package pl.kacpermajkowski.ChunkyPlots.protections.player;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -52,7 +51,7 @@ public class PlayerInteractListener implements Listener {
 		event.setCancelled(true);
 
 //		client-side prediction cosmetic effect fix, still works only when player drops off the ore
-		Bukkit.getScheduler().runTaskLater(ChunkyPlots.getInstance(),
+		Bukkit.getScheduler().runTaskLater(ChunkyPlots.instance(),
 				() -> event.getPlayer().sendBlockChange(block.getLocation(), block.getBlockData())
 		, 1L);
 	}
