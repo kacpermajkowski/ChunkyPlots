@@ -26,15 +26,17 @@ import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 public class ChunkyPlots extends JavaPlugin {
 	@Override
 	public void onEnable(){
-        //initializing singletons
-		Config.getInstance();
-
-		PlotManager.getInstance();
-		UserManager.getInstance();
-		CraftingManager.getInstance();
+        initializeInstances();
 
 		registerListeners();
         tryRegisterCommands();
+	}
+
+	private void initializeInstances(){
+		Config.getInstance();
+		PlotManager.getInstance();
+		UserManager.getInstance();
+		CraftingManager.getInstance();
 	}
 
 	private void registerListeners(){
