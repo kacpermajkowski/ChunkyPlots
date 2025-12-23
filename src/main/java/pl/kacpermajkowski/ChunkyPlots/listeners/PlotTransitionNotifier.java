@@ -15,47 +15,51 @@ import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 
 public class PlotTransitionNotifier implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerMove(final PlayerMoveEvent event) {
-        final Location to = event.getTo();
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Location to = event.getTo();
+
+        // idk precisely when it happens, but the getter is marked as nullable
         if (to == null) return;
 
-        final Player player = event.getPlayer();
-        final User user = UserManager.getInstance().getUser(player);
-        if(user == null) return; //TODO: should probably throw some kind of illegal state exception
+        User user = UserManager.getInstance().getUser(event.getPlayer());
+        if(user == null)
+            throw new IllegalStateException("There is no User mapped to Player.");
 
-        final Plot fromPlot = user.getCurrentPlot();
-        final Plot toPlot = PlotManager.getInstance().getPlot(to);
+        Plot fromPlot = user.getCachedCurrentPlot();
+        Plot toPlot = PlotManager.getInstance().getPlot(to);
 
-        if(fromPlot == toPlot) return;
-        else if(toPlot == null) handleLeavingPlot(player, fromPlot);
-        else if(fromPlot == null) handleEnteringPlot(player, toPlot);
-        else handleSwitchingPlots(player, fromPlot, toPlot);
+        if(toPlot == null)
+            handleLeavingPlot(user, fromPlot);
+        else if(fromPlot == null)
+            handleEnteringPlot(user, toPlot);
+        else
+            handleSwitchingPlots(user, fromPlot, toPlot);
     }
 
-    private void handleLeavingPlot(Player player, Plot fromPlot) {
-        if(!fromPlot.isPlayerBlacklisted(player)) {
-            sendLeaveMessage(player, fromPlot);
-            UserManager.getInstance().getUser(player).setCurrentPlot(null);
+    private void handleLeavingPlot(User user, Plot fromPlot) {
+        if(!fromPlot.isPlayerBlacklisted(user)) {
+            sendLeaveMessage(user, fromPlot);
+            user.setCachedCurrentPlot(null);
         }
     }
 
-    private void handleEnteringPlot(Player player, Plot toPlot) {
-        if(!toPlot.isPlayerBlacklisted(player)) {
-            sendEntryMessage(player, toPlot);
-            UserManager.getInstance().getUser(player).setCurrentPlot(toPlot);
+    private void handleEnteringPlot(User user, Plot toPlot) {
+        if(!toPlot.isPlayerBlacklisted(user)) {
+            sendEntryMessage(user, toPlot);
+            user.setCachedCurrentPlot(toPlot);
         }
     }
 
-    private void handleSwitchingPlots(Player player, Plot fromPlot, Plot toPlot) {
+    private void handleSwitchingPlots(User user, Plot fromPlot, Plot toPlot) {
         if(!fromPlot.hasTheSameOwnerAs(toPlot)){
-            handleEnteringPlot(player, toPlot);
+            handleEnteringPlot(user, toPlot);
         }
     }
 
-    private void sendEntryMessage(Player player, Plot newPlot){
-        new MessageBuilder(Message.ENTERED_PLOT).plot(newPlot).sendAll(player);
+    private void sendEntryMessage(User user, Plot newPlot){
+        new MessageBuilder(Message.ENTERED_PLOT).plot(newPlot).sendAll(user.getPlayer());
     }
-    private void sendLeaveMessage(Player player, Plot previousPlot){
-        new MessageBuilder(Message.LEFT_PLOT).plot(previousPlot).sendAll(player);
+    private void sendLeaveMessage(User user, Plot previousPlot){
+        new MessageBuilder(Message.LEFT_PLOT).plot(previousPlot).sendAll(user.getPlayer());
     }
 }

@@ -7,6 +7,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import pl.kacpermajkowski.ChunkyPlots.user.User;
 
 import java.util.*;
 
@@ -112,6 +113,9 @@ public class Plot {
 	}
 	public boolean isPlayerBlacklisted(OfflinePlayer player){
 		return blacklist.contains(player.getUniqueId());
+	}
+	public boolean isPlayerBlacklisted(User user){
+		return blacklist.contains(user.getPlayerUUID());
 	}
 
 	public boolean isPlayerOwner(UUID playerUUID){
