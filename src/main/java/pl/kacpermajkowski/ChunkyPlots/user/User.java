@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.plot.group.Group;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 
@@ -19,7 +20,7 @@ public class User {
 
 	@Setter
     @Getter
-    private Plot currentPlot;
+    private Plot cachedCurrentPlot;
 	@Setter
     @Getter
     private boolean isBypassingRestrictions = false;
@@ -70,5 +71,9 @@ public class User {
 			}
 		}
 		return false;
+	}
+
+	public Player getPlayer(){
+		return Bukkit.getServer().getPlayer(playerUUID);
 	}
 }
