@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PlotAdminCommand extends Command<PlotAdminCommand> {
+public class PlotAdminCommand extends Command {
     private static PlotAdminCommand instance;
     private final List<Subcommand> subcommands;
 

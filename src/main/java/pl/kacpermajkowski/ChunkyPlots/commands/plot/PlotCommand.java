@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PlotCommand extends Command<PlotCommand> {
+public class PlotCommand extends Command {
 	private static PlotCommand instance;
 
 	private final ArrayList<PlotSubcommand> subcommands;

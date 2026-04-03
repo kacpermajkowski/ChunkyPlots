@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class Command<T extends Command<T>> implements TabExecutor {
+public abstract class Command implements TabExecutor {
 	protected abstract void execute(CommandSender sender, String[] args);
 	protected abstract List<Subcommand> getSubcommands();
 
