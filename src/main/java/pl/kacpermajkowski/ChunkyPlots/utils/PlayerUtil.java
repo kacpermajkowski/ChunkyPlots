@@ -6,7 +6,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,7 +18,6 @@ public class PlayerUtil {
      * @return OfflinePlayer object
      * @see OfflinePlayer
      * **/
-    @Nullable
     public static OfflinePlayer getOfflinePlayer(final String playerName) {
         for(final OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
             final String offlinePlayerName = offlinePlayer.getName();
