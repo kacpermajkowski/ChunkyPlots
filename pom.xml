@@ -6,7 +6,7 @@
 
     <groupId>ChunkyPlots</groupId>
     <artifactId>ChunkyPlots</artifactId>
-    <version>DEV-25w51</version>
+    <version>DEV-2026.1</version>
     <packaging>jar</packaging>
 
     <name>ChunkyPlots</name>
@@ -17,44 +17,48 @@
 
     <build>
         <plugins>
+            <!--            For testing coverage -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
 
+            <!--            Handles license notices-->
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>groovy-maven-plugin</artifactId>
-                <version>2.1.1</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.4.0</version>
+
                 <executions>
                     <execution>
-                        <phase>initialize</phase>
+                        <id>generate-third-party-notices</id>
                         <goals>
-                            <goal>execute</goal>
+                            <goal>add-third-party</goal>
                         </goals>
                         <configuration>
-                            <source>
-                                // Extract Paper version from MockBukkit JAR
-                                def mockbukkitJar = project.artifacts.find {
-                                    it.artifactId.startsWith('mockbukkit-')
-                                }?.file
+                            <thirdPartyFilename>META-INF/THIRD-PARTY.txt</thirdPartyFilename>
+                            <failOnMissing>true</failOnMissing>
+                            <excludedScopes>provided,system</excludedScopes>
+                            <fileTemplate>/org/codehaus/mojo/license/third-party-file-groupByLicense.ftl</fileTemplate>
+                        </configuration>
+                    </execution>
 
-                                if (mockbukkitJar) {
-                                    def jar = new java.util.jar.JarFile(mockbukkitJar)
-                                    def manifest = jar.manifest
-                                    def paperVersion = manifest.mainAttributes.getValue('Paper-Version')
-                                    jar.close()
-
-                                    if (paperVersion) {
-                                        project.properties['paper.version.from.mockbukkit'] = paperVersion
-                                    }
-                                }
-                            </source>
+                    <execution>
+                        <id>download-license-texts</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>download-licenses</goal>
+                        </goals>
+                        <configuration>
+                            <licensesOutputDirectory>${project.build.outputDirectory}/META-INF/licenses</licensesOutputDirectory>
+                            <excludedScopes>provided,system</excludedScopes>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+<!--            Lombok process annotation declaration required in Java 23+-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -71,23 +75,8 @@
                     <target>21</target>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-shade-plugin</artifactId>-->
-<!--                <version>3.6.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>shade</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <createDependencyReducedPom>false</createDependencyReducedPom>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
         </plugins>
+
         <resources>
             <resource>
                 <directory>src/main/java</directory>
@@ -105,14 +94,6 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-<!--        <repository>-->
-<!--            <id>papermc</id>-->
-<!--            <url>https://repo.papermc.io/repository/maven-public/</url>-->
-<!--        </repository>-->
     </repositories>
 
     <dependencies>
@@ -122,17 +103,7 @@
             <version>1.21.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.papermc.paper</groupId>-->
-<!--            <artifactId>paper-api</artifactId>-->
-<!--            <version>1.21.8-R0.1-SNAPSHOT</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.18.0</version>
-        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -140,16 +111,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.Redned235.ConfigLib</groupId>
-            <artifactId>spigot</artifactId>
-            <version>master-SNAPSHOT</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.Anon8281</groupId>
-            <artifactId>UniversalScheduler</artifactId>
-            <version>0.1.7</version>
-            <scope>compile</scope>
-        </dependency>
+
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -159,9 +126,19 @@
         <dependency>
             <groupId>org.mockbukkit.mockbukkit</groupId>
             <artifactId>mockbukkit-v1.21</artifactId>
-            <version>4.98.0</version>
-            <scope>test</scope>
+            <version>4.108.0</version>
         </dependency>
     </dependencies>
 
+<!--    Temporary transitive dependency version override for security of mockbukkit -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>4.0.3</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
