@@ -1,0 +1,12 @@
+# ============================================================
+#  ChunkyPlots – local deploy configuration
+#  DO NOT commit this file to version control, only deploy.properties.example
+# ============================================================
+
+# RCON connection
+rcon.host=127.0.0.1
+rcon.port=25575
+rcon.password=localdevpassword
+
+# Path where the built JAR is copied for the dev server
+deploy.jar.target=E:/data/projects/c-personal-it-projects/c-minecraft/chunkyplots/dev-server/ChunkyPlots.jar
