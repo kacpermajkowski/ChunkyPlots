@@ -16,6 +16,7 @@ messages:
 
   entered_plot: "&aWkroczyłeś na działkę gracza &7{plotOwnerName}"
   left_plot: "&cOpuściłeś działkę gracza &7{plotOwnerName}"
+  current_plot_deleted: "&cDziałka gracza &7{plotOwnerName} &cna której stałeś została usunięta."
 
   # Permission related messages
   not_owner: "&cNie możesz tego zrobić, bo nie jesteś właścicielem tej działki!"

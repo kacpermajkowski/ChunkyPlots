@@ -28,11 +28,11 @@ public class PlotTransitionNotifier implements Listener {
         Plot fromPlot = user.getCachedCurrentPlot();
         Plot toPlot = PlotManager.getInstance().getPlot(to);
 
-        if(toPlot == null)
+        if(toPlot == null && fromPlot != null)
             handleLeavingPlot(user, fromPlot);
-        else if(fromPlot == null)
+        else if(fromPlot == null && toPlot != null)
             handleEnteringPlot(user, toPlot);
-        else
+        else if(fromPlot != null && toPlot != null)
             handleSwitchingPlots(user, fromPlot, toPlot);
     }
 

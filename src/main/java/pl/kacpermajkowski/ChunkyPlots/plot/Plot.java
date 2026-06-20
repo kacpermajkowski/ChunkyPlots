@@ -79,6 +79,9 @@ public class Plot {
 	public int getChunkZ() {
 		return chunkZ;
 	}
+	public Chunk getChunk(){
+		return Objects.requireNonNull(Bukkit.getWorld(worldName)).getChunkAt(chunkX, chunkZ);
+	}
 	public String getWorldName(){
 		return worldName;
 	}

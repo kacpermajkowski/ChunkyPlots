@@ -1,5 +1,6 @@
 package pl.kacpermajkowski.ChunkyPlots.plot.group;
 
+import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
@@ -11,18 +12,26 @@ import java.util.UUID;
 
 public class Group {
 	private final List<Plot> plots = new ArrayList<>();
-	private String name;
+	@Getter
+    private final String name;
+	@Getter
+    private final boolean isDefault;
+
+	public Group(){
+		this.name = "all";
+		isDefault = true;
+	}
 
 	public Group(String name){
 		this.name = name;
+		isDefault = false;
 	}
 
-	public String getName() { return name; }
-	public List<Plot> getPlots(){
+    public List<Plot> getPlots(){
 		return Collections.unmodifiableList(plots);
 	}
 
-	public void add(Plot plot){
+    public void add(Plot plot){
 		if(!contains(plot)){
 			plots.add(plot);
 		}

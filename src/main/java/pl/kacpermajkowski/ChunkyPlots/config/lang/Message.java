@@ -103,5 +103,5 @@ public enum Message {
 	TELEPORTED_TO_VISIT_POINT,
 
 //	Message for unspecified errors occurring at runtime in code
-	ERROR_UNSPECIFIED,
+	ERROR_UNSPECIFIED, CURRENT_PLOT_DELETED,
 }

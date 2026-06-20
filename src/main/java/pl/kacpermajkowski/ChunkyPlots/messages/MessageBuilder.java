@@ -60,9 +60,11 @@ public class MessageBuilder {
     }
 
 
+    public MessageBuilder user(Player userPlayer){
+        return username(userPlayer.getName());
+    }
     public MessageBuilder user(User user) {
-        this.userName = user.getName();
-        return this;
+        return username(user.getName());
     }
     public MessageBuilder username(String username) {
         this.userName = username;
@@ -118,6 +120,25 @@ public class MessageBuilder {
     }
 
     public void sendChat(CommandSender receiver) {
+        if(receiver == null){
+            Bukkit.getLogger().warning("MessageBuilder.sendChat(): receiver is null");
+            return;
+        }
+        receiver.sendMessage(build());
+    }
+
+    public void sendChat(User user){
+        if(user == null){
+            Bukkit.getLogger().warning("MessageBuilder.sendChat(): user is null");
+            return;
+        }
+
+        Player receiver = user.getPlayer();
+        if(receiver == null){
+            Bukkit.getLogger().warning("MessageBuilder.sendChat() called for a user that's not online.");
+            return;
+        }
+
         receiver.sendMessage(build());
     }
 

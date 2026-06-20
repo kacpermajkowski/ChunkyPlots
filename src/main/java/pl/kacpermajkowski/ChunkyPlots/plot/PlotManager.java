@@ -118,7 +118,7 @@ public class PlotManager implements Listener {
 	}
 	public Plot getPlot(Chunk chunk){
 		for(Plot plot:plots) {
-			if (plot.getChunkX() == chunk.getX() && plot.getChunkZ() == chunk.getZ()) return plot;
+			if (plot.getChunk().equals(chunk)) return plot;
 		}
 		return null;
 	}
