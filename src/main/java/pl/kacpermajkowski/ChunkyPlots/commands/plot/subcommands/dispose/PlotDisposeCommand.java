@@ -51,12 +51,16 @@ public class PlotDisposeCommand implements PlotSubcommand {
 
 		refundPlotBlock(player);
 
-		User user = UserManager.getInstance().getUser(player);
-		removePlotFromGroups(user, plot);
+		User owner = UserManager.getInstance().getUser(player);
+		removePlotFromOwnerGroups(owner, plot);
 
-		MessageBuilder mb = new MessageBuilder(Message.CURRENT_PLOT_DELETED).plot(plot);
-		PlayerUtil.getPlayersInPlot(plot).forEach(mb::sendChat);
-		PlayerUtil.getPlayersInPlot(plot).forEach(p -> {
+		informBystandersAboutDisposingAndUpdateCache(plot);
+	}
+
+	private void informBystandersAboutDisposingAndUpdateCache(Plot disposedPlot) {
+		MessageBuilder mb = new MessageBuilder(Message.CURRENT_PLOT_DELETED).plot(disposedPlot);
+		PlayerUtil.getPlayersInPlot(disposedPlot).forEach(p -> {
+			mb.sendAll(p);
 			UserManager.getInstance().getUser(p).setCachedCurrentPlot(null);
 		});
 	}
@@ -65,7 +69,7 @@ public class PlotDisposeCommand implements PlotSubcommand {
 		player.getInventory().addItem(PlotManager.getInstance().getPlotItem());
 	}
 
-	private void removePlotFromGroups(User user, Plot plot){
+	private void removePlotFromOwnerGroups(User user, Plot plot){
 		for(Group group: user.getGroups()){
 			group.remove(plot);
 			if(!group.isDefault()){
