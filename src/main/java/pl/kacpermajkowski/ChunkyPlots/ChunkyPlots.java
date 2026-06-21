@@ -63,7 +63,7 @@ public class ChunkyPlots extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new StructureOvergrowProtection(),this);
 
 //		entity
-		this.getServer().getPluginManager().registerEvents(new BoatSpamProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new VehicleSpamProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new EntityDamageProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new EntityInteractionProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new EntityKnockbackProtection(),this);
