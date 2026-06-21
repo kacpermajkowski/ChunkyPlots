@@ -3,3 +3,6 @@
 /.idea/
 ChunkyPlots.iml
 deploy.properties
+/.gradle
+/build
+/gradle*
