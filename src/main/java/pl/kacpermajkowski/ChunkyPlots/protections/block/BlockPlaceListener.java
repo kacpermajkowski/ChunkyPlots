@@ -13,7 +13,6 @@ import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 public class BlockPlaceListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(final BlockPlaceEvent event){
-        final Block block = event.getBlock();
         final Player player = event.getPlayer();
         final Plot eventPlot = PlotManager.getInstance().getPlot(event.getBlockPlaced());
 

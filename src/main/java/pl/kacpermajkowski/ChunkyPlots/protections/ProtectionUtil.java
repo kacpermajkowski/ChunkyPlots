@@ -96,11 +96,11 @@ public abstract class ProtectionUtil {
         return canPlotAffectPlot(entityPlot, affectedPlot);
     }
 
-    public static boolean canPlotAffectPlot(Plot plot, Plot affectedPlot){
-        if(affectedPlot == null) return true;
-        else if(plot == null) return false;
+    public static boolean canPlotAffectPlot(Plot source, Plot destination){
+        if(destination == null) return true;
+        else if(source == null) return false;
 
-        return plot.hasTheSameOwnerAs(affectedPlot);
+        return source.hasTheSameOwnerAs(destination) || destination.isPlayerWhitelisted(source.getOwnerUUID());
     }
 
     public static boolean canPlotAffectPlots(Plot plot, List<Plot> plots){
