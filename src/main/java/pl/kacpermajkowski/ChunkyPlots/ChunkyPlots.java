@@ -14,6 +14,7 @@ import pl.kacpermajkowski.ChunkyPlots.protections.block.*;
 import pl.kacpermajkowski.ChunkyPlots.protections.block.explosion.*;
 import pl.kacpermajkowski.ChunkyPlots.protections.entity.*;
 import pl.kacpermajkowski.ChunkyPlots.protections.entity.ProjectileHitProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.misc.LightningProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.misc.LingeringPotionProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.misc.SplashPotionProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerBucketEmptyListener;
@@ -43,6 +44,7 @@ public class ChunkyPlots extends JavaPlugin {
 //		misc
 		this.getServer().getPluginManager().registerEvents(new LingeringPotionProtection(),this);
 		this.getServer().getPluginManager().registerEvents(new SplashPotionProtection(),this);
+		this.getServer().getPluginManager().registerEvents(new LightningProtection(), this);
 
 //		block - explosion
 		this.getServer().getPluginManager().registerEvents(new EnderCrystalProtection(),this);
