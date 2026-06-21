@@ -2,7 +2,7 @@ main: pl.kacpermajkowski.ChunkyPlots.ChunkyPlots
 name: ChunkyPlots
 version: ${project.version}
 author: Kacper Majkowski
-api-version: 1.21
+api-version: '26.2'
 commands:
   plot:
     description: This command allows to commit basic operation on your own plots
