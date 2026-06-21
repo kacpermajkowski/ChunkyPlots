@@ -1,7 +1,5 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.entity;
 
-import io.papermc.paper.event.entity.EntityMoveEvent;
-import org.bukkit.entity.Animals;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
