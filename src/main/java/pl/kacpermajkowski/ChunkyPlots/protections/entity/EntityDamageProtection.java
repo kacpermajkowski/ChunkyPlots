@@ -1,19 +1,13 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.entity;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
-import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 
 public class EntityDamageProtection implements Listener {
@@ -32,26 +26,23 @@ public class EntityDamageProtection implements Listener {
             return canPlayerDamageEntity(player, victim);
         } else if(attacker instanceof Projectile projectile){
             return canProjectileDamageEntity(projectile, victim);
-        } else if(attacker instanceof Monster monster){
-            return canMonsterDamageEntity(monster, victim);
         } else if(attacker instanceof TNTPrimed tntPrimed){
             return canTntDamageEntity(tntPrimed, victim);
+        } else if(attacker instanceof LightningStrike lightning){
+            return canLightningDamageEntity(lightning, victim);
         }
-        return false;
+
+        return ProtectionUtil.canEntityAffect(attacker, victim);
     }
 
     public boolean canPlayerDamageEntity(Player player, Entity victim) {
-        Plot victimPlot = PlotManager.getInstance().getPlot(victim.getLocation());
-        if(victimPlot == null){
-            return true;
-        }
-
         if(victim instanceof Player){
             return true;
-        } else if(victim instanceof Monster monster){
-            return monster.getRemoveWhenFarAway() || ProtectionUtil.canPlayerAffect(player, victimPlot);
         }
-        return ProtectionUtil.canPlayerAffect(player, victimPlot);
+        if(victim instanceof Monster monster && monster.getRemoveWhenFarAway()){
+            return true;
+        }
+        return ProtectionUtil.canPlayerAffect(player, victim);
     }
 
     public boolean canProjectileDamageEntity(Projectile projectile, Entity victim) {
@@ -59,26 +50,28 @@ public class EntityDamageProtection implements Listener {
         if(projectileSource instanceof LivingEntity livingEntity){
             return canEntityDamageEntity(livingEntity, victim);
         } else if(projectileSource instanceof BlockProjectileSource blockProjectileSource){
-            Plot victimPlot = PlotManager.getInstance().getPlot(victim.getLocation());
             Block block = blockProjectileSource.getBlock();
-            return ProtectionUtil.canBlockAffect(block, victimPlot);
+            return ProtectionUtil.canBlockAffectEntity(block, victim);
         }
+
         return false;
     }
 
-    public boolean canMonsterDamageEntity(Monster monster, Entity victim) {
-        Plot victimPlot = PlotManager.getInstance().getPlot(victim.getLocation());
-        return true;
-        //TODO: wither?
-    }
-
-    public boolean canFireworkDamageEntity(Firework firework, Entity victim) {
-        //TODO: Handle firework damage
-        return false;
-    }
 
     public boolean canTntDamageEntity(TNTPrimed tntPrimed, Entity victim) {
-        //TODO: Handle tnt damage
-        return false;
+        Entity source = tntPrimed.getSource();
+        if(source != null){
+            return canEntityDamageEntity(source, victim);
+        }
+        return ProtectionUtil.canEntityAffect(tntPrimed, victim);
+    }
+
+    public boolean canLightningDamageEntity(LightningStrike lightning, Entity victim) {
+        Entity causingEntity = lightning.getCausingEntity();
+        if(causingEntity != null){
+            return canEntityDamageEntity(causingEntity, victim);
+        }
+
+        return ProtectionUtil.canEntityAffect(lightning, victim);
     }
 }
