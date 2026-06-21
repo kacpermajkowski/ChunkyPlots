@@ -4,6 +4,7 @@ import io.papermc.paper.event.entity.EntityMoveEvent;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
@@ -11,7 +12,7 @@ import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 
 public class AnimalTemptingProtection implements Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onAnimalMove(EntityTargetEvent event){
         if(event.getReason() != EntityTargetEvent.TargetReason.TEMPT){
             return;
