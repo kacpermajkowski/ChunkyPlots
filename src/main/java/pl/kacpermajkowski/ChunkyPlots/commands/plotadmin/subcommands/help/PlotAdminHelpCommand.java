@@ -3,6 +3,8 @@ package pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.help;
 import org.bukkit.command.CommandSender;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
+import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.messages.TextUtil;
 
 import java.util.ArrayList;
@@ -43,13 +45,13 @@ public class PlotAdminHelpCommand implements Subcommand {
 
     public void sendHelpMessage(CommandSender sender){
         if(subcommands != null) {
-            TextUtil.sendNoPrefixMessage(sender, "&9-----------{ " + Config.getInstance().getPrefix() + " &c&lADMIN" + " &9}-----------");
+            new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().sendChat(sender);
             for(Subcommand s: subcommands){
-                TextUtil.sendNoPrefixMessage(sender, "&a/pa " + s.getName() + " &8- &7" + s.getDescription());
+                new MessageBuilder(Message.HELP_COMMAND_ITEM).noPrependedPrefix().subcommand(s).sendChat(sender);
             }
-            TextUtil.sendNoPrefixMessage(sender, "&9-----------{ " + Config.getInstance().getPrefix() + " &c&lADMIN" + " &9}-----------");
+            new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().sendChat(sender);
         } else {
-            TextUtil.sendMessage(sender, "&cSpecified subcommand was not found.");
+            new MessageBuilder(Message.HELP_COMMAND_ERROR).sendChat(sender);
         }
     }
 

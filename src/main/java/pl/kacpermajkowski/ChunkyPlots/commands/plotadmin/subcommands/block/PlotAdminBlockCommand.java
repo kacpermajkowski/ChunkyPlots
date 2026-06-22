@@ -3,6 +3,8 @@ package pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
+import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 
 import java.util.List;
@@ -32,7 +34,7 @@ public class PlotAdminBlockCommand implements Subcommand {
     public void execute(CommandSender sender, String[] args) {
         if(sender instanceof Player player){
             player.getInventory().addItem(PlotManager.getInstance().getPlotItem());
-            player.sendMessage("Otrzymałeś blok działki!");
+            new MessageBuilder(Message.PADMIN_PLOT_BLOCK_RECEIVED).sendChat(player);
         }
     }
 
