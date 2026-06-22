@@ -46,7 +46,7 @@ public class VehicleSpamProtection implements Listener {
     private boolean handleVehicleSwitchingPlots(VehicleMoveEvent event, Plot source, Plot destination) {
         if(ProtectionUtil.canPlotAffectPlot(source, destination)){
             return true;
-        } else return handleVehicleEnteringPlot(event, source);
+        } else return handleVehicleEnteringPlot(event, destination);
     }
 
     private boolean handleVehicleEnteringPlot(VehicleMoveEvent event, Plot destination) {
