@@ -101,3 +101,7 @@ messages:
 
   # Admin-only messages
   padmin_plot_block_received: "&aOtrzymano blok działki :)"
+  padmin_bypass_enabled: "&6Nowy status trybu \"bypass\": &a&lWŁĄCZONY"
+  padmin_bypass_disabled: "&6Nowy status trybu \"bypass\": &c&lWYŁĄCZONY"
+  padmin_bypass_bossbar: "&4&lMASZ AKTYWNY BYPASS UPRAWNIEŃ DZIAŁEK !!!"
+

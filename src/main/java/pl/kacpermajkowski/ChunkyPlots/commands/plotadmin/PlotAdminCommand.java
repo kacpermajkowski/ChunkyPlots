@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 import pl.kacpermajkowski.ChunkyPlots.commands.Command;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.block.PlotAdminBlockCommand;
+import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.bypass.PlotAdminBypassCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.help.PlotAdminHelpCommand;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class PlotAdminCommand extends Command {
         subcommands = new ArrayList<>();
         subcommands.add(new PlotAdminHelpCommand());
         subcommands.add(new PlotAdminBlockCommand());
+        subcommands.add(new PlotAdminBypassCommand());
     }
 
     protected List<Subcommand> getSubcommands() {
