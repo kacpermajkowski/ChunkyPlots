@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,8 @@ public abstract class ProtectionUtil {
         if (player == null) return false;
         if (plot == null) return true;
 
-        else return plot.isPlayerOwner(player) || plot.isPlayerWhitelisted(player);
+        if(plot.isPlayerOwner(player) || plot.isPlayerWhitelisted(player)) return true;
+        return UserManager.getInstance().getUser(player).isBypassingRestrictions();
     }
 
     public static boolean canPlayerAffect(Player player, Block block){
@@ -99,8 +101,10 @@ public abstract class ProtectionUtil {
     public static boolean canPlotAffectPlot(Plot source, Plot destination){
         if(destination == null) return true;
         else if(source == null) return false;
+        else if(source.hasTheSameOwnerAs(destination)) return true;
+        else if(destination.isPlayerWhitelisted(source.getOwnerUUID())) return true;
 
-        return source.hasTheSameOwnerAs(destination) || destination.isPlayerWhitelisted(source.getOwnerUUID());
+        else return destination.getOwnerUser().isBypassingRestrictions();
     }
 
     public static boolean canPlotAffectPlots(Plot plot, List<Plot> plots){

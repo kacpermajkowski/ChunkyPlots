@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.user.User;
+import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 
 import java.util.*;
 
@@ -73,6 +74,7 @@ public class Plot {
 	public String getOwnerName(){
 		return Bukkit.getOfflinePlayer(ownerUUID).getName();
 	}
+	public User getOwnerUser(){ return UserManager.getInstance().getUser(ownerUUID); }
 	public int getChunkX() {
 		return chunkX;
 	}
