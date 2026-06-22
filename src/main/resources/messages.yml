@@ -98,3 +98,6 @@ messages:
 
   # Message for unspecified errors occurring at runtime in code
   error_unspecified: "&cPojawił się bliżej nieprzewidziany błąd. Zgłoś ten fakt administratorowi"
+
+  # Admin-only messages
+  padmin_plot_block_received: "&aOtrzymano blok działki :)"
