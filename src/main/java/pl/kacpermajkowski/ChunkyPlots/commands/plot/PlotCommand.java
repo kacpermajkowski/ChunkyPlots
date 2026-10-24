@@ -1,10 +1,12 @@
 package pl.kacpermajkowski.ChunkyPlots.commands.plot;
 
 import org.bukkit.command.CommandSender;
+import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
 import pl.kacpermajkowski.ChunkyPlots.commands.Command;
 import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.blacklist.PlotDenyCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.blacklist.PlotUndenyCommand;
+import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.border.PlotShowBorderCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.dispose.PlotDisposeCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.help.PlotHelpCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.info.PlotInfoCommand;
@@ -12,6 +14,7 @@ import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.list.PlotListCom
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.whitelist.PlotAddCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.whitelist.PlotRemoveCommand;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotBorderVisualizer;
 import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 
 import java.util.ArrayList;
@@ -23,6 +26,10 @@ public class PlotCommand extends Command {
 	private final PlotHelpCommand help;
 
 	public PlotCommand(PlotManager plotManager, UserManager userManager) {
+		this(plotManager, userManager, ChunkyPlots.instance() != null ? ChunkyPlots.instance().getBorderVisualizer() : null);
+	}
+
+	public PlotCommand(PlotManager plotManager, UserManager userManager, PlotBorderVisualizer borderVisualizer) {
 		this.subcommands = new ArrayList<>();
 		this.help = new PlotHelpCommand();
 		subcommands.add(help);
@@ -36,6 +43,7 @@ public class PlotCommand extends Command {
 		subcommands.add(new PlotInfoCommand(plotManager));
 //		subcommands.add(new PlotVisitCommand());
 		subcommands.add(new PlotListCommand(plotManager));
+		subcommands.add(new PlotShowBorderCommand(borderVisualizer));
 		help.setSubcommands(subcommands);
 	}
 

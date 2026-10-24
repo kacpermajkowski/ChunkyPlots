@@ -17,6 +17,7 @@ import pl.kacpermajkowski.ChunkyPlots.plot.PlotBlockPlaceListener;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotRepository;
 import pl.kacpermajkowski.ChunkyPlots.plot.SqlitePlotRepository;
+import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotBorderVisualizer;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 import pl.kacpermajkowski.ChunkyPlots.protections.block.*;
@@ -40,6 +41,7 @@ public class ChunkyPlots extends JavaPlugin {
 	private UserManager userManager;
 	private CraftingManager craftingManager;
 	private PlotPermissionChecker permissionChecker;
+	private PlotBorderVisualizer borderVisualizer;
 
 	@Override
 	public void onEnable(){
@@ -51,6 +53,9 @@ public class ChunkyPlots extends JavaPlugin {
 
 	@Override
 	public void onDisable(){
+		if(borderVisualizer != null) {
+			borderVisualizer.stopAll();
+		}
 		if(plotManager != null) {
 			plotManager.savePlots();
 		}
@@ -78,6 +83,8 @@ public class ChunkyPlots extends JavaPlugin {
 
 		this.permissionChecker = new PlotPermissionChecker(plotManager, userManager);
 		ProtectionUtil.init(permissionChecker);
+
+		this.borderVisualizer = new PlotBorderVisualizer(this, plotManager);
 	}
 
 	private void registerListeners(){
@@ -143,6 +150,7 @@ public class ChunkyPlots extends JavaPlugin {
 		pm.registerEvents(new PlotTransitionNotifier(plotManager, userManager), this);
 		pm.registerEvents(new PlotBlockPlaceListener(plotManager), this);
 		pm.registerEvents(userManager, this);
+		pm.registerEvents(borderVisualizer, this);
 	}
 
     private void tryRegisterCommands(){
@@ -156,7 +164,7 @@ public class ChunkyPlots extends JavaPlugin {
     }
 
 	private void registerCommands() throws InvalidStateException {
-		requireCommand("plot").setExecutor(new PlotCommand(plotManager, userManager));
+		requireCommand("plot").setExecutor(new PlotCommand(plotManager, userManager, borderVisualizer));
 		requireCommand("plotadmin").setExecutor(new PlotAdminCommand(plotManager, userManager));
 	}
 
@@ -196,5 +204,9 @@ public class ChunkyPlots extends JavaPlugin {
 
 	public PlotPermissionChecker getPermissionChecker() {
 		return permissionChecker;
+	}
+
+	public PlotBorderVisualizer getBorderVisualizer() {
+		return borderVisualizer;
 	}
 }

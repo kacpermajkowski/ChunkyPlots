@@ -48,8 +48,7 @@ messages:
 
   # Flag related messages
   null_flag: "&cFlaga o nazwie &r{flagName}&c nie istnieje."
-  available_flags: "&aLista dostępnych flag:"
-  default_flags: "&aLista domyślnych flag dla działek:"
+  available_flags: "&aLista dostępnych flag:\"\n  default_flags: \"&aLista domyślnych flag dla działek:"
   plot_flags: "&aLista flag dla działki o ID &8(&7{plotID}&a:"
   flag_set_on_plot: "&aUstawiono wartość &r{flagValue} &afladze &r{flagName}&a na działce"
   flag_set_on_group: "&aUstawiono wartość &r{flagValue} &afladze &r{flagName} &ana wszystkich działkach grupy &r{groupName}"
@@ -96,6 +95,11 @@ messages:
   teleport_cancelled: "&cPoruszyłeś się, anulowano teleportację!"
   teleported_to_visit_point: "&aPomyślnie przeteleportowano do punktu &r{visitPointName}"
 
+  # Border visualization messages
+  border_enabled: "&aWłączono podgląd granicy chunku/działki (widoczny przez 60 sekund)."
+  border_disabled: "&cWyłączono podgląd granicy chunku/działki."
+  border_expired: "&7Podgląd granicy chunku został automatycznie wyłączony."
+
   # Message for unspecified errors occurring at runtime in code
   error_unspecified: "&cPojawił się bliżej nieprzewidziany błąd. Zgłoś ten fakt administratorowi"
 
@@ -104,4 +108,3 @@ messages:
   padmin_bypass_enabled: "&6Nowy status trybu \"bypass\": &a&lWŁĄCZONY"
   padmin_bypass_disabled: "&6Nowy status trybu \"bypass\": &c&lWYŁĄCZONY"
   padmin_bypass_bossbar: "&4&lMASZ AKTYWNY BYPASS UPRAWNIEŃ DZIAŁEK !!!"
-
