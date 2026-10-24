@@ -10,6 +10,7 @@ import pl.kacpermajkowski.ChunkyPlots.crafting.CraftingManager;
 import pl.kacpermajkowski.ChunkyPlots.crafting.PlotItemFactory;
 import pl.kacpermajkowski.ChunkyPlots.database.DatabaseManager;
 import pl.kacpermajkowski.ChunkyPlots.exceptions.InvalidStateException;
+import pl.kacpermajkowski.ChunkyPlots.listeners.PlotLifecycleListener;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlotTransitionNotifier;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotBlockPlaceListener;
@@ -133,6 +134,9 @@ public class ChunkyPlots extends JavaPlugin {
 		pm.registerEvents(new PistonProtection(permissionChecker), this);
 		pm.registerEvents(new RedstoneSignalProtection(permissionChecker), this);
 		pm.registerEvents(new ShriekerProtection(permissionChecker), this);
+
+//		domain events & reactive listeners
+		pm.registerEvents(new PlotLifecycleListener(userManager), this);
 
 //		regular listeners
 		pm.registerEvents(new PlotTransitionNotifier(plotManager, userManager), this);

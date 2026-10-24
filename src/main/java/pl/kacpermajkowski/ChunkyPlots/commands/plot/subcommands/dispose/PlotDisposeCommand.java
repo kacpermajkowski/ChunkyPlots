@@ -10,7 +10,6 @@ import pl.kacpermajkowski.ChunkyPlots.user.User;
 import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.utils.ActionResult;
-import pl.kacpermajkowski.ChunkyPlots.utils.PlayerUtil;
 
 import java.util.List;
 
@@ -62,19 +61,6 @@ public class PlotDisposeCommand implements PlotSubcommand {
 		if (owner != null) {
 			removePlotFromOwnerGroups(owner, plot);
 		}
-
-		informBystandersAboutDisposingAndUpdateCache(plot);
-	}
-
-	private void informBystandersAboutDisposingAndUpdateCache(Plot disposedPlot) {
-		MessageBuilder mb = new MessageBuilder(Message.CURRENT_PLOT_DELETED).plot(disposedPlot);
-		PlayerUtil.getPlayersInPlot(disposedPlot).forEach(mb::sendAll);
-
-		for (User user : userManager.getUsers()) {
-			if (disposedPlot.equals(user.getCachedCurrentPlot())) {
-				user.setCachedCurrentPlot(null);
-			}
-		}
 	}
 
 	private void refundPlotBlock(Player player){
@@ -98,7 +84,10 @@ public class PlotDisposeCommand implements PlotSubcommand {
 		if(!plot.isPlayerOwner(player))
 			return new ActionResult(false, Message.NOT_OWNER);
 
-		plotManager.disposePlot(plot);
+		boolean disposed = plotManager.disposePlot(plot, player);
+		if (!disposed) {
+			return new ActionResult(false, Message.NULL_PLOT);
+		}
 		return new ActionResult(true, Message.PLOT_DELETED);
 	}
 

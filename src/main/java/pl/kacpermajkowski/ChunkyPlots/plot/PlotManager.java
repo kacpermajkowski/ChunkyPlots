@@ -1,5 +1,6 @@
 package pl.kacpermajkowski.ChunkyPlots.plot;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -8,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
+import pl.kacpermajkowski.ChunkyPlots.events.*;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 
 import java.util.ArrayList;
@@ -122,22 +124,48 @@ public class PlotManager {
 		return getPlot(state.getBlock());
 	}
 
-	public void disposePlot(Plot plot) {
-		if (plot == null) return;
-		unindexPlot(plot);
-		repository.delete(plot);
+	public boolean disposePlot(Plot plot) {
+		return disposePlot(plot, null);
 	}
 
-	public void claimPlot(Player player, Block block) {
+	public boolean disposePlot(Plot plot, Player player) {
+		if (plot == null) return false;
+
+		PlotPreDisposeEvent preEvent = new PlotPreDisposeEvent(plot, player);
+		Bukkit.getPluginManager().callEvent(preEvent);
+		if (preEvent.isCancelled()) {
+			return false;
+		}
+
+		unindexPlot(plot);
+		repository.delete(plot);
+
+		PlotDisposeEvent event = new PlotDisposeEvent(plot, player);
+		Bukkit.getPluginManager().callEvent(event);
+		return true;
+	}
+
+	public boolean claimPlot(Player player, Block block) {
 		Chunk chunk = block.getChunk();
 		String plotID = chunk.getX() + ";" + chunk.getZ();
 		if (getPlot(chunk) != null) {
 			new MessageBuilder(Message.PLOT_ALREADY_EXISTS).plotID(plotID).sendChat(player);
-			return;
+			return false;
 		}
+
+		PlotPreClaimEvent preEvent = new PlotPreClaimEvent(player, chunk);
+		Bukkit.getPluginManager().callEvent(preEvent);
+		if (preEvent.isCancelled()) {
+			return false;
+		}
+
 		Plot plot = new Plot(player, chunk);
 		indexPlot(plot);
 		repository.save(plot);
 		new MessageBuilder(Message.PLOT_CREATED).plot(plot).sendChat(player);
+
+		PlotClaimEvent event = new PlotClaimEvent(plot, player);
+		Bukkit.getPluginManager().callEvent(event);
+		return true;
 	}
 }

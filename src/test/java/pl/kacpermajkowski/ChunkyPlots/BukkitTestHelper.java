@@ -2,6 +2,7 @@ package pl.kacpermajkowski.ChunkyPlots;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.plugin.PluginManager;
 import org.mockito.Mockito;
 
 import java.lang.reflect.Field;
@@ -14,6 +15,10 @@ public class BukkitTestHelper {
     public static Server setUpMockServer() {
         Server mockServer = Mockito.mock(Server.class);
         when(mockServer.getLogger()).thenReturn(Logger.getLogger("Minecraft"));
+
+        PluginManager mockPluginManager = Mockito.mock(PluginManager.class);
+        when(mockServer.getPluginManager()).thenReturn(mockPluginManager);
+
         try {
             Field serverField = Bukkit.class.getDeclaredField("server");
             serverField.setAccessible(true);

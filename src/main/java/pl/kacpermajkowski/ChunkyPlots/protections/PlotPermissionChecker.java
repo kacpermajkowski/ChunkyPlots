@@ -13,6 +13,7 @@ import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class PlotPermissionChecker {
     private final PlotManager plotManager;
@@ -52,8 +53,8 @@ public class PlotPermissionChecker {
     }
 
     public boolean canPlayerAffect(Player player, Plot plot) {
-        if (player == null) return false;
         if (plot == null) return true;
+        if (player == null) return false;
 
         if (plot.isPlayerOwner(player) || plot.isPlayerWhitelisted(player)) return true;
         User user = userManager.getUser(player);
@@ -76,8 +77,8 @@ public class PlotPermissionChecker {
     }
 
     public boolean canPlayerAffectPlots(Player player, List<Plot> plots) {
-        if (player == null) return false;
         if (plots == null || plots.isEmpty()) return true;
+        if (player == null) return false;
 
         for (Plot affectedPlot : plots) {
             if (!canPlayerAffect(player, affectedPlot)) return false;
@@ -86,8 +87,8 @@ public class PlotPermissionChecker {
     }
 
     public boolean canPlayerAffectBlocks(Player player, List<Block> blocks) {
-        if (player == null) return false;
         if (blocks == null || blocks.isEmpty()) return true;
+        if (player == null) return false;
 
         List<Plot> plots = new ArrayList<>();
         for (Block block : blocks) {
@@ -97,14 +98,28 @@ public class PlotPermissionChecker {
     }
 
     public boolean canPlayerAffectEntities(Player player, List<Entity> entities) {
-        if (player == null) return false;
         if (entities == null || entities.isEmpty()) return true;
+        if (player == null) return false;
 
         List<Plot> plots = new ArrayList<>();
         for (Entity entity : entities) {
             plots.add(plotManager.getPlot(entity));
         }
         return canPlayerAffectPlots(player, plots);
+    }
+
+    public boolean canOwnerAffect(UUID ownerUuid, Plot plot) {
+        if (plot == null) return true;
+        if (ownerUuid == null) return false;
+        return plot.isPlayerOwner(ownerUuid) || plot.isPlayerWhitelisted(ownerUuid);
+    }
+
+    public boolean canOwnerAffectPlots(UUID ownerUuid, List<Plot> plots) {
+        if (plots == null || plots.isEmpty()) return true;
+        for (Plot p : plots) {
+            if (!canOwnerAffect(ownerUuid, p)) return false;
+        }
+        return true;
     }
 
     public boolean canBlockAffect(Block block, Plot affectedPlot) {
