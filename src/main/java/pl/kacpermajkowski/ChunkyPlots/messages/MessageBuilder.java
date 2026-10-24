@@ -1,5 +1,6 @@
 package pl.kacpermajkowski.ChunkyPlots.messages;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -66,7 +67,6 @@ public class MessageBuilder {
         return this;
     }
 
-
     public MessageBuilder user(Player userPlayer){
         return username(userPlayer.getName());
     }
@@ -77,7 +77,6 @@ public class MessageBuilder {
         this.userName = username;
         return this;
     }
-
 
     public MessageBuilder group(Group group) {
         this.groupName = group.getName();
@@ -99,7 +98,7 @@ public class MessageBuilder {
         return this;
     }
 
-    public String build(){
+    private String buildRaw() {
         String message = "";
         if(config != null && config.isUsingMessagePrefix() && prependPrefix){
             message += "{prefix}{prefixSpacer}";
@@ -108,8 +107,8 @@ public class MessageBuilder {
         String msgTemplate = config != null ? config.getMessage(this.message) : (this.message != null ? this.message.name() : "");
         message += msgTemplate != null ? msgTemplate : "";
         if(config != null) {
-            message = message.replace("{prefix}", config.getPrefix());
-            message = message.replace("{prefixSpacer}", config.getPrefixSpacer());
+            message = message.replace("{prefix}", config.getPrefix() != null ? config.getPrefix() : "");
+            message = message.replace("{prefixSpacer}", config.getPrefixSpacer() != null ? config.getPrefixSpacer() : "");
         } else {
             message = message.replace("{prefix}", "");
             message = message.replace("{prefixSpacer}", "");
@@ -129,7 +128,15 @@ public class MessageBuilder {
         message = message.replace("{subcommandSyntax}", subcommandSyntax);
         message = message.replace("{subcommandDescription}", subcommandDescription);
 
-        return TextUtil.fixColors(message);
+        return message;
+    }
+
+    public String build(){
+        return TextUtil.fixColors(buildRaw());
+    }
+
+    public Component buildComponent() {
+        return TextUtil.toComponent(buildRaw());
     }
 
     public void sendChat(CommandSender receiver) {
@@ -137,7 +144,7 @@ public class MessageBuilder {
             Bukkit.getLogger().warning("MessageBuilder.sendChat(): receiver is null");
             return;
         }
-        receiver.sendMessage(build());
+        receiver.sendMessage(buildComponent());
     }
 
     public void sendChat(User user){
@@ -152,15 +159,17 @@ public class MessageBuilder {
             return;
         }
 
-        receiver.sendMessage(build());
+        receiver.sendMessage(buildComponent());
     }
 
     public void sendActionBar(Player player) {
-        TextUtil.sendActionBarMessage(player, build());
+        if (player == null) return;
+        TextUtil.sendActionBar(player, buildComponent());
     }
 
     public void sendBossBar(Player player) {
-        TextUtil.sendBossBarMessage(player, build());
+        if (player == null) return;
+        TextUtil.sendBossBarMessage(player, buildComponent());
     }
 
     public void sendAll(CommandSender receiver) {

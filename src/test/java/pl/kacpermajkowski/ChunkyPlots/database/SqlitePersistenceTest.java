@@ -67,8 +67,8 @@ public class SqlitePersistenceTest {
         plot.whitelistPlayer(whitelistedUser);
         plot.blacklistPlayer(blacklistedUser);
 
-        // 1. Save plot
-        plotRepository.save(plot);
+        // 1. Save plot synchronously
+        plotRepository.saveSync(plot);
 
         // 2. Load plots
         List<Plot> loadedPlots = plotRepository.loadAll();
@@ -87,14 +87,14 @@ public class SqlitePersistenceTest {
         // 3. Update plot (add another whitelist member)
         UUID secondWhitelisted = UUID.randomUUID();
         loadedPlot.whitelistPlayer(secondWhitelisted);
-        plotRepository.save(loadedPlot);
+        plotRepository.saveSync(loadedPlot);
 
         List<Plot> updatedPlots = plotRepository.loadAll();
         assertEquals(1, updatedPlots.size());
         assertTrue(updatedPlots.get(0).isPlayerWhitelisted(secondWhitelisted));
 
         // 4. Delete plot
-        plotRepository.delete(loadedPlot);
+        plotRepository.deleteSync(loadedPlot);
         assertTrue(plotRepository.loadAll().isEmpty(), "Plot must be removed after deletion");
     }
 
@@ -110,8 +110,8 @@ public class SqlitePersistenceTest {
         User user2 = new User(user2Id);
         user2.setTeleportOnCooldown(false);
 
-        // Batch save
-        userRepository.saveAll(List.of(user1, user2));
+        // Batch save synchronously
+        userRepository.saveAllSync(List.of(user1, user2));
 
         // Load all
         Set<User> loadedUsers = userRepository.loadAll();
@@ -130,5 +130,23 @@ public class SqlitePersistenceTest {
                 .orElse(null);
         assertNotNull(loadedUser2);
         assertFalse(loadedUser2.isTeleportOnCooldown());
+    }
+
+    @Test
+    @DisplayName("SQLite Async Queue: Asynchronous save flushes on databaseManager.close()")
+    void testAsyncPersistenceFlush() {
+        Plot plot = new Plot(UUID.randomUUID(), 3, 3, "world", UUID.randomUUID());
+        plotRepository.save(plot);
+
+        // Closing databaseManager blocks until async queue terminates
+        databaseManager.close();
+
+        // Re-open DB to verify persisted data
+        DatabaseManager reOpenedDb = new DatabaseManager(tempFolder, logger);
+        SqlitePlotRepository reOpenedRepo = new SqlitePlotRepository(reOpenedDb, tempFolder, logger);
+        List<Plot> loaded = reOpenedRepo.loadAll();
+        assertEquals(1, loaded.size());
+        assertEquals(plot.getUUID(), loaded.get(0).getUUID());
+        reOpenedDb.close();
     }
 }

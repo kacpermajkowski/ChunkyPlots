@@ -107,6 +107,7 @@ public class ChunkyPlots extends JavaPlugin {
 		pm.registerEvents(new StructureOvergrowProtection(permissionChecker), this);
 
 //		entity
+		pm.registerEvents(new EntityChangeBlockProtection(permissionChecker), this);
 		pm.registerEvents(new EntityRunawayProtection(permissionChecker), this);
 		pm.registerEvents(new AnimalTemptingProtection(permissionChecker), this);
 		pm.registerEvents(new EndermiteSpawnProtection(permissionChecker), this);

@@ -75,7 +75,7 @@ public class SqlitePlotRepository implements PlotRepository {
                 if (!migratedPlots.isEmpty()) {
                     logger.info("Migrating " + migratedPlots.size() + " plots from YAML to SQLite database...");
                     for (Plot plot : migratedPlots) {
-                        save(plot);
+                        saveSync(plot);
                     }
                     return migratedPlots;
                 }
@@ -87,6 +87,11 @@ public class SqlitePlotRepository implements PlotRepository {
 
     @Override
     public void save(Plot plot) {
+        if (plot == null) return;
+        databaseManager.runAsync(() -> saveSync(plot));
+    }
+
+    public void saveSync(Plot plot) {
         if (plot == null) return;
 
         String upsertPlot = """
@@ -151,6 +156,11 @@ public class SqlitePlotRepository implements PlotRepository {
 
     @Override
     public void delete(Plot plot) {
+        if (plot == null) return;
+        databaseManager.runAsync(() -> deleteSync(plot));
+    }
+
+    public void deleteSync(Plot plot) {
         if (plot == null) return;
 
         String deletePlot = "DELETE FROM plots WHERE uuid = ?;";

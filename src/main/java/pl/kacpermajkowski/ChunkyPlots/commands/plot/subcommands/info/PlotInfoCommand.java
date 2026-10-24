@@ -1,14 +1,13 @@
 package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.info;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
-import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.messages.TextUtil;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class PlotInfoCommand implements PlotSubcommand {
 
 	@Override
 	public String getSyntax() {
-		return "/plot info";
+		return "/plot info [id]";
 	}
 
 	@Override
@@ -42,29 +41,44 @@ public class PlotInfoCommand implements PlotSubcommand {
 	@Override
 	public void execute(Player sender, String[] args) {
 		if(sender instanceof Player player) {
- 			Plot plot = plotManager.getPlot(player.getLocation().getChunk());
+			Plot plot;
+			if (args.length > 0) {
+				plot = plotManager.getPlot(args[0]);
+			} else {
+				plot = plotManager.getPlot(player.getLocation().getChunk());
+			}
+
 			if (plot != null) {
 				new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().sendChat(player);
-				player.sendMessage(TextUtil.fixColors( "&aWłaściciel: &f" + Bukkit.getOfflinePlayer(plot.getOwnerUUID()).getName()));
-				player.sendMessage(TextUtil.fixColors( "&aChunk X: &f" + plot.getChunkX()));
-				player.sendMessage(TextUtil.fixColors( "&aChunk Z: &f" + plot.getChunkZ()));
-				player.sendMessage(TextUtil.fixColors( "&aŚwiat: &f" + plot.getWorldName()));
-				player.sendMessage(TextUtil.fixColors( "&aCzłonkowie: &f" + plot.getWhitelist().stream().map((uuid) ->
+				player.sendMessage(TextUtil.toComponent("&aWłaściciel: &f" + Bukkit.getOfflinePlayer(plot.getOwnerUUID()).getName()));
+				player.sendMessage(TextUtil.toComponent("&aID Działki: &6" + plot.getID()));
+				player.sendMessage(TextUtil.toComponent("&aChunk: &7X:&f" + plot.getChunkX() + "  &7Z:&f" + plot.getChunkZ()));
+				player.sendMessage(TextUtil.toComponent("&aŚwiat: &f" + plot.getWorldName()));
+				player.sendMessage(TextUtil.toComponent("&aCzłonkowie: &f" + plot.getWhitelist().stream().map((uuid) ->
 					Bukkit.getOfflinePlayer(uuid).getName()
 				).toList()));
-				player.sendMessage(TextUtil.fixColors( "&aZablokowani: &f" + plot.getBlacklist().stream().map((uuid) ->
+				player.sendMessage(TextUtil.toComponent("&aZablokowani: &f" + plot.getBlacklist().stream().map((uuid) ->
 						Bukkit.getOfflinePlayer(uuid).getName()
 				).toList()));
-				Location location = player.getWorld().getChunkAt(plot.getChunkX(), plot.getChunkZ()).getBlock(8, 64, 8).getLocation();
-				player.sendMessage(TextUtil.fixColors( "&aLokalizacja: &7X:&f" + location.getBlockX() + "  &7Y:&f" + location.getBlockY() + "  &7Z:&f" + location.getBlockZ()));
-				player.sendMessage(TextUtil.fixColors( "&aUUID: &f" + plot.getUUID()));
+				int blockX = (plot.getChunkX() << 4) + 8;
+				int blockZ = (plot.getChunkZ() << 4) + 8;
+				player.sendMessage(TextUtil.toComponent("&aŚrodek: &7X:&f" + blockX + "  &7Z:&f" + blockZ));
+				player.sendMessage(TextUtil.toComponent("&aUUID: &7" + plot.getUUID()));
 				new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().sendChat(player);
-			} else new MessageBuilder(Message.NULL_PLOT).sendChat(sender);
+			} else {
+				new MessageBuilder(Message.NULL_PLOT).sendChat(sender);
+			}
 		}
 	}
 
 	@Override
 	public List<String> getTabCompletion(Player player, String[] args) {
+		if (args.length == 1) {
+			return plotManager.getPlots().stream()
+					.map(Plot::getID)
+					.filter(id -> id.toLowerCase().startsWith(args[0].toLowerCase()))
+					.toList();
+		}
 		return List.of();
 	}
 }

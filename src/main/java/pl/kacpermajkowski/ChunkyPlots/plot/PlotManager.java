@@ -92,6 +92,42 @@ public class PlotManager {
 		return plotsByUuid.get(uuid);
 	}
 
+	public Plot getPlot(String idOrCoords) {
+		if (idOrCoords == null || idOrCoords.isEmpty()) return null;
+		// Check by UUID
+		try {
+			UUID uuid = UUID.fromString(idOrCoords);
+			Plot plot = plotsByUuid.get(uuid);
+			if (plot != null) return plot;
+		} catch (IllegalArgumentException ignored) {}
+
+		// Check by ID or chunk coords (x;z or x;z;world)
+		if (idOrCoords.contains(";")) {
+			String[] parts = idOrCoords.split(";");
+			if (parts.length == 3) {
+				return getPlot(parts[0], parts[1], parts[2]);
+			} else if (parts.length == 2) {
+				try {
+					int x = Integer.parseInt(parts[0]);
+					int z = Integer.parseInt(parts[1]);
+					long key = chunkKey(x, z);
+					for (Map<Long, Plot> worldPlots : plotsByChunk.values()) {
+						Plot found = worldPlots.get(key);
+						if (found != null) return found;
+					}
+				} catch (NumberFormatException ignored) {}
+			}
+		}
+
+		// Fallback: match by Plot#getID
+		for (Plot plot : plotsByUuid.values()) {
+			if (plot.getID().equalsIgnoreCase(idOrCoords)) {
+				return plot;
+			}
+		}
+		return null;
+	}
+
 	public Plot getPlot(String x, String z, String worldName) {
 		try {
 			int parsedX = Integer.parseInt(x);

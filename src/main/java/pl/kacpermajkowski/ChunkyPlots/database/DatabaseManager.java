@@ -7,11 +7,16 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class DatabaseManager {
     private final HikariDataSource dataSource;
     private final Logger logger;
+    private final ExecutorService asyncExecutor;
 
     public DatabaseManager(File dataFolder, Logger logger) {
         this.logger = logger;
@@ -36,6 +41,7 @@ public class DatabaseManager {
         config.addDataSourceProperty("foreign_keys", "ON");
 
         this.dataSource = new HikariDataSource(config);
+        this.asyncExecutor = createExecutor();
 
         initSchema();
     }
@@ -43,7 +49,16 @@ public class DatabaseManager {
     public DatabaseManager(HikariDataSource dataSource, Logger logger) {
         this.dataSource = dataSource;
         this.logger = logger;
+        this.asyncExecutor = createExecutor();
         initSchema();
+    }
+
+    private ExecutorService createExecutor() {
+        return Executors.newSingleThreadExecutor(r -> {
+            Thread thread = new Thread(r, "ChunkyPlots-AsyncStorage");
+            thread.setDaemon(true);
+            return thread;
+        });
     }
 
     private void initSchema() {
@@ -93,11 +108,26 @@ public class DatabaseManager {
         }
     }
 
+    public CompletableFuture<Void> runAsync(Runnable task) {
+        return CompletableFuture.runAsync(task, asyncExecutor);
+    }
+
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
 
     public void close() {
+        if (asyncExecutor != null) {
+            asyncExecutor.shutdown();
+            try {
+                if (!asyncExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    asyncExecutor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                asyncExecutor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
         }

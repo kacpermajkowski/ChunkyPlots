@@ -49,7 +49,7 @@ public class SqliteUserRepository implements UserRepository {
                 Set<User> migratedUsers = yamlRepo.loadAll();
                 if (!migratedUsers.isEmpty()) {
                     logger.info("Migrating " + migratedUsers.size() + " users from YAML to SQLite database...");
-                    saveAll(migratedUsers);
+                    saveAllSync(migratedUsers);
                     return migratedUsers;
                 }
             }
@@ -60,6 +60,11 @@ public class SqliteUserRepository implements UserRepository {
 
     @Override
     public void save(User user) {
+        if (user == null) return;
+        databaseManager.runAsync(() -> saveSync(user));
+    }
+
+    public void saveSync(User user) {
         if (user == null) return;
 
         String upsertUser = """
@@ -81,6 +86,11 @@ public class SqliteUserRepository implements UserRepository {
 
     @Override
     public void saveAll(Collection<User> users) {
+        if (users == null || users.isEmpty()) return;
+        databaseManager.runAsync(() -> saveAllSync(users));
+    }
+
+    public void saveAllSync(Collection<User> users) {
         if (users == null || users.isEmpty()) return;
 
         String upsertUser = """

@@ -1,7 +1,7 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.redstone;
 
-import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Directional;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -24,32 +24,29 @@ public class DispenserProtection implements Listener {
 	}
 
 	private boolean canBlockDispense(BlockDispenseEvent event) {
-		Plot sourcePlot = getEventSourcePlot(event);
-		Plot destinationPlot = getEventDestinationPlot(event);
+		Block source = event.getBlock();
+		Plot sourcePlot = checker.getPlot(source);
+
+		Block destination = getDestinationBlock(source);
+		Plot destinationPlot = checker.getPlot(destination);
+
 		return canPlotDispenseOnPlot(sourcePlot, destinationPlot);
 	}
 
-	private Plot getEventSourcePlot(BlockDispenseEvent event) {
-		Block source = event.getBlock();
-		return checker.getPlot(source.getChunk());
-	}
-
-	private Plot getEventDestinationPlot(BlockDispenseEvent event) {
-		int x = event.getVelocity().getBlockX();
-		int y = event.getVelocity().getBlockY();
-		int z = event.getVelocity().getBlockZ();
-		World world = event.getBlock().getWorld();
-		Block destination = world.getBlockAt(x, y, z);
-
-		return checker.getPlot(destination.getChunk());
+	private Block getDestinationBlock(Block source) {
+		if (source.getBlockData() instanceof Directional directional) {
+			return source.getRelative(directional.getFacing());
+		}
+		return source;
 	}
 
 	private boolean canPlotDispenseOnPlot(Plot sourcePlot, Plot destinationPlot) {
-		if(sourcePlot == null && destinationPlot != null){
-			return false;
-		} else if(sourcePlot != null && destinationPlot != null) {
-			return sourcePlot.hasTheSameOwnerAs(destinationPlot);
+		if (destinationPlot == null) {
+			return true; // Dispensing into wilderness is allowed
 		}
-		return true;
+		if (sourcePlot == null) {
+			return false; // Wilderness dispenser cannot dispense into claimed plot
+		}
+		return checker.canPlotAffectPlot(sourcePlot, destinationPlot);
 	}
 }
