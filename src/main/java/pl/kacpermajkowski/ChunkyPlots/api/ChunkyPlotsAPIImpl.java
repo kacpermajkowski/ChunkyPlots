@@ -14,6 +14,7 @@ import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotRelation;
 import pl.kacpermajkowski.ChunkyPlots.plot.gui.PlotGuiManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapManager;
+import pl.kacpermajkowski.ChunkyPlots.plot.surround.PlotSurroundChecker;
 
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import java.util.List;
@@ -266,6 +267,11 @@ public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
     @Override
     public WorldGuardHook getWorldGuardHook() {
         return worldGuardHook != null ? worldGuardHook : (plotManager != null ? plotManager.getWorldGuardHook() : null);
+    }
+
+    @Override
+    public PlotSurroundChecker getSurroundChecker() {
+        return plotManager != null ? plotManager.getSurroundChecker() : null;
     }
 
     @Override

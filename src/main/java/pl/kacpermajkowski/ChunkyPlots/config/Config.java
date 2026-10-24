@@ -55,6 +55,10 @@ public class Config {
 	// WorldGuard integration settings
 	private boolean worldGuardAllowClaimOverlappingRegions = false;
 
+	// Surround protection settings
+	private boolean surroundProtectionEnabled = true;
+	private int surroundProtectionSearchDepth = 5;
+
 	// messages.yml options
 	private HashMap<Message, String> messages;
 
@@ -137,6 +141,7 @@ public class Config {
 			loadPlotHeight();
 			loadStructureOvergrowth();
 			loadWorldGuard();
+			loadSurroundProtection();
 
 			loadMessages();
 		} catch (InvalidConfigException e){
@@ -346,6 +351,19 @@ public class Config {
 		}
 	}
 
+	private void loadSurroundProtection() {
+		ConfigurationSection section = this.config.getConfigurationSection("surround-protection");
+		if (section != null) {
+			this.surroundProtectionEnabled = section.getBoolean("enabled", true);
+			this.surroundProtectionSearchDepth = section.getInt("search-depth",
+					section.getInt("search_depth", 5));
+		} else {
+			this.surroundProtectionEnabled = this.config.getBoolean("surround-protection.enabled", true);
+			this.surroundProtectionSearchDepth = this.config.getInt("surround-protection.search-depth",
+					this.config.getInt("surround-protection.search_depth", 5));
+		}
+	}
+
 	// messages.yml loaders
 	private void loadMessages(){
 		Logger logger = plugin.getLogger();
@@ -485,6 +503,22 @@ public class Config {
 
 	public void setWorldGuardAllowClaimOverlappingRegions(boolean worldGuardAllowClaimOverlappingRegions) {
 		this.worldGuardAllowClaimOverlappingRegions = worldGuardAllowClaimOverlappingRegions;
+	}
+
+	public boolean isSurroundProtectionEnabled() {
+		return surroundProtectionEnabled;
+	}
+
+	public void setSurroundProtectionEnabled(boolean surroundProtectionEnabled) {
+		this.surroundProtectionEnabled = surroundProtectionEnabled;
+	}
+
+	public int getSurroundProtectionSearchDepth() {
+		return surroundProtectionSearchDepth;
+	}
+
+	public void setSurroundProtectionSearchDepth(int surroundProtectionSearchDepth) {
+		this.surroundProtectionSearchDepth = surroundProtectionSearchDepth;
 	}
 
 	// messages.yml getters

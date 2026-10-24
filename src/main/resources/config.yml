@@ -70,3 +70,13 @@ worldguard:
   # false = blokuje zajmowanie chunku, jesli nachodzi na jakikolwiek region WorldGuard (z wyjatkiem __global__)
   # true = pozwala na zajmowanie chunkow niezaleznie od regionow WorldGuard
   allow-claim-overlapping-regions: false
+
+# Ochrona przed calkowitym otoczeniem dzialek przez obcych graczy (anty-otaczanie / anty-griefing)
+surround-protection:
+  # Czy ochrona przed calkowitym otoczeniem dzialek przez innych graczy jest wlaczona?
+  # Gracz moze dowolnie otaczac wlasne dzialki swoimi dzialkami, ale nie moze otoczyc obcego gracza
+  # ani zajac dzialki, ktora bylaby calkowicie uwieziona wsrod obcych dzialek.
+  enabled: true
+  # Maksymalna glebokosc przeszukiwania (w chunkach), do ktorej sprawdzana jest mozliwosc ucieczki do dziczy.
+  # Domyslnie: 5
+  search-depth: 5

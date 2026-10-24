@@ -8,6 +8,7 @@ import pl.kacpermajkowski.ChunkyPlots.hook.worldguard.WorldGuardHook;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotRelation;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
+import pl.kacpermajkowski.ChunkyPlots.plot.surround.PlotSurroundChecker;
 
 import java.util.List;
 import java.util.Set;
@@ -199,6 +200,8 @@ public interface ChunkyPlotsAPI {
     PlotLimitManager getLimitManager();
 
     WorldGuardHook getWorldGuardHook();
+
+    PlotSurroundChecker getSurroundChecker();
 
     // --- Allowed Worlds & Aliases ---
 

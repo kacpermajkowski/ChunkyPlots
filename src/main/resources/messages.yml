@@ -16,6 +16,7 @@ messages:
   plot_limit_reached: "&cOsiągnąłeś swój maksymalny limit działek! ({currentPlots}/{plotLimit})"
   world_not_allowed: "&cTworzenie działek na świecie &f{world} &cjest niedozwolone!"
   worldguard_region_overlap: "&cNie możesz zająć działki, ponieważ nakłada się ona na istniejący region WorldGuard!"
+  plot_surround_restriction: "&cNie możesz zająć tej działki, ponieważ doprowadziłoby to do całkowitego otoczenia działki przez obcych graczy!"
 
   entered_plot: "&aWkroczyłeś na działkę gracza &7{plotOwnerName}"
   left_plot: "&cOpuściłeś działkę gracza &7{plotOwnerName}"

@@ -15,6 +15,7 @@ import pl.kacpermajkowski.ChunkyPlots.hook.worldguard.WorldGuardHook;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.mnemonic.PlotMnemonic;
+import pl.kacpermajkowski.ChunkyPlots.plot.surround.PlotSurroundChecker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +41,7 @@ public class PlotManager {
 	private final ItemStack plotItem;
 	private PlotLimitManager limitManager;
 	private WorldGuardHook worldGuardHook;
+	private PlotSurroundChecker surroundChecker;
 	private Config config;
 
 	public static long chunkKey(int chunkX, int chunkZ) {
@@ -126,6 +128,7 @@ public class PlotManager {
 
 	public void setConfig(Config config) {
 		this.config = config;
+		this.surroundChecker = new PlotSurroundChecker(this, config);
 	}
 
 	public Config getConfig() {
@@ -197,6 +200,17 @@ public class PlotManager {
 
 	public WorldGuardHook getWorldGuardHook() {
 		return worldGuardHook;
+	}
+
+	public void setSurroundChecker(PlotSurroundChecker surroundChecker) {
+		this.surroundChecker = surroundChecker;
+	}
+
+	public PlotSurroundChecker getSurroundChecker() {
+		if (this.surroundChecker == null) {
+			this.surroundChecker = new PlotSurroundChecker(this, config != null ? config : Config.getInstance());
+		}
+		return surroundChecker;
 	}
 
 	public void savePlots() {
@@ -299,11 +313,13 @@ public class PlotManager {
 	public Plot getPlot(String idOrCoords) {
 		if (idOrCoords == null || idOrCoords.isEmpty()) return null;
 		// Check by UUID
-		try {
-			UUID uuid = UUID.fromString(idOrCoords);
-			Plot plot = getPlot(uuid);
-			if (plot != null) return plot;
-		} catch (IllegalArgumentException ignored) {}
+		ttry: {
+			try {
+				UUID uuid = UUID.fromString(idOrCoords);
+				Plot plot = getPlot(uuid);
+				if (plot != null) return plot;
+			} catch (IllegalArgumentException ignored) {}
+		}
 
 		// Check by mnemonic representation (e.g. god-water, end-home-table, nether-hand-value)
 		if (idOrCoords.contains("-")) {
@@ -476,6 +492,12 @@ public class PlotManager {
 				new MessageBuilder(Message.WORLDGUARD_REGION_OVERLAP).sendChat(player);
 				return false;
 			}
+		}
+
+		PlotSurroundChecker checker = getSurroundChecker();
+		if (checker != null && checker.wouldCauseEncirclement(player, chunk)) {
+			new MessageBuilder(Message.PLOT_SURROUND_RESTRICTION).sendChat(player);
+			return false;
 		}
 
 		PlotPreClaimEvent preEvent = new PlotPreClaimEvent(player, chunk);
