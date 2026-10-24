@@ -163,6 +163,24 @@ public class PlotManager {
 		return worldNameOrAlias;
 	}
 
+	public boolean isYWithinPlotBounds(int y) {
+		Config cfg = this.config != null ? this.config : Config.getInstance();
+		if (cfg != null) {
+			return cfg.isYWithinBounds(y);
+		}
+		return y >= 0;
+	}
+
+	public int getPlotMinY() {
+		Config cfg = this.config != null ? this.config : Config.getInstance();
+		return cfg != null ? cfg.getPlotMinY() : 0;
+	}
+
+	public Integer getPlotMaxY() {
+		Config cfg = this.config != null ? this.config : Config.getInstance();
+		return cfg != null ? cfg.getPlotMaxY() : null;
+	}
+
 	public void setLimitManager(PlotLimitManager limitManager) {
 		this.limitManager = limitManager;
 	}
@@ -246,6 +264,7 @@ public class PlotManager {
 
 	public Plot getPlot(Block block) {
 		if (block == null) return null;
+		if (!isYWithinPlotBounds(block.getY())) return null;
 		return getPlot(block.getX() >> 4, block.getZ() >> 4, block.getWorld().getName());
 	}
 
@@ -373,6 +392,7 @@ public class PlotManager {
 
 	public Plot getPlot(Location location) {
 		if (location == null || location.getWorld() == null) return null;
+		if (!isYWithinPlotBounds(location.getBlockY())) return null;
 		return getPlot(location.getBlockX() >> 4, location.getBlockZ() >> 4, location.getWorld().getName());
 	}
 

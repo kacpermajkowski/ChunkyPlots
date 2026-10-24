@@ -22,7 +22,7 @@ public class LecternBookProtection implements Listener {
 	public void onPlayerTakeLecternBook(PlayerTakeLecternBookEvent event){
 		final Location lecternLocation = event.getLectern().getLocation();
 		final Player player = event.getPlayer();
-		final Plot eventPlot = checker.getPlot(lecternLocation.getChunk());
+		final Plot eventPlot = checker.getPlot(lecternLocation);
 
 		if (!checker.canPlayerAffect(player, eventPlot)) {
 			event.setCancelled(true);

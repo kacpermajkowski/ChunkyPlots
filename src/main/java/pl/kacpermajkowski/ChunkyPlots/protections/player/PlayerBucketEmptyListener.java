@@ -20,9 +20,14 @@ public class PlayerBucketEmptyListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event){
-		final Block block = event.getBlockClicked();
+		Block targetBlock = event.getBlockClicked();
+		if (targetBlock != null && event.getBlockFace() != null) {
+			targetBlock = targetBlock.getRelative(event.getBlockFace());
+		} else if (targetBlock == null) {
+			targetBlock = event.getBlock();
+		}
 		final Player player = event.getPlayer();
-		final Plot eventPlot = checker.getPlot(block.getChunk());
+		final Plot eventPlot = checker.getPlot(targetBlock);
 
 		if (!checker.canPlayerAffect(player, eventPlot)) {
 			event.setCancelled(true);

@@ -24,8 +24,8 @@ public class BlockBurnProtection implements Listener {
 
 	private boolean blockCanBeBurntByFire(Block block, Block fire) {
 		if(fire == null) return false;
-		Plot blockPlot = checker.getPlot(block.getChunk());
-		Plot firePlot = checker.getPlot(fire.getChunk());
+		Plot blockPlot = checker.getPlot(block);
+		Plot firePlot = checker.getPlot(fire);
 		if(blockPlot == null) return true;
 		if(firePlot == null) return false;
 		return blockPlot.hasTheSameOwnerAs(firePlot);

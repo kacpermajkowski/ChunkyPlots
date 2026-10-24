@@ -44,6 +44,10 @@ public class Config {
 	private final Map<String, String> worlds = new LinkedHashMap<>();
 	private final Map<String, String> aliasToWorld = new HashMap<>();
 
+	// Plot height boundary settings
+	private int plotMinY = 0;
+	private Integer plotMaxY = null;
+
 	// Structure overgrowth settings
 	private boolean dontGenerateOvergrowingBlocks = false;
 	private boolean dropSaplingOnFail = true;
@@ -127,6 +131,7 @@ public class Config {
 			loadMessageDisplayTypes();
 			loadPlotLimits();
 			loadWorlds();
+			loadPlotHeight();
 			loadStructureOvergrowth();
 
 			loadMessages();
@@ -256,6 +261,38 @@ public class Config {
 		this.aliasToWorld.put(lowerAlias, worldName);
 	}
 
+	private void loadPlotHeight() {
+		ConfigurationSection section = this.config.getConfigurationSection("plot-height");
+		if (section != null) {
+			this.plotMinY = section.getInt("min-y", section.getInt("min_y", 0));
+			this.plotMaxY = parseMaxY(section.getString("max-y", section.getString("max_y", null)));
+		} else {
+			this.plotMinY = this.config.getInt("plot-height.min-y",
+					this.config.getInt("plot-height.min_y",
+					this.config.getInt("min-y", 0)));
+			this.plotMaxY = parseMaxY(this.config.getString("plot-height.max-y",
+					this.config.getString("plot-height.max_y",
+					this.config.getString("max-y", null))));
+		}
+	}
+
+	private Integer parseMaxY(String raw) {
+		if (raw == null || raw.trim().isEmpty()
+				|| raw.equalsIgnoreCase("null")
+				|| raw.equalsIgnoreCase("disabled")
+				|| raw.equalsIgnoreCase("none")
+				|| raw.equalsIgnoreCase("false")
+				|| raw.equalsIgnoreCase("unlimited")
+				|| raw.equals("-1")) {
+			return null;
+		}
+		try {
+			return Integer.parseInt(raw.trim());
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
+
 	private void loadStructureOvergrowth() {
 		ConfigurationSection section = this.config.getConfigurationSection("structure-overgrowth");
 		String mode = section != null ? section.getString("mode") : this.config.getString("structure-overgrowth.mode");
@@ -379,6 +416,36 @@ public class Config {
 			}
 		}
 		return null;
+	}
+
+	public int getPlotMinY() {
+		return plotMinY;
+	}
+
+	public void setPlotMinY(int plotMinY) {
+		this.plotMinY = plotMinY;
+	}
+
+	public Integer getPlotMaxY() {
+		return plotMaxY;
+	}
+
+	public void setPlotMaxY(Integer plotMaxY) {
+		this.plotMaxY = plotMaxY;
+	}
+
+	public boolean isPlotMaxYEnabled() {
+		return plotMaxY != null;
+	}
+
+	public boolean isYWithinBounds(int y) {
+		if (y < plotMinY) {
+			return false;
+		}
+		if (plotMaxY != null && y > plotMaxY) {
+			return false;
+		}
+		return true;
 	}
 
 	public boolean isDontGenerateOvergrowingBlocks() {

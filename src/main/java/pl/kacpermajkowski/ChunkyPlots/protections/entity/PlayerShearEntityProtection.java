@@ -22,7 +22,7 @@ public class PlayerShearEntityProtection implements Listener {
     public void onPlayerShearEntity(final PlayerShearEntityEvent event){
         final Location entityLocation = event.getEntity().getLocation();
         final Player player = event.getPlayer();
-        final Plot eventPlot = checker.getPlot(entityLocation.getChunk());
+        final Plot eventPlot = checker.getPlot(entityLocation);
 
         if (!checker.canPlayerAffect(player, eventPlot)) {
             event.setCancelled(true);

@@ -36,7 +36,7 @@ public class TNTMinecartProtection implements Listener {
 
     private boolean canTNTCartExplodeBlock(ExplosiveMinecart tntCart, Block block) {
         // ExplodingMinecart explosion source is hard to narrow so its left unfinished for now
-        Plot blockPlot = checker.getPlot(block.getChunk());
+        Plot blockPlot = checker.getPlot(block);
         return blockPlot == null;
         //TODO: Possibly allow tnt minecart to explode when it's ignited by an activation rail on a plot it's trying to explode
     }

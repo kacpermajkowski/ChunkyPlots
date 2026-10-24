@@ -36,8 +36,8 @@ public class EnderCrystalProtection implements Listener {
     }
 
     private boolean canEnderCrystalExplodeBlock(EnderCrystal enderCrystal, Block block) {
-        Plot blockPlot = checker.getPlot(block.getChunk());
-        Plot crystalPlot = checker.getPlot(enderCrystal.getLocation().getChunk());
+        Plot blockPlot = checker.getPlot(block);
+        Plot crystalPlot = checker.getPlot(enderCrystal.getLocation());
         return checker.canPlotAffectPlot(crystalPlot, blockPlot);
     }
 }

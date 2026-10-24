@@ -32,6 +32,10 @@ public class PlotPermissionChecker {
         return userManager;
     }
 
+    public boolean isYWithinBounds(int y) {
+        return plotManager != null && plotManager.isYWithinPlotBounds(y);
+    }
+
     public Plot getPlot(Block block) {
         return plotManager.getPlot(block);
     }

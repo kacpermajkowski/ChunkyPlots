@@ -61,7 +61,7 @@ public class SplashPotionProtection implements Listener {
 	private boolean canBlockSplashPotion(final PotionSplashEvent event) {
 		BlockProjectileSource blockProjectileSource = (BlockProjectileSource) event.getPotion().getShooter();
 		Block block = blockProjectileSource.getBlock();
-		Plot blockPlot = checker.getPlot(block.getChunk());
+		Plot blockPlot = checker.getPlot(block);
 
 		return canPlotSplashPotion(blockPlot, event);
 	}

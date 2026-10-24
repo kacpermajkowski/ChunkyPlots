@@ -41,6 +41,17 @@ worlds:
   world_nether: "nether"
   world_end: "end"
 
+# Granice wysokosci dzialek (poziom Y)
+# Domyslnie dzialka chroni tylko od poziomu Y = 0 w gore (wszystko ponizej Y < 0 nie jest chronione).
+plot-height:
+  # Dolna granica ochrony dzialki (domyslnie 0).
+  # Wszystko ponizej tego poziomu Y (np. jaskinie Y < 0) nie jest chronione.
+  min-y: 0
+
+  # Gorny limit wysokosci ochrony dzialki.
+  # Wpisz liczbe (np. 320), aby wlaczyc limit, lub pozostaw 'disabled' / null / -1, aby wylaczyc gorny limit.
+  max-y: null
+
 # Ochrona przed wrastaniem struktur (drzewa, wielkie grzyby itp.) w obce dzialki
 structure-overgrowth:
   # Jesli true: bloki wrastajace w obca dzialke nie wygeneruja sie (zostana wyciete),

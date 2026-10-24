@@ -1,6 +1,5 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.block;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EnderCrystal;
@@ -27,7 +26,7 @@ public class IgniteProtection implements Listener {
 		if(!canBlockBeIgnited(event)){
 			event.setCancelled(true);
 			if (event.getIgnitingEntity() instanceof Player player) {
-				Plot plot = checker.getPlot(event.getBlock().getChunk());
+				Plot plot = checker.getPlot(event.getBlock());
 				ProtectionNotifier.notify(player, Message.PROTECTION_IGNITE, plot);
 			}
 		}
@@ -49,10 +48,8 @@ public class IgniteProtection implements Listener {
 	}
 
 	private boolean canBlockBeIgnitedByBlock(Block block, Block ignitingBlock) {
-		Chunk ignitingBlockChunk = ignitingBlock.getChunk();
-		Chunk blockChunk = block.getChunk();
-		Plot sourceBlockPlot = checker.getPlot(ignitingBlockChunk);
-		Plot destinationBlockPlot = checker.getPlot(blockChunk);
+		Plot sourceBlockPlot = checker.getPlot(ignitingBlock);
+		Plot destinationBlockPlot = checker.getPlot(block);
 
 		if(sourceBlockPlot != null && destinationBlockPlot != null){
 			return sourceBlockPlot.hasTheSameOwnerAs(destinationBlockPlot);
@@ -66,8 +63,7 @@ public class IgniteProtection implements Listener {
 	}
 
 	private boolean canBlockBeIgnitedByEntity(Block block, Entity ignitingEntity) {
-		Chunk blockChunk = block.getChunk();
-		Plot destinationBlockPlot = checker.getPlot(blockChunk);
+		Plot destinationBlockPlot = checker.getPlot(block);
 
 		if (destinationBlockPlot == null) {
 			return true;

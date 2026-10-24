@@ -24,7 +24,7 @@ public class VehicleEnterListener implements Listener {
         final Entity entered = event.getEntered();
 
         final Location vehicleLocation = event.getVehicle().getLocation();
-        final Plot eventPlot = checker.getPlot(vehicleLocation.getChunk());
+        final Plot eventPlot = checker.getPlot(vehicleLocation);
 
         if(entered instanceof Player player) {
             if (!checker.canPlayerAffect(player, eventPlot)) {

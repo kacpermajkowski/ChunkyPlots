@@ -23,7 +23,7 @@ public class HopperProtection implements Listener {
         InventoryHolder inventoryHolder = event.getInventory().getHolder();
         if(!(inventoryHolder instanceof Hopper hopper)) return;
 
-        Plot hopperPlot = checker.getPlot(hopper.getChunk());
+        Plot hopperPlot = checker.getPlot(hopper.getBlock());
         if(hopperPlot == null) return;
 
         UUID itemThrowerUUID = event.getItem().getThrower();

@@ -40,7 +40,7 @@ public class PlayerInteractListener implements Listener {
 		final Block block = event.getClickedBlock();
 		final Player player = event.getPlayer();
 		if (block != null) {
-			final Plot eventPlot = checker.getPlot(block.getChunk());
+			final Plot eventPlot = checker.getPlot(block);
 			if (checker.canPlayerAffect(player, eventPlot)) return;
 			event.setCancelled(true);
 			ProtectionNotifier.notify(player, Message.PROTECTION_BLOCK_INTERACT, eventPlot);

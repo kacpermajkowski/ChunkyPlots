@@ -142,6 +142,14 @@ public class Plot {
 		if (location == null || location.getWorld() == null) {
 			return false;
 		}
+		Config cfg = Config.getInstance();
+		if (cfg != null) {
+			if (!cfg.isYWithinBounds(location.getBlockY())) {
+				return false;
+			}
+		} else if (location.getBlockY() < 0) {
+			return false;
+		}
 		return location.getWorld().getName().equals(worldName)
 				&& (location.getBlockX() >> 4) == chunkX
 				&& (location.getBlockZ() >> 4) == chunkZ;

@@ -33,7 +33,7 @@ public class LingeringPotionProtection implements Listener {
 	}
 
 	private boolean canShooterApplyEffectToEntity(ProjectileSource shooter, LivingEntity entity) {
-		Plot plotEntityIsStandingOn = checker.getPlot(entity.getLocation().getChunk());
+		Plot plotEntityIsStandingOn = checker.getPlot(entity.getLocation());
 		if(plotEntityIsStandingOn != null){
 			return canShooterApplyEffectToEntityStandingOnPlot(shooter, plotEntityIsStandingOn);
 		}
