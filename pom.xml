@@ -6,7 +6,7 @@
 
     <groupId>ChunkyPlots</groupId>
     <artifactId>ChunkyPlots</artifactId>
-    <version>DEV-2026.1</version>
+    <version>DEV-2026.3</version>
     <packaging>jar</packaging>
 
     <name>ChunkyPlots</name>
@@ -220,14 +220,14 @@
         <dependency>
             <groupId>ca.bkaw</groupId>
             <artifactId>paper-nms</artifactId>
-            <version>26.2-SNAPSHOT</version>
+            <version>26.3-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>[26.2.build,)</version>
+            <version>[26.3.build,)</version>
             <scope>provided</scope>
         </dependency>
 

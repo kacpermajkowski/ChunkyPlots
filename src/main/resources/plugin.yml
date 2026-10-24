@@ -2,7 +2,11 @@ main: pl.kacpermajkowski.ChunkyPlots.ChunkyPlots
 name: ChunkyPlots
 version: ${project.version}
 author: Kacper Majkowski
-api-version: '26.2'
+api-version: '26.3'
+libraries:
+  - com.zaxxer:HikariCP:6.2.1
+  - org.xerial:sqlite-jdbc:3.47.1.0
+  - org.apache.commons:commons-lang3:3.20.0
 commands:
   plot:
     description: This command allows to commit basic operation on your own plots
