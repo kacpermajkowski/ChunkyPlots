@@ -8,13 +8,13 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.border.PlotShowBorderCommand;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
@@ -82,6 +82,13 @@ class PlotBorderVisualizerTest {
         assertNotNull(PlotRelation.OWN_PLOT.getPlName());
         assertNotNull(PlotRelation.MEMBER_PLOT.getPlName());
         assertNotNull(PlotRelation.THIRD_PARTY_PLOT.getPlName());
+    }
+
+    @Test
+    @DisplayName("Duration should default to 10 minutes (600s / 1200 iterations)")
+    void testDurationDefault() {
+        assertEquals(600, PlotBorderVisualizer.DEFAULT_DURATION_SECONDS);
+        assertEquals(1200, PlotBorderVisualizer.MAX_ITERATIONS);
     }
 
     @Test
@@ -192,13 +199,13 @@ class PlotBorderVisualizerTest {
     }
 
     @Test
-    @DisplayName("PlotShowBorderCommand metadata and execution")
+    @DisplayName("PlotShowBorderCommand is a pure toggle without on/off parameters")
     void testPlotShowBorderCommand() {
         PlotShowBorderCommand command = new PlotShowBorderCommand(visualizer);
 
         assertEquals("showborder", command.getName());
         assertEquals("chunkyplots.player", command.getPermission());
-        assertEquals("/plot showborder [on|off]", command.getSyntax());
+        assertEquals("/plot showborder", command.getSyntax());
         assertNotNull(command.getDescription());
 
         // Test execution toggle
@@ -206,23 +213,18 @@ class PlotBorderVisualizerTest {
         // In mock mode without plugin enabled, it calls renderBorder
         verify(player, atLeastOnce()).spawnParticle(eq(Particle.DUST), anyDouble(), anyDouble(), anyDouble(), anyInt(), anyDouble(), anyDouble(), anyDouble(), anyDouble(), any());
 
-        // Test tab completion
+        // Pure toggle has no parameters to complete
         List<String> completions = command.getTabCompletion(player, new String[]{""});
-        assertTrue(completions.contains("on"));
-        assertTrue(completions.contains("off"));
-
-        List<String> filtered = command.getTabCompletion(player, new String[]{"o"});
-        assertTrue(filtered.contains("on"));
-        assertTrue(filtered.contains("off"));
-
-        List<String> offOnly = command.getTabCompletion(player, new String[]{"of"});
-        assertEquals(List.of("off"), offOnly);
+        assertTrue(completions.isEmpty());
     }
 
     @Test
-    @DisplayName("Player quit should remove active task and clean up")
-    void testPlayerQuitCleanup() {
+    @DisplayName("Player quit and kick should auto-disable and remove active task")
+    void testPlayerQuitAndKickCleanup() {
         visualizer.onPlayerQuit(new PlayerQuitEvent(player, (Component) null));
+        assertFalse(visualizer.isVisualizing(player));
+
+        visualizer.onPlayerKick(new PlayerKickEvent(player, (Component) null, (Component) null));
         assertFalse(visualizer.isVisualizing(player));
 
         visualizer.stopAll();

@@ -22,12 +22,12 @@ public class PlotShowBorderCommand implements PlotSubcommand {
 
     @Override
     public String getDescription() {
-        return "wyświetla cząsteczkową granicę aktualnego chunku/działki";
+        return "przełącza widoczność cząsteczkowej granicy aktualnego chunku/działki";
     }
 
     @Override
     public String getSyntax() {
-        return "/plot showborder [on|off]";
+        return "/plot showborder";
     }
 
     @Override
@@ -42,34 +42,12 @@ public class PlotShowBorderCommand implements PlotSubcommand {
             return;
         }
 
-        if (args.length == 0) {
-            borderVisualizer.toggle(player);
-            return;
-        }
-
-        if (args.length == 1) {
-            String sub = args[0].toLowerCase();
-            if (sub.equals("on") || sub.equals("start") || sub.equals("enable")) {
-                borderVisualizer.start(player);
-                return;
-            } else if (sub.equals("off") || sub.equals("stop") || sub.equals("disable")) {
-                borderVisualizer.stop(player);
-                new MessageBuilder(Message.BORDER_DISABLED).sendChat(player);
-                return;
-            }
-        }
-
-        new MessageBuilder().subcommand(this).message(Message.COMMAND_USAGE).sendChat(player);
+        // Pure toggle: /plot showborder toggles border visibility
+        borderVisualizer.toggle(player);
     }
 
     @Override
     public List<String> getTabCompletion(Player player, String[] args) {
-        if (args.length == 1) {
-            String query = args[0].toLowerCase();
-            return List.of("on", "off").stream()
-                    .filter(s -> s.startsWith(query))
-                    .toList();
-        }
         return List.of();
     }
 }

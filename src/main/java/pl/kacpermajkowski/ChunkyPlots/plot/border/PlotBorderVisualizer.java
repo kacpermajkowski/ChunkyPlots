@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -35,8 +36,9 @@ public class PlotBorderVisualizer implements Listener {
 
     // Visualization interval: every 10 ticks (0.5 seconds)
     private static final long TASK_PERIOD_TICKS = 10L;
-    // Default auto-expire duration: 60 seconds (120 executions at 10-tick interval)
-    private static final int MAX_ITERATIONS = 120;
+    // Default auto-expire duration: 10 minutes (600 seconds = 1200 executions at 10-tick interval)
+    public static final int DEFAULT_DURATION_SECONDS = 600;
+    public static final int MAX_ITERATIONS = (int) (DEFAULT_DURATION_SECONDS * 20L / TASK_PERIOD_TICKS);
 
     public PlotBorderVisualizer(Plugin plugin, PlotManager plotManager) {
         this.plugin = plugin;
@@ -68,7 +70,7 @@ public class PlotBorderVisualizer implements Listener {
     }
 
     /**
-     * Starts the repeating border visualization task for a player.
+     * Starts the repeating border visualization task for a player (active for 10 minutes by default).
      */
     public void start(Player player) {
         if (player == null) return;
@@ -83,6 +85,7 @@ public class PlotBorderVisualizer implements Listener {
             AtomicInteger remainingIterations = new AtomicInteger(MAX_ITERATIONS);
 
             BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+                // Auto-disable if player left the server
                 if (!player.isOnline()) {
                     stop(player.getUniqueId());
                     return;
@@ -133,6 +136,11 @@ public class PlotBorderVisualizer implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        stop(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void onPlayerKick(PlayerKickEvent event) {
         stop(event.getPlayer().getUniqueId());
     }
 
