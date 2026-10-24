@@ -14,7 +14,9 @@ import pl.kacpermajkowski.ChunkyPlots.plot.gui.PlotGuiManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapManager;
 
+import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
@@ -218,5 +220,39 @@ public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
     @Override
     public PlotLimitManager getLimitManager() {
         return limitManager;
+    }
+
+    @Override
+    public boolean isWorldAllowed(String worldName) {
+        if (plotManager != null) {
+            return plotManager.isWorldAllowed(worldName);
+        }
+        Config cfg = Config.getInstance();
+        return cfg != null && cfg.isWorldAllowed(worldName);
+    }
+
+    @Override
+    public String getWorldAlias(String worldName) {
+        if (plotManager != null) {
+            return plotManager.getWorldAlias(worldName);
+        }
+        Config cfg = Config.getInstance();
+        return cfg != null ? cfg.getWorldAlias(worldName) : null;
+    }
+
+    @Override
+    public String getWorldByAlias(String alias) {
+        Config cfg = (plotManager != null && plotManager.getConfig() != null)
+                ? plotManager.getConfig()
+                : Config.getInstance();
+        return cfg != null ? cfg.getWorldByAlias(alias) : null;
+    }
+
+    @Override
+    public Set<String> getAllowedWorlds() {
+        Config cfg = (plotManager != null && plotManager.getConfig() != null)
+                ? plotManager.getConfig()
+                : Config.getInstance();
+        return cfg != null ? cfg.getAllowedWorlds() : Set.of();
     }
 }

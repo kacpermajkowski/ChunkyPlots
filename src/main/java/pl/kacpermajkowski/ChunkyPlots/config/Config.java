@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,9 @@ public class Config {
 	private int defaultPlotLimit = 1;
 	private final HashMap<String, Integer> groupPlotLimits = new HashMap<>();
 
+	private final Map<String, String> worlds = new LinkedHashMap<>();
+	private final Map<String, String> aliasToWorld = new HashMap<>();
+
 	// messages.yml options
 	private HashMap<Message, String> messages;
 
@@ -50,9 +54,21 @@ public class Config {
 		loadConfigValues();
 	}
 
+	public Config(JavaPlugin plugin, FileConfiguration config, FileConfiguration messageConfig) {
+		this.plugin = plugin;
+		instance = this;
+		this.config = config;
+		this.messageConfig = messageConfig;
+		loadConfigValues();
+	}
+
 	@Deprecated
 	public static Config getInstance(){
 		return instance;
+	}
+
+	public static void setInstance(Config config) {
+		instance = config;
 	}
 
 	private void loadFileConfigurations() {
@@ -69,6 +85,17 @@ public class Config {
 		}
 
 		this.config = plugin.getConfig();
+		InputStream defaultConfigStream = plugin.getResource("config.yml");
+		if (defaultConfigStream != null) {
+			YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(
+					new InputStreamReader(defaultConfigStream, StandardCharsets.UTF_8)
+			);
+			this.config.setDefaults(defaultConfig);
+			this.config.options().copyDefaults(true);
+			try {
+				plugin.saveConfig();
+			} catch (Exception ignored) {}
+		}
 		File messagesFile = new File(dataFolder, "messages.yml");
 		this.messageConfig = YamlConfiguration.loadConfiguration(messagesFile);
 
@@ -95,6 +122,7 @@ public class Config {
 			loadPlotItemLore();
 			loadMessageDisplayTypes();
 			loadPlotLimits();
+			loadWorlds();
 
 			loadMessages();
 		} catch (InvalidConfigException e){
@@ -175,6 +203,54 @@ public class Config {
 		}
 	}
 
+	private void loadWorlds() throws InvalidConfigException {
+		this.worlds.clear();
+		this.aliasToWorld.clear();
+
+		ConfigurationSection section = this.config.getConfigurationSection("worlds");
+		if (section == null) {
+			section = this.config.getConfigurationSection("allowed-worlds");
+		}
+
+		if (section == null) {
+			addWorldWithAlias("world", "");
+			addWorldWithAlias("world_nether", "nether");
+			addWorldWithAlias("world_end", "end");
+			return;
+		}
+
+		Set<String> keys = section.getKeys(false);
+		if (keys.isEmpty() && section.getDefaultSection() != null) {
+			keys = section.getDefaultSection().getKeys(false);
+		}
+
+		if (keys.isEmpty()) {
+			addWorldWithAlias("world", "");
+			addWorldWithAlias("world_nether", "nether");
+			addWorldWithAlias("world_end", "end");
+			return;
+		}
+
+		for (String worldName : keys) {
+			String alias = section.getString(worldName);
+			if (alias == null) {
+				alias = "";
+			}
+			addWorldWithAlias(worldName, alias.trim());
+		}
+	}
+
+	private void addWorldWithAlias(String worldName, String alias) throws InvalidConfigException {
+		String lowerAlias = alias.toLowerCase();
+		if (aliasToWorld.containsKey(lowerAlias)) {
+			String existingWorld = aliasToWorld.get(lowerAlias);
+			throw new InvalidConfigException("Duplicate world alias '" + alias + "' for world '" + worldName
+					+ "'. Already used by world '" + existingWorld + "'. World aliases must be unique.");
+		}
+		this.worlds.put(worldName, alias);
+		this.aliasToWorld.put(lowerAlias, worldName);
+	}
+
 	// messages.yml loaders
 	private void loadMessages(){
 		Logger logger = plugin.getLogger();
@@ -217,6 +293,49 @@ public class Config {
 
 	public Map<String, Integer> getGroupPlotLimits() {
 		return Collections.unmodifiableMap(groupPlotLimits);
+	}
+
+	public boolean isWorldAllowed(String worldName) {
+		if (worldName == null) return false;
+		for (String configuredWorld : worlds.keySet()) {
+			if (configuredWorld.equalsIgnoreCase(worldName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Map<String, String> getWorldAliases() {
+		return Collections.unmodifiableMap(worlds);
+	}
+
+	public Set<String> getAllowedWorlds() {
+		return Collections.unmodifiableSet(worlds.keySet());
+	}
+
+	public String getWorldAlias(String worldName) {
+		if (worldName == null) return null;
+		for (Map.Entry<String, String> entry : worlds.entrySet()) {
+			if (entry.getKey().equalsIgnoreCase(worldName)) {
+				return entry.getValue();
+			}
+		}
+		return null;
+	}
+
+	public String getWorldByAlias(String alias) {
+		if (alias == null) return null;
+		String lower = alias.trim().toLowerCase();
+		String world = aliasToWorld.get(lower);
+		if (world != null) {
+			return world;
+		}
+		for (String configuredWorld : worlds.keySet()) {
+			if (configuredWorld.equalsIgnoreCase(alias.trim())) {
+				return configuredWorld;
+			}
+		}
+		return null;
 	}
 
 	// messages.yml getters

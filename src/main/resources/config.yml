@@ -32,3 +32,11 @@ plot-limits:
     vip: 5
     svip: 10
     mvp: 20
+
+# Swiaty, w ktorych mozna tworzyc dzialki oraz ich unikalne aliasy
+# Domyslnie: "world" = "", "world_nether" = "nether", "world_end" = "end"
+# Aliasy musza byc unikalne!
+worlds:
+  world: ""
+  world_nether: "nether"
+  world_end: "end"

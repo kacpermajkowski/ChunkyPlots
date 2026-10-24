@@ -50,5 +50,9 @@ public class BukkitTestHelper {
             serverField.set(null, null);
         } catch (Exception ignored) {
         }
+        try {
+            pl.kacpermajkowski.ChunkyPlots.config.Config.setInstance(null);
+        } catch (Exception ignored) {
+        }
     }
 }

@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.user.User;
+import pl.kacpermajkowski.ChunkyPlots.config.Config;
 
 import java.util.*;
 
@@ -106,7 +107,23 @@ public class Plot {
 	}
 	@Deprecated
 	public String getID(){
+		Config cfg = Config.getInstance();
+		if (cfg != null) {
+			String alias = cfg.getWorldAlias(worldName);
+			if (alias != null && !alias.isEmpty()) {
+				return chunkX + ";" + chunkZ + ";" + alias;
+			}
+		}
 		return chunkX + ";" + chunkZ;
+	}
+
+	public String getWorldAlias() {
+		Config cfg = Config.getInstance();
+		if (cfg != null) {
+			String alias = cfg.getWorldAlias(worldName);
+			if (alias != null) return alias;
+		}
+		return "";
 	}
 	public Set<UUID> getBlacklist(){
 		return Collections.unmodifiableSet(blacklist);

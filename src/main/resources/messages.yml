@@ -14,6 +14,7 @@ messages:
   plot_deleted: "&cPomyślnie usunięto działkę o ID &8(&7{plotID}&8)"
   plot_already_exists: "&cW tym miejscu istnieje już działka!"
   plot_limit_reached: "&cOsiągnąłeś swój maksymalny limit działek! ({currentPlots}/{plotLimit})"
+  world_not_allowed: "&cTworzenie działek na świecie &f{world} &cjest niedozwolone!"
 
   entered_plot: "&aWkroczyłeś na działkę gracza &7{plotOwnerName}"
   left_plot: "&cOpuściłeś działkę gracza &7{plotOwnerName}"

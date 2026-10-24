@@ -124,6 +124,7 @@ public class ChunkyPlots extends JavaPlugin {
 		UserRepository userRepository = new SqliteUserRepository(databaseManager, getDataFolder(), getLogger());
 
 		this.plotManager = new PlotManager(plotRepository, plotItem);
+		this.plotManager.setConfig(config);
 		this.userManager = new UserManager(userRepository);
 		this.craftingManager = new CraftingManager(this, plotItem);
 

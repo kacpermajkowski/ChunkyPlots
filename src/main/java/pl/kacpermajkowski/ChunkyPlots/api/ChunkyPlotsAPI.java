@@ -9,6 +9,7 @@ import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotRelation;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -163,4 +164,26 @@ public interface ChunkyPlotsAPI {
     VaultHook getVaultHook();
 
     PlotLimitManager getLimitManager();
+
+    // --- Allowed Worlds & Aliases ---
+
+    /**
+     * Checks if plot creation is enabled in the specified world.
+     */
+    boolean isWorldAllowed(String worldName);
+
+    /**
+     * Gets the configured alias for the specified world name.
+     */
+    String getWorldAlias(String worldName);
+
+    /**
+     * Resolves a world name from a world alias.
+     */
+    String getWorldByAlias(String alias);
+
+    /**
+     * Gets all configured worlds where plot creation is allowed.
+     */
+    Set<String> getAllowedWorlds();
 }

@@ -8,6 +8,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.events.*;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
@@ -35,6 +36,7 @@ public class PlotManager {
 	private final PlotRepository repository;
 	private final ItemStack plotItem;
 	private PlotLimitManager limitManager;
+	private Config config;
 
 	public static long chunkKey(int chunkX, int chunkZ) {
 		return ((long) chunkX & 0xFFFFFFFFL) | (((long) chunkZ & 0xFFFFFFFFL) << 32);
@@ -118,6 +120,47 @@ public class PlotManager {
 		return instance;
 	}
 
+	public void setConfig(Config config) {
+		this.config = config;
+	}
+
+	public Config getConfig() {
+		return config;
+	}
+
+	public boolean isWorldAllowed(String worldName) {
+		if (worldName == null) return false;
+		if (this.config != null) {
+			return this.config.isWorldAllowed(worldName);
+		}
+		Config cfg = Config.getInstance();
+		if (cfg != null) {
+			return cfg.isWorldAllowed(worldName);
+		}
+		return true;
+	}
+
+	public String getWorldAlias(String worldName) {
+		if (worldName == null) return null;
+		Config cfg = this.config != null ? this.config : Config.getInstance();
+		if (cfg != null) {
+			return cfg.getWorldAlias(worldName);
+		}
+		return null;
+	}
+
+	public String resolveWorld(String worldNameOrAlias) {
+		if (worldNameOrAlias == null) return null;
+		Config cfg = this.config != null ? this.config : Config.getInstance();
+		if (cfg != null) {
+			String resolved = cfg.getWorldByAlias(worldNameOrAlias);
+			if (resolved != null) {
+				return resolved;
+			}
+		}
+		return worldNameOrAlias;
+	}
+
 	public void setLimitManager(PlotLimitManager limitManager) {
 		this.limitManager = limitManager;
 	}
@@ -192,16 +235,31 @@ public class PlotManager {
 			if (plot != null) return plot;
 		} catch (IllegalArgumentException ignored) {}
 
-		// Check by ID or chunk coords (x;z or x;z;world)
+		// Check by ID or chunk coords (x;z or x;z;world or x;z;alias)
 		if (idOrCoords.contains(";")) {
 			String[] parts = idOrCoords.split(";");
 			if (parts.length == 3) {
-				return getPlot(parts[0], parts[1], parts[2]);
+				String worldSpec = resolveWorld(parts[2]);
+				Plot found = getPlot(parts[0], parts[1], worldSpec);
+				if (found != null) return found;
+				if (!worldSpec.equalsIgnoreCase(parts[2])) {
+					found = getPlot(parts[0], parts[1], parts[2]);
+					if (found != null) return found;
+				}
 			} else if (parts.length == 2) {
 				try {
 					int x = Integer.parseInt(parts[0]);
 					int z = Integer.parseInt(parts[1]);
 					long key = chunkKey(x, z);
+
+					// 1. If default world (alias "") is known, check it first
+					Config cfg = this.config != null ? this.config : Config.getInstance();
+					String defaultWorld = cfg != null ? cfg.getWorldByAlias("") : null;
+					if (defaultWorld != null) {
+						Plot found = getPlot(x, z, defaultWorld);
+						if (found != null) return found;
+					}
+
 					for (Map<Long, Plot> worldPlots : plotsByChunk.values()) {
 						Plot found = worldPlots.get(key);
 						if (found != null) return found;
@@ -236,6 +294,7 @@ public class PlotManager {
 
 	public Plot getPlot(int x, int z, String worldName) {
 		if (worldName == null) return null;
+		worldName = resolveWorld(worldName);
 		long key = chunkKey(x, z);
 
 		// 1. L1 Spatial in-memory cache hit check (O(1) nanoseconds)
@@ -300,7 +359,20 @@ public class PlotManager {
 
 	public boolean claimPlot(Player player, Block block) {
 		Chunk chunk = block.getChunk();
-		String plotID = chunk.getX() + ";" + chunk.getZ();
+		String worldName = chunk != null && chunk.getWorld() != null
+				? chunk.getWorld().getName()
+				: (block.getWorld() != null ? block.getWorld().getName() : "world");
+
+		if (!isWorldAllowed(worldName)) {
+			new MessageBuilder(Message.WORLD_NOT_ALLOWED).world(worldName).sendChat(player);
+			return false;
+		}
+
+		String alias = getWorldAlias(worldName);
+		String plotID = (alias != null && !alias.isEmpty())
+				? (chunk.getX() + ";" + chunk.getZ() + ";" + alias)
+				: (chunk.getX() + ";" + chunk.getZ());
+
 		if (getPlot(chunk) != null) {
 			new MessageBuilder(Message.PLOT_ALREADY_EXISTS).plotID(plotID).sendChat(player);
 			return false;
