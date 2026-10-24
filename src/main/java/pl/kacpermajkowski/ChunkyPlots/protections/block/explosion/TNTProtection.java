@@ -1,6 +1,5 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.block.explosion;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -17,65 +16,73 @@ import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TNTProtection implements Listener {
     private final PlotPermissionChecker checker;
     private final Plugin plugin;
-    private Block lastTntPrimedSource = null;
-    private final HashMap<TNTPrimed, Block> tntBlockSources = new HashMap<>();
+    private final Map<TNTPrimed, Block> tntBlockSources = new ConcurrentHashMap<>();
 
     public TNTProtection(PlotPermissionChecker checker, Plugin plugin) {
         this.checker = checker;
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onTntPrimed(TNTPrimeEvent event) {
-        lastTntPrimedSource = event.getBlock();
-    }
+        Block tntBlock = event.getBlock();
+        Plot plot = checker.getPlot(tntBlock);
+        if (plot == null) return;
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onTntSpawn(EntitySpawnEvent event) {
-        Entity entity = event.getEntity();
-        if(!(entity instanceof TNTPrimed tnt)) return;
-        tntBlockSources.put(tnt, lastTntPrimedSource);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            tntBlockSources.remove(tnt);
-        }, tnt.getFuseTicks()* 2L);
+        Entity primingEntity = event.getPrimingEntity();
+        if (primingEntity instanceof Player player) {
+            if (!checker.canPlayerAffect(player, plot)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
+        Block primingBlock = event.getPrimingBlock();
+        if (primingBlock != null) {
+            if (!checker.canBlockAffect(primingBlock, plot)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityExplode(final EntityExplodeEvent event){
-        if(event.getEntity().getType() != EntityType.TNT) return;
-        event.setCancelled(false);
+        if (event.getEntity().getType() != EntityType.TNT) return;
 
         List<Block> blockToSave = new ArrayList<>();
         TNTPrimed tnt = (TNTPrimed) event.getEntity();
-        for(Block block : event.blockList())
-            if(!canTNTExplodeBlock(tnt, block))
+        for (Block block : event.blockList()) {
+            if (!canTNTExplodeBlock(tnt, block)) {
                 blockToSave.add(block);
+            }
+        }
 
         event.blockList().removeAll(blockToSave);
     }
 
-    //TODO: maybe? add detection of where did redstone signal which primed the tnt come from
-
     private boolean canTNTExplodeBlock(TNTPrimed tntPrimed, Block block) {
         Entity tntSource = tntPrimed.getSource();
         Plot blockPlot = checker.getPlot(block);
-        if(tntSource == null) {
+        if (tntSource == null) {
             Block blockSource = tntBlockSources.get(tntPrimed);
-            if(blockPlot == null) return true;
-            else if(blockSource != null) {
+            if (blockPlot == null) return true;
+            else if (blockSource != null) {
                 return checker.canBlockAffect(blockSource, block);
             }
         } else {
-            if(!tntSource.isValid()) return false;
+            if (!tntSource.isValid()) return false;
 
-            if (tntSource instanceof Player player)
+            if (tntSource instanceof Player player) {
                 return checker.canPlayerAffect(player, blockPlot);
+            }
         }
         return false;
     }

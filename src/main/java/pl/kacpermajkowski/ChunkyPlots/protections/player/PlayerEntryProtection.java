@@ -24,19 +24,26 @@ public class PlayerEntryProtection implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if(event.getTo() == null || event.getFrom().distance(event.getTo()) == 0) return;
+        if (event.getTo() == null) return;
+        if (event.getFrom().getWorld() == null || event.getTo().getWorld() == null) return;
+        if (!event.getFrom().getWorld().equals(event.getTo().getWorld())) return;
+        if (event.getFrom().getX() == event.getTo().getX()
+                && event.getFrom().getY() == event.getTo().getY()
+                && event.getFrom().getZ() == event.getTo().getZ()) {
+            return;
+        }
 
         Plot toPlot = checker.getPlot(event.getTo());
-        if(toPlot == null) return;
-
-        if(!toPlot.isPlayerBlacklisted(player)) return;
+        if (toPlot == null) return;
+        if (checker.canPlayerAffect(player, toPlot)) return;
+        if (!toPlot.isPlayerBlacklisted(player)) return;
 
         Chunk fromChunk = event.getFrom().getChunk();
         Chunk toChunk = event.getTo().getChunk();
         int zDirection = fromChunk.getZ() - toChunk.getZ();
         int xDirection = fromChunk.getX() - toChunk.getX();
 
-        if(zDirection == 0 && xDirection == 0) {
+        if (zDirection == 0 && xDirection == 0) {
             Location closestBorderPoint = ChunkBorderUtil.getSafeBorderPoint(player, toChunk);
             closestBorderPoint.setYaw(event.getTo().getYaw());
             closestBorderPoint.setPitch(event.getTo().getPitch());

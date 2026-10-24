@@ -11,157 +11,85 @@ import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class ShriekerProtection implements Listener {
-    //TODO: Add a way to disable it in config cuz its prolly a resource hog
-
     private final PlotPermissionChecker checker;
-    private Block lastBlock = null;
+    private volatile Block lastBlock = null;
 
     public ShriekerProtection(PlotPermissionChecker checker) {
         this.checker = checker;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void BellResonateEvent(BellResonateEvent event) {
+    public void onBellResonate(BellResonateEvent event) {
         registerBlockEvent(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void BellRingEvent(BellRingEvent event) {
-        registerBlockEvent(event);
-    }
-
-//    @EventHandler(priority = EventPriority.MONITOR)
-//    public void BlockBrushEvent(BlockBrushEvent event) {
-//        registerBlockEvent(event);
-//    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockBurnEvent(BlockBurnEvent event) {
+    public void onBellRing(BellRingEvent event) {
         registerBlockEvent(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockDamageAbortEvent(BlockDamageAbortEvent event) {
+    public void onBlockBurn(BlockBurnEvent event) {
         registerBlockEvent(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockDamageEvent(BlockDamageEvent event) {
+    public void onBlockDispense(BlockDispenseEvent event) {
         registerBlockEvent(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockDispenseEvent(BlockDispenseEvent event) {
-        registerBlockEvent(event);
-    }
-
-//    @EventHandler(priority = EventPriority.MONITOR)
-//    public void BlockDispenseLootEvent(BlockDispenseLootEvent event) {
-//        registerBlockEvent(event);
-//    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockDropItemEvent(BlockDropItemEvent event) {
+    public void onBlockExplode(BlockExplodeEvent event) {
         registerBlockEvent(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockExplodeEvent(BlockExplodeEvent event) {
+    public void onBlockPistonExtend(org.bukkit.event.block.BlockPistonExtendEvent event) {
         registerBlockEvent(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockFadeEvent(BlockFadeEvent event) {
+    public void onBlockPistonRetract(org.bukkit.event.block.BlockPistonRetractEvent event) {
         registerBlockEvent(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockFertilizeEvent(BlockFertilizeEvent event) {
+    public void onBlockPlace(BlockPlaceEvent event) {
         registerBlockEvent(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockIgniteEvent(BlockIgniteEvent event) {
+    public void onNotePlay(NotePlayEvent event) {
         registerBlockEvent(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockPhysicsEvent(BlockPhysicsEvent event) {
+    public void onSculkBloom(SculkBloomEvent event) {
         registerBlockEvent(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockPistonExtendEvent(org.bukkit.event.block.BlockPistonExtendEvent event) {
+    public void onTNTPrime(TNTPrimeEvent event) {
         registerBlockEvent(event);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockPistonRetractEvent(org.bukkit.event.block.BlockPistonRetractEvent event) {
-        registerBlockEvent(event);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockPlaceEvent(BlockPlaceEvent event) {
-        registerBlockEvent(event);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void BlockShearEntityEvent(BlockShearEntityEvent event) {
-        registerBlockEvent(event);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void CauldronLevelChangeEvent(CauldronLevelChangeEvent event) {
-        registerBlockEvent(event);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void FluidLevelChangeEvent(FluidLevelChangeEvent event) {
-        registerBlockEvent(event);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void LeavesDecayEvent(LeavesDecayEvent event) {
-        registerBlockEvent(event);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void NotePlayEvent(NotePlayEvent event) {
-        registerBlockEvent(event);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void SculkBloomEvent(SculkBloomEvent event) {
-        registerBlockEvent(event);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void SpongeAbsorbEvent(SpongeAbsorbEvent event) {
-        registerBlockEvent(event);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void TNTPrimeEvent(TNTPrimeEvent event) {
-        registerBlockEvent(event);
-    }
-
-    public void registerBlockEvent(BlockEvent event) {
+    private void registerBlockEvent(BlockEvent event) {
         lastBlock = event.getBlock();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onVibrationSpawn(BlockReceiveGameEvent event) {
         Plot destPlot = checker.getPlot(event.getBlock());
-        if(destPlot == null) return;
+        if (destPlot == null) return;
 
         Entity entity = event.getEntity();
-        if(entity instanceof Player player) {
-            if(checker.canPlayerAffect(player, destPlot)) return;
+        if (entity instanceof Player player) {
+            if (checker.canPlayerAffect(player, destPlot)) return;
         } else if (entity != null) {
             Plot entityPlot = checker.getPlot(entity);
-            if(entityPlot != null && entityPlot.hasTheSameOwnerAs(destPlot)) return;
+            if (entityPlot != null && entityPlot.hasTheSameOwnerAs(destPlot)) return;
         } else if (lastBlock != null) {
-            if(checker.canBlockAffect(lastBlock, destPlot)) return;
+            if (checker.canBlockAffect(lastBlock, destPlot)) return;
         }
 
         event.setCancelled(true);

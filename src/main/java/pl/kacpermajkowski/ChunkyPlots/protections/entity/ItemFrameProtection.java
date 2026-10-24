@@ -1,6 +1,8 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.entity;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,15 +18,22 @@ public class ItemFrameProtection implements Listener {
         this.checker = checker;
     }
 
-    //TODO: Find other cases when item frame is allowed to be destroyed
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onItemFrameProtection(final HangingBreakEvent event) {
         Plot hangingPlot = checker.getPlot(event.getEntity());
-        if(hangingPlot == null) return;
+        if (hangingPlot == null) return;
 
-        if(event instanceof HangingBreakByEntityEvent entityEvent) {
-            if(entityEvent.getRemover() instanceof Player player) {
-                if(checker.canPlayerAffect(player, hangingPlot)) return;
+        if (event.getCause() == HangingBreakEvent.RemoveCause.PHYSICS) {
+            // Physics pops (e.g. supporting block broken by authorized player)
+            return;
+        }
+
+        if (event instanceof HangingBreakByEntityEvent entityEvent) {
+            Entity remover = entityEvent.getRemover();
+            if (remover instanceof Player player) {
+                if (checker.canPlayerAffect(player, hangingPlot)) return;
+            } else if (remover instanceof Projectile projectile && projectile.getShooter() instanceof Player player) {
+                if (checker.canPlayerAffect(player, hangingPlot)) return;
             }
         }
 

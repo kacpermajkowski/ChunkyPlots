@@ -23,12 +23,11 @@ public class BlockSpreadListener implements Listener {
 		}
 	}
 
-	// TODO: Reevaluate why can't block spread from a plot to unclaimed chunks
 	private boolean canBlockSpreadFromPlotToPlot(Plot sourcePlot, Plot destinationPlot) {
-		if(sourcePlot == null && destinationPlot == null) return true;
-		else if(sourcePlot != null && destinationPlot != null){
+		if (destinationPlot == null) return true; // Spreading into unclaimed wilderness is safe
+		if (sourcePlot != null) {
 			return sourcePlot.hasTheSameOwnerAs(destinationPlot);
 		}
-		return false;
+		return false; // Cannot spread from wilderness into a claimed plot
 	}
 }

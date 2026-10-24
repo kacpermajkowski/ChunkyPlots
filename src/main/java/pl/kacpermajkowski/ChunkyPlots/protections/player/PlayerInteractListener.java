@@ -37,29 +37,36 @@ public class PlayerInteractListener implements Listener {
 	private void handleBlockClickInteration(final PlayerInteractEvent event) {
 		final Block block = event.getClickedBlock();
 		final Player player = event.getPlayer();
-		final Plot eventPlot;
-		if(block != null) {
-			eventPlot = checker.getPlot(block.getChunk());
-			if(checker.canPlayerAffect(player, eventPlot)) return;
+		if (block != null) {
+			final Plot eventPlot = checker.getPlot(block.getChunk());
+			if (checker.canPlayerAffect(player, eventPlot)) return;
 			event.setCancelled(true);
 		}
 	}
 
-	//redstone ore light up protection
 	private void handlePhysicalInteraction(final PlayerInteractEvent event) {
 		if (!event.hasBlock()) return;
 
 		final Block block = event.getClickedBlock();
 		if (block == null) return;
-		if (block.getType() != Material.REDSTONE_ORE) return;
 
+		Material type = block.getType();
 		Plot plot = checker.getPlot(block);
 		if (checker.canPlayerAffect(event.getPlayer(), plot)) return;
-		event.setCancelled(true);
 
-//		client-side prediction cosmetic effect fix, still works only when player drops off the ore
-		Bukkit.getScheduler().runTaskLater(plugin,
-				() -> event.getPlayer().sendBlockChange(block.getLocation(), block.getBlockData())
-		, 1L);
+		// Farmland trampling, pressure plates, tripwire hooks, and redstone ore
+		if (type == Material.FARMLAND || type.name().endsWith("_PRESSURE_PLATE") || type == Material.TRIPWIRE) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (type == Material.REDSTONE_ORE || type == Material.DEEPSLATE_REDSTONE_ORE) {
+			event.setCancelled(true);
+			if (plugin != null && plugin.isEnabled()) {
+				Bukkit.getScheduler().runTaskLater(plugin,
+						() -> event.getPlayer().sendBlockChange(block.getLocation(), block.getBlockData()),
+						1L);
+			}
+		}
 	}
 }
