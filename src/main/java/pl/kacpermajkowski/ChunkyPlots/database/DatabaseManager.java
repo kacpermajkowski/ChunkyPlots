@@ -98,8 +98,9 @@ public class DatabaseManager {
                 );
             """);
 
-            // Performance indexes
+            // Performance indexes for O(log N) seeks at billion-scale
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_plots_coords ON plots(world_name, chunk_x, chunk_z);");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_plots_owner ON plots(owner_uuid);");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_plot_members_plot ON plot_members(plot_uuid);");
 
         } catch (SQLException e) {

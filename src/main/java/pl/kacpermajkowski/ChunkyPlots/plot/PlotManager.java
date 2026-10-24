@@ -16,14 +16,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlotManager {
+	public static final int DEFAULT_MAX_PRELOAD_PLOTS = 50_000;
+	public static final int MAX_WILDERNESS_CACHE_SIZE = 100_000;
+
 	private static PlotManager instance;
 
 	private final Map<UUID, Plot> plotsByUuid = new ConcurrentHashMap<>();
+	private final Map<UUID, Set<Plot>> plotsByOwner = new ConcurrentHashMap<>();
 	private final Map<String, Map<Long, Plot>> plotsByChunk = new ConcurrentHashMap<>();
+	private final Map<String, Set<Long>> wildernessChunks = new ConcurrentHashMap<>();
+
 	private final PlotRepository repository;
 	private final ItemStack plotItem;
 
@@ -32,25 +39,75 @@ public class PlotManager {
 	}
 
 	public PlotManager(PlotRepository repository, ItemStack plotItem) {
+		this(repository, plotItem, DEFAULT_MAX_PRELOAD_PLOTS);
+	}
+
+	public PlotManager(PlotRepository repository, ItemStack plotItem, int maxPreloadPlots) {
 		this.repository = repository;
 		this.plotItem = plotItem;
-		for (Plot plot : repository.loadAll()) {
-			indexPlot(plot);
+
+		int totalCount = repository.count();
+		if (totalCount <= maxPreloadPlots) {
+			for (Plot plot : repository.loadAll()) {
+				indexPlot(plot);
+			}
 		}
 		instance = this;
 	}
 
 	private void indexPlot(Plot plot) {
+		if (plot == null) return;
 		plotsByUuid.put(plot.getUUID(), plot);
+		plotsByOwner.computeIfAbsent(plot.getOwnerUUID(), k -> ConcurrentHashMap.newKeySet()).add(plot);
 		plotsByChunk.computeIfAbsent(plot.getWorldName(), k -> new ConcurrentHashMap<>())
 				.put(chunkKey(plot.getChunkX(), plot.getChunkZ()), plot);
+
+		Set<Long> worldWilderness = wildernessChunks.get(plot.getWorldName());
+		if (worldWilderness != null) {
+			worldWilderness.remove(chunkKey(plot.getChunkX(), plot.getChunkZ()));
+		}
 	}
 
 	private void unindexPlot(Plot plot) {
+		if (plot == null) return;
 		plotsByUuid.remove(plot.getUUID());
+		Set<Plot> ownerPlots = plotsByOwner.get(plot.getOwnerUUID());
+		if (ownerPlots != null) {
+			ownerPlots.remove(plot);
+		}
 		Map<Long, Plot> worldPlots = plotsByChunk.get(plot.getWorldName());
 		if (worldPlots != null) {
 			worldPlots.remove(chunkKey(plot.getChunkX(), plot.getChunkZ()));
+		}
+		markWilderness(plot.getChunkX(), plot.getChunkZ(), plot.getWorldName());
+	}
+
+	private void markWilderness(int x, int z, String worldName) {
+		if (worldName == null) return;
+		Set<Long> worldWilderness = wildernessChunks.computeIfAbsent(worldName, k -> ConcurrentHashMap.newKeySet());
+		if (worldWilderness.size() >= MAX_WILDERNESS_CACHE_SIZE) {
+			worldWilderness.clear();
+		}
+		worldWilderness.add(chunkKey(x, z));
+	}
+
+	public void evictChunk(int x, int z, String worldName) {
+		if (worldName == null) return;
+		long key = chunkKey(x, z);
+		Map<Long, Plot> worldPlots = plotsByChunk.get(worldName);
+		if (worldPlots != null) {
+			Plot plot = worldPlots.remove(key);
+			if (plot != null) {
+				plotsByUuid.remove(plot.getUUID());
+				Set<Plot> ownerPlots = plotsByOwner.get(plot.getOwnerUUID());
+				if (ownerPlots != null) {
+					ownerPlots.remove(plot);
+				}
+			}
+		}
+		Set<Long> worldWilderness = wildernessChunks.get(worldName);
+		if (worldWilderness != null) {
+			worldWilderness.remove(key);
 		}
 	}
 
@@ -77,6 +134,22 @@ public class PlotManager {
 		return new ArrayList<>(plotsByUuid.values());
 	}
 
+	public List<Plot> getPlotsByOwner(UUID ownerUuid) {
+		if (ownerUuid == null) return List.of();
+		Set<Plot> cached = plotsByOwner.get(ownerUuid);
+		if (cached != null && !cached.isEmpty()) {
+			return new ArrayList<>(cached);
+		}
+		List<Plot> dbPlots = repository.loadByOwner(ownerUuid);
+		if (!dbPlots.isEmpty()) {
+			for (Plot plot : dbPlots) {
+				indexPlot(plot);
+			}
+			return dbPlots;
+		}
+		return List.of();
+	}
+
 	public Plot getPlot(Block block) {
 		if (block == null) return null;
 		return getPlot(block.getX() >> 4, block.getZ() >> 4, block.getWorld().getName());
@@ -89,7 +162,15 @@ public class PlotManager {
 
 	public Plot getPlot(UUID uuid) {
 		if (uuid == null) return null;
-		return plotsByUuid.get(uuid);
+		Plot cached = plotsByUuid.get(uuid);
+		if (cached != null) return cached;
+
+		Plot loaded = repository.loadByUuid(uuid);
+		if (loaded != null) {
+			indexPlot(loaded);
+			return loaded;
+		}
+		return null;
 	}
 
 	public Plot getPlot(String idOrCoords) {
@@ -97,7 +178,7 @@ public class PlotManager {
 		// Check by UUID
 		try {
 			UUID uuid = UUID.fromString(idOrCoords);
-			Plot plot = plotsByUuid.get(uuid);
+			Plot plot = getPlot(uuid);
 			if (plot != null) return plot;
 		} catch (IllegalArgumentException ignored) {}
 
@@ -114,6 +195,11 @@ public class PlotManager {
 					for (Map<Long, Plot> worldPlots : plotsByChunk.values()) {
 						Plot found = worldPlots.get(key);
 						if (found != null) return found;
+					}
+					// If not in cache, check current world if single world known
+					if (plotsByChunk.size() == 1) {
+						String singleWorld = plotsByChunk.keySet().iterator().next();
+						return getPlot(x, z, singleWorld);
 					}
 				} catch (NumberFormatException ignored) {}
 			}
@@ -140,9 +226,30 @@ public class PlotManager {
 
 	public Plot getPlot(int x, int z, String worldName) {
 		if (worldName == null) return null;
+		long key = chunkKey(x, z);
+
+		// 1. L1 Spatial in-memory cache hit check (O(1) nanoseconds)
 		Map<Long, Plot> worldPlots = plotsByChunk.get(worldName);
-		if (worldPlots == null) return null;
-		return worldPlots.get(chunkKey(x, z));
+		if (worldPlots != null) {
+			Plot cached = worldPlots.get(key);
+			if (cached != null) return cached;
+		}
+
+		// 2. Wilderness negative-cache hit check (O(1) nanoseconds)
+		Set<Long> worldWilderness = wildernessChunks.get(worldName);
+		if (worldWilderness != null && worldWilderness.contains(key)) {
+			return null;
+		}
+
+		// 3. Cache miss: on-demand query from database
+		Plot loaded = repository.loadByChunk(x, z, worldName);
+		if (loaded != null) {
+			indexPlot(loaded);
+			return loaded;
+		} else {
+			markWilderness(x, z, worldName);
+			return null;
+		}
 	}
 
 	public Plot getPlot(Location location) {

@@ -46,29 +46,27 @@ public class PlotListCommand implements PlotSubcommand {
 		if(sender instanceof Player player){
 			new MessageBuilder(Message.WIDE_HEADER).sendChat(player);
 			player.sendMessage(TextUtil.toComponent("&eID Działki &9» &eKoordynaty &8(kliknij, aby zarządzać)"));
-			boolean hasPlots = false;
-			for(Plot plot : plotManager.getPlots()){
-				if(plot.isPlayerOwner(player)) {
-					hasPlots = true;
-					int blockX = (plot.getChunkX() << 4) + 8;
-					int blockZ = (plot.getChunkZ() << 4) + 8;
+			List<Plot> ownedPlots = plotManager.getPlotsByOwner(player.getUniqueId());
+			boolean hasPlots = !ownedPlots.isEmpty();
+			for(Plot plot : ownedPlots){
+				int blockX = (plot.getChunkX() << 4) + 8;
+				int blockZ = (plot.getChunkZ() << 4) + 8;
 
-					Component line = Component.text()
-							.append(Component.text("(", NamedTextColor.DARK_GRAY))
-							.append(Component.text(plot.getID(), NamedTextColor.GOLD))
-							.append(Component.text(") ", NamedTextColor.DARK_GRAY))
-							.append(Component.text("» ", NamedTextColor.GREEN))
-							.append(Component.text("X:", NamedTextColor.GRAY))
-							.append(Component.text(blockX + " ", NamedTextColor.WHITE))
-							.append(Component.text("Z:", NamedTextColor.GRAY))
-							.append(Component.text(blockZ + " ", NamedTextColor.WHITE))
-							.append(Component.text("[" + plot.getWorldName() + "]", NamedTextColor.DARK_AQUA))
-							.hoverEvent(HoverEvent.showText(Component.text("Kliknij, aby zarządzać działką /plot info " + plot.getID(), NamedTextColor.YELLOW)))
-							.clickEvent(ClickEvent.runCommand("/plot info " + plot.getID()))
-							.build();
+				Component line = Component.text()
+						.append(Component.text("(", NamedTextColor.DARK_GRAY))
+						.append(Component.text(plot.getID(), NamedTextColor.GOLD))
+						.append(Component.text(") ", NamedTextColor.DARK_GRAY))
+						.append(Component.text("» ", NamedTextColor.GREEN))
+						.append(Component.text("X:", NamedTextColor.GRAY))
+						.append(Component.text(blockX + " ", NamedTextColor.WHITE))
+						.append(Component.text("Z:", NamedTextColor.GRAY))
+						.append(Component.text(blockZ + " ", NamedTextColor.WHITE))
+						.append(Component.text("[" + plot.getWorldName() + "]", NamedTextColor.DARK_AQUA))
+						.hoverEvent(HoverEvent.showText(Component.text("Kliknij, aby zarządzać działką /plot info " + plot.getID(), NamedTextColor.YELLOW)))
+						.clickEvent(ClickEvent.runCommand("/plot info " + plot.getID()))
+						.build();
 
-					player.sendMessage(line);
-				}
+				player.sendMessage(line);
 			}
 			if(!hasPlots) {
 				player.sendMessage(TextUtil.toComponent("&7Nie posiadasz żadnych zarejestrowanych działek."));

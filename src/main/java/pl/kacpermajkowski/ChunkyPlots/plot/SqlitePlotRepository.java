@@ -86,6 +86,148 @@ public class SqlitePlotRepository implements PlotRepository {
     }
 
     @Override
+    public Plot loadByChunk(int chunkX, int chunkZ, String worldName) {
+        if (worldName == null) return null;
+        String selectPlot = "SELECT uuid, owner_uuid, chunk_x, chunk_z, world_name FROM plots WHERE world_name = ? AND chunk_x = ? AND chunk_z = ? LIMIT 1;";
+        String selectMembers = "SELECT player_uuid, member_type FROM plot_members WHERE plot_uuid = ?;";
+
+        try (Connection conn = databaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(selectPlot)) {
+            stmt.setString(1, worldName);
+            stmt.setInt(2, chunkX);
+            stmt.setInt(3, chunkZ);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    UUID uuid = UUID.fromString(rs.getString("uuid"));
+                    UUID ownerUuid = UUID.fromString(rs.getString("owner_uuid"));
+                    Plot plot = new Plot(ownerUuid, chunkX, chunkZ, worldName, uuid);
+
+                    try (PreparedStatement memStmt = conn.prepareStatement(selectMembers)) {
+                        memStmt.setString(1, uuid.toString());
+                        try (ResultSet memRs = memStmt.executeQuery()) {
+                            while (memRs.next()) {
+                                UUID memberUuid = UUID.fromString(memRs.getString("player_uuid"));
+                                String type = memRs.getString("member_type");
+                                if ("WHITELIST".equalsIgnoreCase(type)) {
+                                    plot.whitelistPlayer(memberUuid);
+                                } else if ("BLACKLIST".equalsIgnoreCase(type)) {
+                                    plot.blacklistPlayer(memberUuid);
+                                }
+                            }
+                        }
+                    }
+                    return plot;
+                }
+            }
+        } catch (SQLException e) {
+            logger.severe("Failed to load plot at " + worldName + "[" + chunkX + "," + chunkZ + "] from SQLite: " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public Plot loadByUuid(UUID uuid) {
+        if (uuid == null) return null;
+        String selectPlot = "SELECT uuid, owner_uuid, chunk_x, chunk_z, world_name FROM plots WHERE uuid = ? LIMIT 1;";
+        String selectMembers = "SELECT player_uuid, member_type FROM plot_members WHERE plot_uuid = ?;";
+
+        try (Connection conn = databaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(selectPlot)) {
+            stmt.setString(1, uuid.toString());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    UUID ownerUuid = UUID.fromString(rs.getString("owner_uuid"));
+                    int chunkX = rs.getInt("chunk_x");
+                    int chunkZ = rs.getInt("chunk_z");
+                    String worldName = rs.getString("world_name");
+                    Plot plot = new Plot(ownerUuid, chunkX, chunkZ, worldName, uuid);
+
+                    try (PreparedStatement memStmt = conn.prepareStatement(selectMembers)) {
+                        memStmt.setString(1, uuid.toString());
+                        try (ResultSet memRs = memStmt.executeQuery()) {
+                            while (memRs.next()) {
+                                UUID memberUuid = UUID.fromString(memRs.getString("player_uuid"));
+                                String type = memRs.getString("member_type");
+                                if ("WHITELIST".equalsIgnoreCase(type)) {
+                                    plot.whitelistPlayer(memberUuid);
+                                } else if ("BLACKLIST".equalsIgnoreCase(type)) {
+                                    plot.blacklistPlayer(memberUuid);
+                                }
+                            }
+                        }
+                    }
+                    return plot;
+                }
+            }
+        } catch (SQLException e) {
+            logger.severe("Failed to load plot by UUID " + uuid + " from SQLite: " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public List<Plot> loadByOwner(UUID ownerUuid) {
+        if (ownerUuid == null) return List.of();
+        List<Plot> plots = new ArrayList<>();
+        Map<UUID, Plot> plotMap = new HashMap<>();
+        String selectPlots = "SELECT uuid, owner_uuid, chunk_x, chunk_z, world_name FROM plots WHERE owner_uuid = ?;";
+        String selectMembers = "SELECT plot_uuid, player_uuid, member_type FROM plot_members WHERE plot_uuid = ?;";
+
+        try (Connection conn = databaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(selectPlots)) {
+            stmt.setString(1, ownerUuid.toString());
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    UUID uuid = UUID.fromString(rs.getString("uuid"));
+                    int chunkX = rs.getInt("chunk_x");
+                    int chunkZ = rs.getInt("chunk_z");
+                    String worldName = rs.getString("world_name");
+                    Plot plot = new Plot(ownerUuid, chunkX, chunkZ, worldName, uuid);
+                    plotMap.put(uuid, plot);
+                    plots.add(plot);
+                }
+            }
+
+            if (!plots.isEmpty()) {
+                try (PreparedStatement memStmt = conn.prepareStatement(selectMembers)) {
+                    for (Plot plot : plots) {
+                        memStmt.setString(1, plot.getUUID().toString());
+                        try (ResultSet memRs = memStmt.executeQuery()) {
+                            while (memRs.next()) {
+                                UUID memberUuid = UUID.fromString(memRs.getString("player_uuid"));
+                                String type = memRs.getString("member_type");
+                                if ("WHITELIST".equalsIgnoreCase(type)) {
+                                    plot.whitelistPlayer(memberUuid);
+                                } else if ("BLACKLIST".equalsIgnoreCase(type)) {
+                                    plot.blacklistPlayer(memberUuid);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            logger.severe("Failed to load plots by owner " + ownerUuid + " from SQLite: " + e.getMessage());
+        }
+        return plots;
+    }
+
+    @Override
+    public int count() {
+        String countSql = "SELECT COUNT(*) FROM plots;";
+        try (Connection conn = databaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(countSql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            logger.severe("Failed to count plots in SQLite: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    @Override
     public void save(Plot plot) {
         if (plot == null) return;
         databaseManager.runAsync(() -> saveSync(plot));
