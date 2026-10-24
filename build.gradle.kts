@@ -29,6 +29,10 @@ dependencies {
     // Apache Commons
     implementation("org.apache.commons:commons-lang3:3.20.0")
 
+    // Database: SQLite & HikariCP
+    implementation("org.xerial:sqlite-jdbc:3.47.1.0")
+    implementation("com.zaxxer:HikariCP:6.2.1")
+
     // Tests
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")

@@ -8,12 +8,14 @@ import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.PlotAdminCommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.crafting.CraftingManager;
 import pl.kacpermajkowski.ChunkyPlots.crafting.PlotItemFactory;
+import pl.kacpermajkowski.ChunkyPlots.database.DatabaseManager;
 import pl.kacpermajkowski.ChunkyPlots.exceptions.InvalidStateException;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlotTransitionNotifier;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotBlockPlaceListener;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotRepository;
+import pl.kacpermajkowski.ChunkyPlots.plot.SqlitePlotRepository;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 import pl.kacpermajkowski.ChunkyPlots.protections.block.*;
@@ -26,11 +28,13 @@ import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerBucketEmptyListen
 import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerEntryProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerInteractListener;
 import pl.kacpermajkowski.ChunkyPlots.protections.redstone.*;
+import pl.kacpermajkowski.ChunkyPlots.user.SqliteUserRepository;
 import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 import pl.kacpermajkowski.ChunkyPlots.user.UserRepository;
 
 public class ChunkyPlots extends JavaPlugin {
 	private Config config;
+	private DatabaseManager databaseManager;
 	private PlotManager plotManager;
 	private UserManager userManager;
 	private CraftingManager craftingManager;
@@ -52,16 +56,20 @@ public class ChunkyPlots extends JavaPlugin {
 		if(userManager != null) {
 			userManager.saveUsers();
 		}
+		if(databaseManager != null) {
+			databaseManager.close();
+		}
 	}
 
 	private void initializeDependencies(){
 		this.config = new Config(this);
 		MessageBuilder.init(config);
 
-		PlotRepository plotRepository = new PlotRepository(getDataFolder(), getLogger());
+		this.databaseManager = new DatabaseManager(getDataFolder(), getLogger());
+		PlotRepository plotRepository = new SqlitePlotRepository(databaseManager, getDataFolder(), getLogger());
 		ItemStack plotItem = new PlotItemFactory(config).createPlotItem();
 
-		UserRepository userRepository = new UserRepository(getDataFolder(), getLogger());
+		UserRepository userRepository = new SqliteUserRepository(databaseManager, getDataFolder(), getLogger());
 
 		this.plotManager = new PlotManager(plotRepository, plotItem);
 		this.userManager = new UserManager(userRepository);
@@ -163,6 +171,10 @@ public class ChunkyPlots extends JavaPlugin {
 
 	public Config getPluginConfig() {
 		return config;
+	}
+
+	public DatabaseManager getDatabaseManager() {
+		return databaseManager;
 	}
 
 	public PlotManager getPlotManager() {

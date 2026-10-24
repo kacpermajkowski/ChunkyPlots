@@ -7,3 +7,5 @@ deploy.properties
 /build
 /gradle*
 /skills/
+/logs/
+*.db
