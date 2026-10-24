@@ -14,6 +14,12 @@ import pl.kacpermajkowski.ChunkyPlots.user.User;
 import java.util.Set;
 
 public class MessageBuilder {
+    private static Config config;
+
+    public static void init(Config cfg) {
+        config = cfg;
+    }
+
     private Message message;
 
     private String plotID = "";
@@ -94,13 +100,19 @@ public class MessageBuilder {
 
     public String build(){
         String message = "";
-        if(Config.getInstance().isUsingMessagePrefix() && prependPrefix){
+        if(config != null && config.isUsingMessagePrefix() && prependPrefix){
             message += "{prefix}{prefixSpacer}";
         }
 
-        message += Config.getInstance().getMessage(this.message);
-        message = message.replace("{prefix}", Config.getInstance().getPrefix());
-        message = message.replace("{prefixSpacer}", Config.getInstance().getPrefixSpacer());
+        String msgTemplate = config != null ? config.getMessage(this.message) : (this.message != null ? this.message.name() : "");
+        message += msgTemplate != null ? msgTemplate : "";
+        if(config != null) {
+            message = message.replace("{prefix}", config.getPrefix());
+            message = message.replace("{prefixSpacer}", config.getPrefixSpacer());
+        } else {
+            message = message.replace("{prefix}", "");
+            message = message.replace("{prefixSpacer}", "");
+        }
         message = message.replace("{plotOwnerName}", plotOwnerName);
         message = message.replace("{plotOwner}", plotOwnerName);
         message = message.replace("{plotID}", plotID);
@@ -151,11 +163,12 @@ public class MessageBuilder {
     }
 
     public void sendAll(CommandSender receiver) {
-        Set<MessageDisplayType> types = Config.getInstance().getMessageDisplayTypes();
         if(!(receiver instanceof Player player)){
             sendChat(receiver);
             return;
         }
+
+        Set<MessageDisplayType> types = config != null ? config.getMessageDisplayTypes() : Set.of(MessageDisplayType.CHAT);
 
         if(types.contains(MessageDisplayType.CHAT)){
             sendChat(receiver);

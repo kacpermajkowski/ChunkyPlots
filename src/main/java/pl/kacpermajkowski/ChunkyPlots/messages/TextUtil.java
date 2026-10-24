@@ -11,7 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
-import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.user.User;
 
@@ -63,7 +62,7 @@ public class TextUtil {
 
     @Deprecated
     public static void sendMessage(CommandSender sender, String s) {
-        sender.sendMessage(fixColors(Config.getInstance().getPrefix() + Config.getInstance().getPrefixSpacer() + s));
+        sender.sendMessage(fixColors(s));
     }
 
     @Deprecated

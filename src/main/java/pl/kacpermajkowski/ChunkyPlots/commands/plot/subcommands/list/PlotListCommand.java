@@ -12,6 +12,12 @@ import pl.kacpermajkowski.ChunkyPlots.messages.TextUtil;
 import java.util.List;
 
 public class PlotListCommand implements PlotSubcommand {
+	private final PlotManager plotManager;
+
+	public PlotListCommand(PlotManager plotManager) {
+		this.plotManager = plotManager;
+	}
+
 	@Override
 	public String getName() {
 		return "list";
@@ -37,7 +43,7 @@ public class PlotListCommand implements PlotSubcommand {
 		if(sender instanceof Player player){
 			new MessageBuilder(Message.WIDE_HEADER).sendChat(player);
 			TextUtil.sendNoPrefixMessage(player, "&eID Działki &9» &ePrzybliżone koordynaty działki");
-			for(Plot plot:PlotManager.getInstance().getPlots()){
+			for(Plot plot : plotManager.getPlots()){
 				if(plot.isPlayerOwner(player)) {
 					Location location = player.getWorld().getChunkAt(plot.getChunkX(), plot.getChunkZ()).getBlock(8, 64, 8).getLocation();
 					TextUtil.sendNoPrefixMessage(player,"&8(&6" + plot.getID() + "&8)" + " &a» &7X:&f" + location.getBlockX() + "  &7Y:&f" + location.getBlockY() + "  &7Z:&f" + location.getBlockZ());

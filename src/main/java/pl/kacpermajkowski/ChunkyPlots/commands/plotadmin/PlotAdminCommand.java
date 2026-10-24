@@ -6,20 +6,21 @@ import pl.kacpermajkowski.ChunkyPlots.commands.Subcommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.block.PlotAdminBlockCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.bypass.PlotAdminBypassCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.subcommands.help.PlotAdminHelpCommand;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class PlotAdminCommand extends Command {
-    private static PlotAdminCommand instance;
     private final List<Subcommand> subcommands;
 
-    private PlotAdminCommand() {
+    public PlotAdminCommand(PlotManager plotManager, UserManager userManager) {
         subcommands = new ArrayList<>();
         subcommands.add(new PlotAdminHelpCommand());
-        subcommands.add(new PlotAdminBlockCommand());
-        subcommands.add(new PlotAdminBypassCommand());
+        subcommands.add(new PlotAdminBlockCommand(plotManager));
+        subcommands.add(new PlotAdminBypassCommand(userManager));
     }
 
     protected List<Subcommand> getSubcommands() {
@@ -29,12 +30,5 @@ public class PlotAdminCommand extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
         getSubcommand("help").execute(sender, args);
-    }
-
-    public static PlotAdminCommand getInstance() {
-        if(instance == null) {
-            instance = new PlotAdminCommand();
-        }
-        return instance;
     }
 }

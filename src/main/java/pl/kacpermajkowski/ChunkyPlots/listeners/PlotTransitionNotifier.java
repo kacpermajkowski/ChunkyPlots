@@ -1,7 +1,6 @@
 package pl.kacpermajkowski.ChunkyPlots.listeners;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -14,6 +13,14 @@ import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 
 public class PlotTransitionNotifier implements Listener {
+    private final PlotManager plotManager;
+    private final UserManager userManager;
+
+    public PlotTransitionNotifier(PlotManager plotManager, UserManager userManager) {
+        this.plotManager = plotManager;
+        this.userManager = userManager;
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerMove(PlayerMoveEvent event) {
         Location to = event.getTo();
@@ -21,12 +28,12 @@ public class PlotTransitionNotifier implements Listener {
         // idk precisely when it happens, but the getter is marked as nullable
         if (to == null) return;
 
-        User user = UserManager.getInstance().getUser(event.getPlayer());
+        User user = userManager.getUser(event.getPlayer());
         if(user == null)
             throw new IllegalStateException("There is no User mapped to Player.");
 
         Plot fromPlot = user.getCachedCurrentPlot();
-        Plot toPlot = PlotManager.getInstance().getPlot(to);
+        Plot toPlot = plotManager.getPlot(to);
 
         if(toPlot == null && fromPlot != null)
             handleLeavingPlot(user, fromPlot);

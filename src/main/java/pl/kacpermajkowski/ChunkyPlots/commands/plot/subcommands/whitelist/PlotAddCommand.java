@@ -14,6 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlotAddCommand implements PlotSubcommand {
+    private final PlotManager plotManager;
+
+    public PlotAddCommand(PlotManager plotManager) {
+        this.plotManager = plotManager;
+    }
+
     @Override
     public String getName() {
         return "add";
@@ -43,7 +49,7 @@ public class PlotAddCommand implements PlotSubcommand {
             return;
         }
 
-        Plot plot = PlotManager.getInstance().getPlot(playerOwner.getLocation());
+        Plot plot = plotManager.getPlot(playerOwner.getLocation());
         if(plot == null) {
             messageBuilder.message(Message.NULL_PLOT).sendChat(playerOwner);
             return;
@@ -86,11 +92,9 @@ public class PlotAddCommand implements PlotSubcommand {
         messageBuilder.message(Message.ADDED_MEMBER_TO_PLOT).sendChat(playerOwner);
     }
 
-
-
     @Override
     public List<String> getTabCompletion(Player player, String[] args) {
-        Plot plot = PlotManager.getInstance().getPlot(player.getLocation());
+        Plot plot = plotManager.getPlot(player.getLocation());
         if(args.length == 1) {
             if(plot != null) {
                 if(plot.isPlayerOwner(player)){

@@ -11,31 +11,31 @@ import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.info.PlotInfoCom
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.list.PlotListCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.whitelist.PlotAddCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.whitelist.PlotRemoveCommand;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class PlotCommand extends Command {
-	private static PlotCommand instance;
-
 	private final ArrayList<PlotSubcommand> subcommands;
-	private PlotCommand() {
-		instance = this;
+	private final PlotHelpCommand help;
 
+	public PlotCommand(PlotManager plotManager, UserManager userManager) {
 		this.subcommands = new ArrayList<>();
-		PlotHelpCommand help = new PlotHelpCommand();
+		this.help = new PlotHelpCommand();
 		subcommands.add(help);
-		subcommands.add(new PlotDisposeCommand());
-		subcommands.add(new PlotDenyCommand());
-		subcommands.add(new PlotUndenyCommand());
-		subcommands.add(new PlotAddCommand());
-		subcommands.add(new PlotRemoveCommand());
+		subcommands.add(new PlotDisposeCommand(plotManager, userManager));
+		subcommands.add(new PlotDenyCommand(plotManager));
+		subcommands.add(new PlotUndenyCommand(plotManager));
+		subcommands.add(new PlotAddCommand(plotManager));
+		subcommands.add(new PlotRemoveCommand(plotManager));
 //		subcommands.add(new PlotFlagCommand());
 //		subcommands.add(new PlotGroupCommand());
-		subcommands.add(new PlotInfoCommand());
+		subcommands.add(new PlotInfoCommand(plotManager));
 //		subcommands.add(new PlotVisitCommand());
-		subcommands.add(new PlotListCommand());
+		subcommands.add(new PlotListCommand(plotManager));
 		help.setSubcommands(subcommands);
 	}
 
@@ -46,16 +46,5 @@ public class PlotCommand extends Command {
 
 	protected List<Subcommand> getSubcommands() {
 		return Collections.unmodifiableList(subcommands);
-	}
-
-	public static Subcommand getHelpSubcommand() {
-		return instance.getSubcommand("help");
-	}
-
-	public static PlotCommand getInstance() {
-		if(instance == null) {
-			instance = new PlotCommand();
-		}
-		return instance;
 	}
 }

@@ -3,7 +3,7 @@ package pl.kacpermajkowski.ChunkyPlots.config;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
+import org.bukkit.plugin.java.JavaPlugin;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 
 import java.io.File;
@@ -16,9 +16,9 @@ import java.util.logging.Logger;
 public class Config {
 	private static Config instance;
 
+	private final JavaPlugin plugin;
 	private FileConfiguration config;
 	private FileConfiguration messageConfig;
-	private FileConfiguration flagConfig;
 
 	// config.yml options
 	private boolean isUsingMessagePrefix;
@@ -34,27 +34,35 @@ public class Config {
 	// messages.yml options
 	private HashMap<Message, String> messages;
 
-	private Config(){
+	public Config(JavaPlugin plugin){
+		this.plugin = plugin;
+		instance = this;
 		loadFileConfigurations();
 		loadConfigValues();
 	}
 
+	@Deprecated
+	public static Config getInstance(){
+		return instance;
+	}
+
 	private void loadFileConfigurations() {
-		File dataFolder = ChunkyPlots.instance().getDataFolder();
+		File dataFolder = plugin.getDataFolder();
 		dataFolder.mkdirs();
 
-		ChunkyPlots.instance().saveDefaultConfig();
+		plugin.saveDefaultConfig();
 		List<File> files = List.of(
 				new File(dataFolder, "messages.yml")
 		);
 		for (File file : files) {
 			if(!file.exists())
-				ChunkyPlots.instance().saveResource(file.getName(), false);
+				plugin.saveResource(file.getName(), false);
 		}
 
-		this.config = ChunkyPlots.instance().getConfig();
+		this.config = plugin.getConfig();
 		this.messageConfig = YamlConfiguration.loadConfiguration(new File(dataFolder, "messages.yml"));
 	}
+
 	private void loadConfigValues() {
 		try {
 			loadIsUsingMessagePrefix();
@@ -67,9 +75,7 @@ public class Config {
 
 			loadMessages();
 		} catch (InvalidConfigException e){
-			ChunkyPlots plugin = ChunkyPlots.instance();
 			Logger logger = plugin.getLogger();
-
 			logger.severe("Couldn't start the plugin because of invalid configuration");
 			logger.severe("Reason: " + e.getMessage());
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
@@ -80,20 +86,20 @@ public class Config {
 	private void loadIsUsingMessagePrefix() {
 		this.isUsingMessagePrefix = config.getBoolean("use-message-prefix");
 		if(config.getString("use-message-prefix") == null){
-			ChunkyPlots.instance().getLogger().warning("'use-message-prefix' in 'config.yml' is not set. Prefix will not be displayed.");
+			plugin.getLogger().warning("'use-message-prefix' in 'config.yml' is not set. Prefix will not be displayed.");
 		}
 	}
 	private void loadPrefix(){
 		this.prefix = this.config.getString("prefix");
 		if(this.prefix == null){
-			ChunkyPlots.instance().getLogger().warning("'prefix' in 'config.yml' is not set. Using empty string instead.");
+			plugin.getLogger().warning("'prefix' in 'config.yml' is not set. Using empty string instead.");
 			this.prefix = "";
 		}
 	}
 	private void loadPrefixSpacer(){
 		this.prefixSpacer = this.config.getString("prefix-spacer");
 		if(prefixSpacer == null){
-			ChunkyPlots.instance().getLogger().warning("'prefix-spacer' in 'config.yml' is not set. Using empty string instead.");
+			plugin.getLogger().warning("'prefix-spacer' in 'config.yml' is not set. Using empty string instead.");
 			this.prefixSpacer = "";
 		}
 	}
@@ -136,9 +142,7 @@ public class Config {
 
 	// messages.yml loaders
 	private void loadMessages(){
-		ChunkyPlots plugin = ChunkyPlots.instance();
 		Logger logger = plugin.getLogger();
-
 		messages = new HashMap<>();
 		for(Message key : Message.values()){
 			String messageKey = key.name().toLowerCase();
@@ -147,17 +151,6 @@ public class Config {
 				logger.warning("'messages." + messageKey + "' in 'messages.yml' is not set");
 			messages.put(key, message);
 		}
-	}
-
-	public static void reload(){
-		instance = new Config();
-	}
-
-	public static Config getInstance(){
-		if(instance == null){
-			instance = new Config();
-		}
-		return instance;
 	}
 
 	// config.yml getters
@@ -173,7 +166,7 @@ public class Config {
 
 	public Material getPlotItemMaterial() {
 		return plotItemMaterial;
-    }
+	}
 	public String getPlotItemName() {
 		return plotItemName;
 	}

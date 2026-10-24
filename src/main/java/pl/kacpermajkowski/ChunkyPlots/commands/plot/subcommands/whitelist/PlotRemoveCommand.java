@@ -15,6 +15,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class PlotRemoveCommand implements PlotSubcommand {
+    private final PlotManager plotManager;
+
+    public PlotRemoveCommand(PlotManager plotManager) {
+        this.plotManager = plotManager;
+    }
+
     @Override
     public String getName() {
         return "remove";
@@ -44,7 +50,7 @@ public class PlotRemoveCommand implements PlotSubcommand {
             return;
         }
 
-        Plot plot = PlotManager.getInstance().getPlot(playerOwner.getLocation());
+        Plot plot = plotManager.getPlot(playerOwner.getLocation());
         if(plot == null) {
             messageBuilder.message(Message.NULL_PLOT).sendChat(playerOwner);
             return;
@@ -77,11 +83,9 @@ public class PlotRemoveCommand implements PlotSubcommand {
         messageBuilder.message(Message.REMOVED_MEMBER_FROM_PLOT).sendChat(playerOwner);
     }
 
-
-
     @Override
     public List<String> getTabCompletion(Player player, String[] args) {
-        Plot plot = PlotManager.getInstance().getPlot(player.getLocation());
+        Plot plot = plotManager.getPlot(player.getLocation());
         if(args.length == 1) {
             if(plot != null) {
                 if(plot.isPlayerOwner(player)){

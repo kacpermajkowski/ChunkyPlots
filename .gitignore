@@ -6,3 +6,4 @@ deploy.properties
 /.gradle
 /build
 /gradle*
+/skills/

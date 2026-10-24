@@ -15,6 +15,13 @@ import pl.kacpermajkowski.ChunkyPlots.utils.PlayerUtil;
 import java.util.List;
 
 public class PlotDisposeCommand implements PlotSubcommand {
+	private final PlotManager plotManager;
+	private final UserManager userManager;
+
+	public PlotDisposeCommand(PlotManager plotManager, UserManager userManager) {
+		this.plotManager = plotManager;
+		this.userManager = userManager;
+	}
 
 	@Override
 	public String getName() {
@@ -38,12 +45,12 @@ public class PlotDisposeCommand implements PlotSubcommand {
 
 	@Override
 	public void execute(Player player, String[] args) {
-		Plot plot = PlotManager.getInstance().getPlot(player);
+		Plot plot = plotManager.getPlot(player);
 
 		ActionResult result = tryDisposePlot(player, plot);
 		new MessageBuilder(result.getResultMessage())
 				.plot(plot)
-				.world(plot.getWorldName())
+				.world(plot != null ? plot.getWorldName() : "")
 				.sendChat(player);
 		if(!result.isSuccess()){
 			return;
@@ -51,8 +58,10 @@ public class PlotDisposeCommand implements PlotSubcommand {
 
 		refundPlotBlock(player);
 
-		User owner = UserManager.getInstance().getUser(player);
-		removePlotFromOwnerGroups(owner, plot);
+		User owner = userManager.getUser(player);
+		if (owner != null) {
+			removePlotFromOwnerGroups(owner, plot);
+		}
 
 		informBystandersAboutDisposingAndUpdateCache(plot);
 	}
@@ -61,12 +70,15 @@ public class PlotDisposeCommand implements PlotSubcommand {
 		MessageBuilder mb = new MessageBuilder(Message.CURRENT_PLOT_DELETED).plot(disposedPlot);
 		PlayerUtil.getPlayersInPlot(disposedPlot).forEach(p -> {
 			mb.sendAll(p);
-			UserManager.getInstance().getUser(p).setCachedCurrentPlot(null);
+			User u = userManager.getUser(p);
+			if (u != null) {
+				u.setCachedCurrentPlot(null);
+			}
 		});
 	}
 
 	private void refundPlotBlock(Player player){
-		player.getInventory().addItem(PlotManager.getInstance().getPlotItem());
+		player.getInventory().addItem(plotManager.getPlotItem());
 	}
 
 	private void removePlotFromOwnerGroups(User user, Plot plot){
@@ -86,7 +98,7 @@ public class PlotDisposeCommand implements PlotSubcommand {
 		if(!plot.isPlayerOwner(player))
 			return new ActionResult(false, Message.NOT_OWNER);
 
-		PlotManager.getInstance().disposePlot(plot);
+		plotManager.disposePlot(plot);
 		return new ActionResult(true, Message.PLOT_DELETED);
 	}
 

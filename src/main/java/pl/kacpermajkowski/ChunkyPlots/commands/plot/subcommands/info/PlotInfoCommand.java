@@ -13,6 +13,12 @@ import pl.kacpermajkowski.ChunkyPlots.messages.TextUtil;
 import java.util.List;
 
 public class PlotInfoCommand implements PlotSubcommand {
+	private final PlotManager plotManager;
+
+	public PlotInfoCommand(PlotManager plotManager) {
+		this.plotManager = plotManager;
+	}
+
 	@Override
 	public String getName() {
 		return "info";
@@ -36,7 +42,7 @@ public class PlotInfoCommand implements PlotSubcommand {
 	@Override
 	public void execute(Player sender, String[] args) {
 		if(sender instanceof Player player) {
- 			Plot plot = PlotManager.getInstance().getPlot(player.getLocation().getChunk());
+ 			Plot plot = plotManager.getPlot(player.getLocation().getChunk());
 			if (plot != null) {
 				new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().sendChat(player);
 				player.sendMessage(TextUtil.fixColors( "&aWłaściciel: &f" + Bukkit.getOfflinePlayer(plot.getOwnerUUID()).getName()));

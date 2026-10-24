@@ -14,6 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlotDenyCommand implements PlotSubcommand {
+    private final PlotManager plotManager;
+
+    public PlotDenyCommand(PlotManager plotManager) {
+        this.plotManager = plotManager;
+    }
+
     @Override
     public String getName() {
         return "deny";
@@ -43,7 +49,7 @@ public class PlotDenyCommand implements PlotSubcommand {
             return;
         }
 
-        Plot plot = PlotManager.getInstance().getPlot(playerOwner.getLocation());
+        Plot plot = plotManager.getPlot(playerOwner.getLocation());
         if(plot == null) {
             messageBuilder.message(Message.NULL_PLOT).sendChat(playerOwner);
             return;
@@ -86,10 +92,9 @@ public class PlotDenyCommand implements PlotSubcommand {
         messageBuilder.message(Message.BLACKLIST_ADDED_TO_PLOT).sendChat(playerOwner);
     }
 
-
     @Override
     public List<String> getTabCompletion(Player player, String[] args) {
-        Plot plot = PlotManager.getInstance().getPlot(player.getLocation());
+        Plot plot = plotManager.getPlot(player.getLocation());
         if(args.length == 1) {
             if(plot != null) {
                 if(plot.isPlayerOwner(player)){
