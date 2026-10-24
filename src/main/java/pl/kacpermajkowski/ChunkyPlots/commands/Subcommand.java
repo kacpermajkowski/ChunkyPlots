@@ -8,6 +8,10 @@ public interface Subcommand{
 
 	String getName();
 
+	default List<String> getAliases() {
+		return List.of();
+	}
+
 	String getDescription();
 
 	String getSyntax();

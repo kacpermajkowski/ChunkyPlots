@@ -1,6 +1,7 @@
 package pl.kacpermajkowski.ChunkyPlots.plot.map;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -45,11 +46,12 @@ public class PlotMapHolder implements InventoryHolder {
     }
 
     private final Player player;
-    private final World world;
+    private World world;
     private final PlotManager plotManager;
 
     private int centerX;
     private int centerZ;
+    private int currentPlotIndex = -1;
     private Inventory inventory;
 
     public PlotMapHolder(Player player, World world, PlotManager plotManager, int initialCenterX, int initialCenterZ) {
@@ -77,6 +79,10 @@ public class PlotMapHolder implements InventoryHolder {
         return world;
     }
 
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
     public PlotManager getPlotManager() {
         return plotManager;
     }
@@ -89,6 +95,17 @@ public class PlotMapHolder implements InventoryHolder {
         return centerZ;
     }
 
+    public int getCurrentPlotIndex() {
+        return currentPlotIndex;
+    }
+
+    public void setWorldAndCenter(World world, int x, int z) {
+        this.world = world;
+        this.centerX = x;
+        this.centerZ = z;
+        render();
+    }
+
     public void pan(int deltaX, int deltaZ) {
         this.centerX += deltaX;
         this.centerZ += deltaZ;
@@ -97,8 +114,12 @@ public class PlotMapHolder implements InventoryHolder {
 
     public void recenter() {
         if (player != null && player.getLocation() != null && player.getLocation().getChunk() != null) {
+            if (player.getWorld() != null) {
+                this.world = player.getWorld();
+            }
             this.centerX = player.getLocation().getChunk().getX();
             this.centerZ = player.getLocation().getChunk().getZ();
+            this.currentPlotIndex = -1;
         }
         render();
     }
@@ -107,6 +128,95 @@ public class PlotMapHolder implements InventoryHolder {
         this.centerX = x;
         this.centerZ = z;
         render();
+    }
+
+    public boolean isSameWorld() {
+        return player != null && player.getWorld() != null && world != null && player.getWorld().equals(world);
+    }
+
+    public double getDistanceToPlayer() {
+        if (!isSameWorld() || player == null || player.getLocation() == null || player.getLocation().getChunk() == null) {
+            return -1.0;
+        }
+        int playerChunkX = player.getLocation().getChunk().getX();
+        int playerChunkZ = player.getLocation().getChunk().getZ();
+        return Math.hypot(centerX - playerChunkX, centerZ - playerChunkZ);
+    }
+
+    public Plot jumpToNextPlot() {
+        if (plotManager == null || player == null) return null;
+        List<Plot> accessible = plotManager.getAccessiblePlots(player);
+        if (accessible.isEmpty()) return null;
+
+        if (currentPlotIndex < 0 || currentPlotIndex >= accessible.size()) {
+            currentPlotIndex = findMatchingPlotIndex(accessible);
+        }
+
+        currentPlotIndex = (currentPlotIndex + 1) % accessible.size();
+        Plot target = accessible.get(currentPlotIndex);
+        jumpToPlot(target);
+        return target;
+    }
+
+    public Plot jumpToPrevPlot() {
+        if (plotManager == null || player == null) return null;
+        List<Plot> accessible = plotManager.getAccessiblePlots(player);
+        if (accessible.isEmpty()) return null;
+
+        if (currentPlotIndex < 0 || currentPlotIndex >= accessible.size()) {
+            currentPlotIndex = findMatchingPlotIndex(accessible);
+        }
+
+        currentPlotIndex = (currentPlotIndex - 1 + accessible.size()) % accessible.size();
+        Plot target = accessible.get(currentPlotIndex);
+        jumpToPlot(target);
+        return target;
+    }
+
+    private int findMatchingPlotIndex(List<Plot> accessible) {
+        for (int i = 0; i < accessible.size(); i++) {
+            Plot p = accessible.get(i);
+            if (p.getChunkX() == centerX && p.getChunkZ() == centerZ
+                    && (world == null || p.getWorldName().equalsIgnoreCase(world.getName()))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void jumpToPlot(Plot target) {
+        if (target == null) return;
+        World targetWorld = null;
+        if (Bukkit.getServer() != null && target.getWorldName() != null) {
+            targetWorld = Bukkit.getWorld(target.getWorldName());
+        }
+        if (targetWorld == null) {
+            targetWorld = this.world != null ? this.world : (player != null ? player.getWorld() : null);
+        }
+        this.world = targetWorld;
+        this.centerX = target.getChunkX();
+        this.centerZ = target.getChunkZ();
+        render();
+    }
+
+    public Plot getCurrentAccessiblePlot() {
+        if (plotManager == null || player == null) return null;
+        List<Plot> accessible = plotManager.getAccessiblePlots(player);
+        if (accessible.isEmpty()) return null;
+        if (currentPlotIndex >= 0 && currentPlotIndex < accessible.size()) {
+            Plot p = accessible.get(currentPlotIndex);
+            if (p.getChunkX() == centerX && p.getChunkZ() == centerZ
+                    && (world == null || p.getWorldName().equalsIgnoreCase(world.getName()))) {
+                return p;
+            }
+        }
+        for (Plot p : accessible) {
+            if (p.getChunkX() == centerX && p.getChunkZ() == centerZ
+                    && (world == null || p.getWorldName().equalsIgnoreCase(world.getName()))) {
+                return p;
+            }
+        }
+        return null;
     }
 
     /**
@@ -119,12 +229,13 @@ public class PlotMapHolder implements InventoryHolder {
                 ? player.getLocation().getChunk().getX() : centerX;
         int playerChunkZ = player.getLocation() != null && player.getLocation().getChunk() != null
                 ? player.getLocation().getChunk().getZ() : centerZ;
-        boolean isSameWorld = player.getWorld() != null && player.getWorld().equals(world);
+        boolean sameWorld = isSameWorld();
 
         // Update inventory title if supported
         try {
             if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory() == inventory) {
-                player.getOpenInventory().setTitle("§8Mapa działek: §6[" + centerX + ", " + centerZ + "]");
+                String worldLabel = world.getName();
+                player.getOpenInventory().setTitle("§8Mapa działek: §6[" + centerX + ", " + centerZ + "] §8(" + worldLabel + ")");
             }
         } catch (Throwable ignored) {}
 
@@ -135,7 +246,7 @@ public class PlotMapHolder implements InventoryHolder {
                 int chunkX = centerX + (col - 4);
                 int chunkZ = centerZ + (row - 2);
 
-                boolean isPlayerHere = isSameWorld && (playerChunkX == chunkX && playerChunkZ == chunkZ);
+                boolean isPlayerHere = sameWorld && (playerChunkX == chunkX && playerChunkZ == chunkZ);
                 boolean isCenterChunk = (centerX == chunkX && centerZ == chunkZ);
 
                 Plot plot = plotManager != null ? plotManager.getPlot(chunkX, chunkZ, world.getName()) : null;
@@ -297,36 +408,76 @@ public class PlotMapHolder implements InventoryHolder {
                 )
         ));
 
-        // Slot 50: Coordinates / Position info
-        double distChunks = Math.hypot(centerX - playerChunkX, centerZ - playerChunkZ);
+        // Slot 50: Browse Plots (Owned & Member)
+        List<Plot> accessible = plotManager != null && player != null
+                ? plotManager.getAccessiblePlots(player)
+                : List.of();
+        int ownedCount = 0;
+        int memberCount = 0;
+        if (player != null) {
+            for (Plot p : accessible) {
+                if (p.isPlayerOwner(player)) ownedCount++;
+                else memberCount++;
+            }
+        }
+
+        Plot currentPlot = getCurrentAccessiblePlot();
+        List<String> plotLore = new ArrayList<>();
+        plotLore.add("§7Przeglądaj swoje działki oraz działki,");
+        plotLore.add("§7na których masz uprawnienia członka.");
+        plotLore.add("");
+        plotLore.add("§7Własne: §a" + ownedCount + " §8| §7Członek: §b" + memberCount + " §8(Razem: §e" + accessible.size() + "§8)");
+
+        if (currentPlot != null) {
+            boolean isOwner = player != null && currentPlot.isPlayerOwner(player);
+            plotLore.add("");
+            plotLore.add("§7Wybrana: " + (isOwner ? "§a" : "§b") + currentPlot.getMnemonicId() + " §8(" + currentPlot.getID() + ")");
+            plotLore.add("§7Pozycja: §f[" + currentPlot.getChunkX() + ", " + currentPlot.getChunkZ() + "] §8w §f" + currentPlot.getWorldName());
+            plotLore.add("§7Rola: " + (isOwner ? "§aWłaściciel" : "§bCzłonek §7(Właściciel: §f" + currentPlot.getOwnerName() + "§7)"));
+        } else if (!accessible.isEmpty()) {
+            plotLore.add("");
+            plotLore.add("§7Aktualnie patrzysz na inny chunk.");
+        }
+
+        plotLore.add("");
+        if (!accessible.isEmpty()) {
+            plotLore.add("§eLPM: §fNastępna działka (→)");
+            plotLore.add("§6PPM: §fPoprzednia działka (←)");
+            plotLore.add("§bShift + LPM: §fWypisz listę działek na czacie");
+        } else {
+            plotLore.add("§7Nie posiadasz ani nie należysz do żadnej działki.");
+        }
+
         inventory.setItem(50, createControlItem(
-                Material.FILLED_MAP,
-                "§6§l🗺 Pozycja mapy",
-                List.of(
-                        "§7Centrum widoku: §eChunk [" + centerX + ", " + centerZ + "]",
-                        "§7Świat: §f" + world.getName(),
-                        "§7Odległość od Ciebie: §f" + String.format("%.1f", distChunks) + " chunków (" + (int) (distChunks * 16) + " bloków)",
-                        "§7Obszar widoku: §89x5 chunków (45 chunków)",
-                        "",
-                        "§eWskazówka: §7Użyj §f/plot map <x> <z>§7, aby",
-                        "§7skoczyć bezpośrednio do współrzędnych."
-                )
+                Material.CHEST,
+                "§6§l🏰 Przeglądaj działki",
+                plotLore
         ));
 
-        // Slot 51: Legend
+        // Slot 51: Map Position Info & Legend
+        boolean sameWorld = isSameWorld();
+        double distChunks = sameWorld ? Math.hypot(centerX - playerChunkX, centerZ - playerChunkZ) : -1.0;
+        List<String> infoLore = new ArrayList<>();
+        infoLore.add("§7Środek widoku: §eChunk [" + centerX + ", " + centerZ + "]");
+        infoLore.add("§7Świat: §f" + (world != null ? world.getName() : "brak"));
+        if (distChunks >= 0) {
+            infoLore.add("§7Odległość od Ciebie: §f" + String.format("%.1f", distChunks) + " chunków (" + (int) (distChunks * 16) + " bloków)");
+        } else {
+            infoLore.add("§7Odległość od Ciebie: §8(inny świat)");
+        }
+        infoLore.add("§8-------------------------");
+        infoLore.add("§a■ Twoja działka §7(kolor zielony)");
+        infoLore.add("§b■ Działka członka §7(kolor błękitny)");
+        infoLore.add("§c■ Obca działka §7(kolor czerwony)");
+        infoLore.add("§e■ Dzicz / Wolny chunk §7(kolor żółty)");
+        infoLore.add("§6■ Głowa gracza §7- Twoja aktualna pozycja");
+        infoLore.add("");
+        infoLore.add("§eKliknij: §7Wyświetl szczegóły na czacie");
+
         inventory.setItem(51, createControlItem(
                 Material.BOOK,
-                "§b§lℹ Legenda mapy",
-                List.of(
-                        "§a■ Twoja działka §7(kolor zielony)",
-                        "§b■ Działka członka §7(kolor błękitny)",
-                        "§c■ Obca działka §7(kolor czerwony)",
-                        "§e■ Dzicz / Wolny chunk §7(kolor żółty)",
-                        "§6■ Głowa gracza §7- Twoja aktualna pozycja",
-                        "§8-------------------------",
-                        "§7Kliknij dowolny chunk w widoku,",
-                        "§7aby natychmiast wyśrodkować na nim mapę!"
-                )
+                "§b§lℹ Informacje i Legenda",
+                infoLore
         ));
 
         // Slot 52: Refresh

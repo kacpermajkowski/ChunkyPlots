@@ -123,6 +123,21 @@ public interface ChunkyPlotsAPI {
     List<Plot> getPlotsByOwner(UUID ownerUuid);
 
     /**
+     * Gets all plots where player is a member (whitelisted).
+     */
+    List<Plot> getMemberPlots(Player player);
+
+    /**
+     * Gets all plots where player UUID is a member (whitelisted).
+     */
+    List<Plot> getMemberPlots(UUID playerUuid);
+
+    /**
+     * Gets all plots accessible to player (owned + member plots).
+     */
+    List<Plot> getAccessiblePlots(Player player);
+
+    /**
      * Gets plot by ID string (e.g. "x;z" or "x;z;world").
      */
     Plot getPlotById(String plotId);
@@ -160,6 +175,11 @@ public interface ChunkyPlotsAPI {
      * Opens the interactive chunk map GUI for a player centered on specified chunk coordinates.
      */
     void openPlotMap(Player player, int chunkX, int chunkZ);
+
+    /**
+     * Opens the interactive chunk map GUI for a player centered on a specific plot.
+     */
+    void openPlotMap(Player player, Plot plot);
 
     /**
      * Opens the plot management GUI for a player.

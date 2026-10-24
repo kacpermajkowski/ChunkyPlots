@@ -170,6 +170,22 @@ public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
     }
 
     @Override
+    public List<Plot> getMemberPlots(Player player) {
+        if (player == null) return List.of();
+        return getMemberPlots(player.getUniqueId());
+    }
+
+    @Override
+    public List<Plot> getMemberPlots(UUID playerUuid) {
+        return plotManager != null ? plotManager.getPlotsByMember(playerUuid) : List.of();
+    }
+
+    @Override
+    public List<Plot> getAccessiblePlots(Player player) {
+        return plotManager != null ? plotManager.getAccessiblePlots(player) : List.of();
+    }
+
+    @Override
     public Plot getPlotById(String plotId) {
         return plotManager != null ? plotManager.getPlot(plotId) : null;
     }
@@ -205,6 +221,13 @@ public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
     public void openPlotMap(Player player, int chunkX, int chunkZ) {
         if (mapManager != null && player != null) {
             mapManager.openMap(player, chunkX, chunkZ);
+        }
+    }
+
+    @Override
+    public void openPlotMap(Player player, Plot plot) {
+        if (mapManager != null && player != null && plot != null) {
+            mapManager.openMap(player, plot);
         }
     }
 

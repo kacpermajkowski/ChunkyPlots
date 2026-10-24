@@ -57,6 +57,8 @@ public abstract class Command implements TabExecutor {
 		for(Subcommand subcommand : getSubcommands()) {
 			if(subcommand.getName().equalsIgnoreCase(providedSubcommandName)) {
 				matchingSubcommands.add(subcommand);
+			} else if (subcommand.getAliases() != null && subcommand.getAliases().stream().anyMatch(a -> a.equalsIgnoreCase(providedSubcommandName))) {
+				matchingSubcommands.add(subcommand);
 			}
 		}
 		return matchingSubcommands;
@@ -69,6 +71,13 @@ public abstract class Command implements TabExecutor {
 			for (Subcommand subcommand : getSubcommands()) {
 				if(sender.hasPermission(subcommand.getPermission())) {
 					autocomParams.add(subcommand.getName());
+					if (subcommand.getAliases() != null) {
+						for (String alias : subcommand.getAliases()) {
+							if (alias.toLowerCase().startsWith(args[0].toLowerCase())) {
+								autocomParams.add(alias);
+							}
+						}
+					}
 				}
 			}
 

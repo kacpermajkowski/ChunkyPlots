@@ -53,6 +53,7 @@ messages:
   player_is_not_whitelisted: "&cGracz &r{user} &cnie jest na białej liście."
   added_member_to_group: "&aPomyślnie dodano &f{user} &ajako członka grupy działek!"
   removed_member_from_group: "&cPomyślnie usunięto &f{user} &ajako członka grupy działek!"
+  no_member_plots: "&7Nie jesteś członkiem żadnej działki."
 
   # Blacklist related messages
   blacklist_added_to_plot: "&aZabroniono graczowi &r{user} &awstępu na działkę."

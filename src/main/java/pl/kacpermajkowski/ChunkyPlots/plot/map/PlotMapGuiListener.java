@@ -12,6 +12,8 @@ import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotRelation;
 
+import java.util.List;
+
 /**
  * Handles interactions inside the PlotMapHolder chest GUI.
  */
@@ -83,13 +85,52 @@ public class PlotMapGuiListener implements Listener {
                 holder.pan(step, 0);
                 playSound(player, SOUND_CLICK, 1.1f);
             }
-            case 50 -> { // Map Position Info
-                player.sendMessage(TextUtil.toComponent("§6[ChunkyPlots] §7Aktualne centrum mapy: §eX: " + holder.getCenterX() + ", Z: " + holder.getCenterZ() + " §7(Świat: §f" + holder.getWorld().getName() + "§7)"));
-                player.sendMessage(TextUtil.toComponent("§7Wpisz §e/plot map <x> <z>§7, aby skoczyć w dowolne miejsce."));
-                playSound(player, SOUND_CLICK, 1.0f);
+            case 50 -> { // Plot cycler (LMB = next, RMB = prev, Shift = list on chat)
+                if (click.isShiftClick()) {
+                    PlotManager pm = holder.getPlotManager();
+                    List<Plot> accessible = pm != null ? pm.getAccessiblePlots(player) : List.of();
+                    if (accessible.isEmpty()) {
+                        player.sendMessage(TextUtil.toComponent("§6[ChunkyPlots] §cNie posiadasz ani nie należysz do żadnej działki."));
+                    } else {
+                        player.sendMessage(TextUtil.toComponent("§6=== §eTwoje Dostępne Działki (" + accessible.size() + ") §6==="));
+                        for (Plot p : accessible) {
+                            boolean isOwner = p.isPlayerOwner(player);
+                            String prefix = isOwner ? "§a[Własna] " : "§b[Członek] ";
+                            player.sendMessage(TextUtil.toComponent(prefix + "§e" + p.getMnemonicId() + " §7[" + p.getChunkX() + ", " + p.getChunkZ() + "; " + p.getWorldName() + "] §8- Właściciel: §f" + p.getOwnerName()));
+                        }
+                    }
+                    playSound(player, SOUND_CLICK, 1.0f);
+                } else if (click.isRightClick()) {
+                    Plot prev = holder.jumpToPrevPlot();
+                    if (prev != null) {
+                        boolean isOwner = prev.isPlayerOwner(player);
+                        player.sendMessage(TextUtil.toComponent("§6[ChunkyPlots] §7Przełączono na działkę: " + (isOwner ? "§a" : "§b") + prev.getMnemonicId() + " §7[" + prev.getChunkX() + ", " + prev.getChunkZ() + "] §8(" + prev.getWorldName() + ")"));
+                        playSound(player, SOUND_CLICK, 1.2f);
+                    } else {
+                        player.sendMessage(TextUtil.toComponent("§6[ChunkyPlots] §cNie masz żadnych dostępnych działek do przeglądania."));
+                        playSound(player, SOUND_CLICK, 0.6f);
+                    }
+                } else {
+                    Plot next = holder.jumpToNextPlot();
+                    if (next != null) {
+                        boolean isOwner = next.isPlayerOwner(player);
+                        player.sendMessage(TextUtil.toComponent("§6[ChunkyPlots] §7Przełączono na działkę: " + (isOwner ? "§a" : "§b") + next.getMnemonicId() + " §7[" + next.getChunkX() + ", " + next.getChunkZ() + "] §8(" + next.getWorldName() + ")"));
+                        playSound(player, SOUND_CLICK, 1.2f);
+                    } else {
+                        player.sendMessage(TextUtil.toComponent("§6[ChunkyPlots] §cNie masz żadnych dostępnych działek do przeglądania."));
+                        playSound(player, SOUND_CLICK, 0.6f);
+                    }
+                }
             }
-            case 51 -> { // Legend
-                player.sendMessage(TextUtil.toComponent("§6=== §eLegenda Mapy Działek §6==="));
+            case 51 -> { // Position & Legend
+                double dist = holder.getDistanceToPlayer();
+                player.sendMessage(TextUtil.toComponent("§6=== §ePozycja i Legenda Mapy §6==="));
+                player.sendMessage(TextUtil.toComponent("§7Środek widoku: §eChunk [" + holder.getCenterX() + ", " + holder.getCenterZ() + "] §7w §f" + (holder.getWorld() != null ? holder.getWorld().getName() : "brak")));
+                if (dist >= 0) {
+                    player.sendMessage(TextUtil.toComponent("§7Odległość od Ciebie: §f" + String.format("%.1f", dist) + " chunków (" + (int) (dist * 16) + " bloków)"));
+                } else {
+                    player.sendMessage(TextUtil.toComponent("§7Odległość: §8(inny świat niż Twoja aktualna pozycja)"));
+                }
                 player.sendMessage(TextUtil.toComponent("§a■ Twoja działka §7- pełne prawa budowania i zarządzania"));
                 player.sendMessage(TextUtil.toComponent("§b■ Działka członka §7- jesteś dodany na białą listę"));
                 player.sendMessage(TextUtil.toComponent("§c■ Obca działka §7- działka innego gracza (chroniona)"));
@@ -134,6 +175,7 @@ public class PlotMapGuiListener implements Listener {
             PlotRelation relation = holder.determineRelation(targetPlot);
             player.sendMessage(TextUtil.toComponent("§7Status: " + relation.getChatColor() + relation.getPlName()));
             player.sendMessage(TextUtil.toComponent("§7ID Działki: §f" + targetPlot.getID()));
+            player.sendMessage(TextUtil.toComponent("§7Kod: §e" + targetPlot.getMnemonicId()));
             player.sendMessage(TextUtil.toComponent("§7Właściciel: §f" + targetPlot.getOwnerName()));
             if (targetPlot.getWhitelist() != null && !targetPlot.getWhitelist().isEmpty()) {
                 player.sendMessage(TextUtil.toComponent("§7Członkowie: §b" + targetPlot.getWhitelist().size() + " graczy"));

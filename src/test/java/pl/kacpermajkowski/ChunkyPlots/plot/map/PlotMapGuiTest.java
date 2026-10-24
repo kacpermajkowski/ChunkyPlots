@@ -228,10 +228,56 @@ class PlotMapGuiTest {
         assertEquals(Material.COMPASS, inventorySlots.get(47).getType()); // Recenter
         assertEquals(Material.ARROW, inventorySlots.get(48).getType()); // South
         assertEquals(Material.ARROW, inventorySlots.get(49).getType()); // East
-        assertEquals(Material.FILLED_MAP, inventorySlots.get(50).getType()); // Info
-        assertEquals(Material.BOOK, inventorySlots.get(51).getType()); // Legend
+        assertEquals(Material.CHEST, inventorySlots.get(50).getType()); // Browse plots
+        assertEquals(Material.BOOK, inventorySlots.get(51).getType()); // Legend & Position info
         assertEquals(Material.SUNFLOWER, inventorySlots.get(52).getType()); // Refresh
         assertEquals(Material.BARRIER, inventorySlots.get(53).getType()); // Close
+    }
+
+    @Test
+    @DisplayName("PlotMapHolder plot cycling jumps through accessible plots")
+    void testPlotCycling() {
+        Plot plot1 = mock(Plot.class);
+        when(plot1.getChunkX()).thenReturn(5);
+        when(plot1.getChunkZ()).thenReturn(10);
+        when(plot1.getWorldName()).thenReturn("world");
+        when(plot1.getMnemonicId()).thenReturn("plot-one");
+
+        Plot plot2 = mock(Plot.class);
+        when(plot2.getChunkX()).thenReturn(100);
+        when(plot2.getChunkZ()).thenReturn(-200);
+        when(plot2.getWorldName()).thenReturn("world_nether");
+        when(plot2.getMnemonicId()).thenReturn("nether-plot-two");
+
+        when(mockPlotManager.getAccessiblePlots(mockPlayer)).thenReturn(List.of(plot1, plot2));
+
+        PlotMapHolder holder = new PlotMapHolder(mockPlayer, mockWorld, mockPlotManager, 0, 0);
+        holder.setInventory(mockInventory);
+        when(mockInventory.getHolder()).thenReturn(holder);
+
+        // Jump next -> plot1
+        Plot next1 = holder.jumpToNextPlot();
+        assertEquals(plot1, next1);
+        assertEquals(5, holder.getCenterX());
+        assertEquals(10, holder.getCenterZ());
+
+        // Jump next -> plot2
+        Plot next2 = holder.jumpToNextPlot();
+        assertEquals(plot2, next2);
+        assertEquals(100, holder.getCenterX());
+        assertEquals(-200, holder.getCenterZ());
+
+        // Jump next -> wraps to plot1
+        Plot next3 = holder.jumpToNextPlot();
+        assertEquals(plot1, next3);
+        assertEquals(5, holder.getCenterX());
+        assertEquals(10, holder.getCenterZ());
+
+        // Jump prev -> wraps to plot2
+        Plot prev1 = holder.jumpToPrevPlot();
+        assertEquals(plot2, prev1);
+        assertEquals(100, holder.getCenterX());
+        assertEquals(-200, holder.getCenterZ());
     }
 
     @Test
@@ -278,6 +324,44 @@ class PlotMapGuiTest {
     }
 
     @Test
+    @DisplayName("PlotMapGuiListener handles slot 50 plot cycling clicks")
+    void testSlot50PlotCyclingClicks() {
+        Plot plot1 = mock(Plot.class);
+        when(plot1.getChunkX()).thenReturn(5);
+        when(plot1.getChunkZ()).thenReturn(10);
+        when(plot1.getWorldName()).thenReturn("world");
+        when(plot1.getMnemonicId()).thenReturn("plot-one");
+
+        when(mockPlotManager.getAccessiblePlots(mockPlayer)).thenReturn(List.of(plot1));
+
+        PlotMapHolder holder = new PlotMapHolder(mockPlayer, mockWorld, mockPlotManager, 0, 0);
+        holder.setInventory(mockInventory);
+        when(mockInventory.getHolder()).thenReturn(holder);
+
+        PlotMapGuiListener listener = new PlotMapGuiListener();
+
+        // Left click slot 50 -> jump to next plot
+        InventoryClickEvent nextClick = mockClick(50, ClickType.LEFT);
+        listener.onInventoryClick(nextClick);
+        assertTrue(nextClick.isCancelled());
+        assertEquals(5, holder.getCenterX());
+        assertEquals(10, holder.getCenterZ());
+
+        // Right click slot 50 -> jump to prev plot
+        InventoryClickEvent prevClick = mockClick(50, ClickType.RIGHT);
+        listener.onInventoryClick(prevClick);
+        assertTrue(prevClick.isCancelled());
+        assertEquals(5, holder.getCenterX());
+        assertEquals(10, holder.getCenterZ());
+
+        // Shift click slot 50 -> print accessible plots to chat
+        InventoryClickEvent shiftClick = mockClick(50, ClickType.SHIFT_LEFT);
+        listener.onInventoryClick(shiftClick);
+        assertTrue(shiftClick.isCancelled());
+        verify(mockPlayer, atLeastOnce()).sendMessage(any(net.kyori.adventure.text.Component.class));
+    }
+
+    @Test
     @DisplayName("PlotMapGuiListener cancels inventory drag")
     void testInventoryDragCancelled() {
         PlotMapHolder holder = new PlotMapHolder(mockPlayer, mockWorld, mockPlotManager, 10, 20);
@@ -296,10 +380,18 @@ class PlotMapGuiTest {
     @DisplayName("PlotMapCommand executes and tab completes correctly")
     void testPlotMapCommand() {
         PlotMapManager mockMapManager = mock(PlotMapManager.class);
+        when(mockMapManager.getPlotManager()).thenReturn(mockPlotManager);
+
+        Plot testPlot = mock(Plot.class);
+        when(testPlot.getID()).thenReturn("10;20");
+        when(testPlot.getMnemonicId()).thenReturn("god-water");
+        when(mockPlotManager.getAccessiblePlots(playerUuid)).thenReturn(List.of(testPlot));
+        when(mockPlotManager.getPlot("god-water")).thenReturn(testPlot);
+
         PlotMapCommand cmd = new PlotMapCommand(mockMapManager);
 
         assertEquals("map", cmd.getName());
-        assertEquals("/plot map [chunkX] [chunkZ]", cmd.getSyntax());
+        assertEquals("/plot map [chunkX] [chunkZ] lub /plot map [id/kod]", cmd.getSyntax());
         assertEquals("chunkyplots.player", cmd.getPermission());
 
         // Execute without args opens map at player
@@ -310,9 +402,14 @@ class PlotMapGuiTest {
         cmd.execute(mockPlayer, new String[]{"15", "-30"});
         verify(mockMapManager).openMap(mockPlayer, 15, -30);
 
+        // Execute with plot mnemonic opens map at that plot
+        cmd.execute(mockPlayer, new String[]{"god-water"});
+        verify(mockMapManager).openMap(mockPlayer, testPlot);
+
         // Tab completion
         List<String> tab1 = cmd.getTabCompletion(mockPlayer, new String[]{""});
-        assertEquals(List.of("10"), tab1);
+        assertTrue(tab1.contains("10"));
+        assertTrue(tab1.contains("god-water"));
 
         List<String> tab2 = cmd.getTabCompletion(mockPlayer, new String[]{"10", ""});
         assertEquals(List.of("20"), tab2);

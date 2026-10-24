@@ -17,6 +17,7 @@ import pl.kacpermajkowski.ChunkyPlots.plot.mnemonic.PlotMnemonic;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -202,6 +203,45 @@ public class PlotManager {
 			return dbPlots;
 		}
 		return List.of();
+	}
+
+	public List<Plot> getPlotsByMember(UUID memberUuid) {
+		if (memberUuid == null) return List.of();
+		Set<Plot> result = new LinkedHashSet<>();
+		for (Plot plot : plotsByUuid.values()) {
+			if (plot.isPlayerWhitelisted(memberUuid)) {
+				result.add(plot);
+			}
+		}
+		List<Plot> dbPlots = repository.loadByMember(memberUuid);
+		for (Plot plot : dbPlots) {
+			Plot cached = plotsByUuid.get(plot.getUUID());
+			if (cached != null) {
+				result.add(cached);
+			} else {
+				indexPlot(plot);
+				result.add(plot);
+			}
+		}
+		return new ArrayList<>(result);
+	}
+
+	public List<Plot> getPlotsByMember(Player player) {
+		if (player == null) return List.of();
+		return getPlotsByMember(player.getUniqueId());
+	}
+
+	public List<Plot> getAccessiblePlots(UUID playerUuid) {
+		if (playerUuid == null) return List.of();
+		Set<Plot> result = new LinkedHashSet<>();
+		result.addAll(getPlotsByOwner(playerUuid));
+		result.addAll(getPlotsByMember(playerUuid));
+		return new ArrayList<>(result);
+	}
+
+	public List<Plot> getAccessiblePlots(Player player) {
+		if (player == null) return List.of();
+		return getAccessiblePlots(player.getUniqueId());
 	}
 
 	public Plot getPlot(Block block) {

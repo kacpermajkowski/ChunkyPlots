@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
 import pl.kacpermajkowski.ChunkyPlots.messages.TextUtil;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 
 /**
@@ -35,7 +36,15 @@ public class PlotMapManager {
      */
     public void openMap(Player player, int chunkX, int chunkZ) {
         if (player == null) return;
-        World world = player.getWorld();
+        openMap(player, player.getWorld(), chunkX, chunkZ);
+    }
+
+    /**
+     * Opens the chunk map centered on specific chunk coordinates in the given world.
+     */
+    public void openMap(Player player, World world, int chunkX, int chunkZ) {
+        if (player == null) return;
+        if (world == null) world = player.getWorld();
         if (world == null) return;
 
         PlotMapHolder holder = new PlotMapHolder(player, world, plotManager, chunkX, chunkZ);
@@ -44,6 +53,21 @@ public class PlotMapManager {
         holder.render();
 
         player.openInventory(inventory);
+    }
+
+    /**
+     * Opens the chunk map centered directly on the given plot.
+     */
+    public void openMap(Player player, Plot plot) {
+        if (player == null || plot == null) return;
+        World targetWorld = null;
+        if (Bukkit.getServer() != null && plot.getWorldName() != null) {
+            targetWorld = Bukkit.getWorld(plot.getWorldName());
+        }
+        if (targetWorld == null) {
+            targetWorld = player.getWorld();
+        }
+        openMap(player, targetWorld, plot.getChunkX(), plot.getChunkZ());
     }
 
     public PlotManager getPlotManager() {

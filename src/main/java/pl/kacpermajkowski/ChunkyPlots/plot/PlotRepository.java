@@ -20,6 +20,10 @@ public interface PlotRepository {
         return List.of();
     }
 
+    default List<Plot> loadByMember(UUID memberUuid) {
+        return List.of();
+    }
+
     default int count() {
         return loadAll().size();
     }

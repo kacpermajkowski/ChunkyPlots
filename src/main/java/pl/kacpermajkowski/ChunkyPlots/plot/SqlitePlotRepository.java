@@ -213,6 +213,59 @@ public class SqlitePlotRepository implements PlotRepository {
     }
 
     @Override
+    public List<Plot> loadByMember(UUID memberUuid) {
+        if (memberUuid == null) return List.of();
+        List<Plot> plots = new ArrayList<>();
+        Map<UUID, Plot> plotMap = new HashMap<>();
+        String selectPlots = """
+            SELECT p.uuid, p.owner_uuid, p.chunk_x, p.chunk_z, p.world_name 
+            FROM plots p 
+            INNER JOIN plot_members pm ON p.uuid = pm.plot_uuid 
+            WHERE pm.player_uuid = ? AND pm.member_type = 'WHITELIST';
+        """;
+        String selectMembers = "SELECT plot_uuid, player_uuid, member_type FROM plot_members WHERE plot_uuid = ?;";
+
+        try (Connection conn = databaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(selectPlots)) {
+            stmt.setString(1, memberUuid.toString());
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    UUID uuid = UUID.fromString(rs.getString("uuid"));
+                    UUID ownerUuid = UUID.fromString(rs.getString("owner_uuid"));
+                    int chunkX = rs.getInt("chunk_x");
+                    int chunkZ = rs.getInt("chunk_z");
+                    String worldName = rs.getString("world_name");
+                    Plot plot = new Plot(ownerUuid, chunkX, chunkZ, worldName, uuid);
+                    plotMap.put(uuid, plot);
+                    plots.add(plot);
+                }
+            }
+
+            if (!plots.isEmpty()) {
+                try (PreparedStatement memStmt = conn.prepareStatement(selectMembers)) {
+                    for (Plot plot : plots) {
+                        memStmt.setString(1, plot.getUUID().toString());
+                        try (ResultSet memRs = memStmt.executeQuery()) {
+                            while (memRs.next()) {
+                                UUID mUuid = UUID.fromString(memRs.getString("player_uuid"));
+                                String type = memRs.getString("member_type");
+                                if ("WHITELIST".equalsIgnoreCase(type)) {
+                                    plot.whitelistPlayer(mUuid);
+                                } else if ("BLACKLIST".equalsIgnoreCase(type)) {
+                                    plot.blacklistPlayer(mUuid);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            logger.severe("Failed to load plots by member " + memberUuid + " from SQLite: " + e.getMessage());
+        }
+        return plots;
+    }
+
+    @Override
     public int count() {
         String countSql = "SELECT COUNT(*) FROM plots;";
         try (Connection conn = databaseManager.getConnection();

@@ -14,6 +14,7 @@ import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.help.PlotHelpCom
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.info.PlotInfoCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.list.PlotListCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.map.PlotMapCommand;
+import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.shared.PlotSharedCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.whitelist.PlotAddCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.whitelist.PlotRemoveCommand;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
@@ -65,6 +66,7 @@ public class PlotCommand extends Command {
 		subcommands.add(new PlotInfoCommand(plotManager));
 //		subcommands.add(new PlotVisitCommand());
 		subcommands.add(new PlotListCommand(plotManager));
+		subcommands.add(new PlotSharedCommand(plotManager));
 		subcommands.add(new PlotShowBorderCommand(borderVisualizer));
 		subcommands.add(new PlotMapCommand(mapManager));
 		subcommands.add(new PlotGuiCommand(guiManager, plotManager));
