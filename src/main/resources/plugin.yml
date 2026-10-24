@@ -2,6 +2,7 @@ main: pl.kacpermajkowski.ChunkyPlots.ChunkyPlots
 name: ChunkyPlots
 version: ${project.version}
 author: Kacper Majkowski
+description: ChunkyPlots - Chunk-based plot protection plugin (Paper / PaperSpigot only)
 api-version: '26.3'
 softdepend:
   - Vault

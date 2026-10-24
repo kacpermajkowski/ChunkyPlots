@@ -1,18 +1,23 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.entity;
 
+import com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.WindCharge;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityKnockbackByEntityEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
+/**
+ * Handles entity knockback protection using PaperSpigot's EntityKnockbackByEntityEvent.
+ */
 public class EntityKnockbackProtection implements Listener {
     private final PlotPermissionChecker checker;
 
@@ -21,25 +26,29 @@ public class EntityKnockbackProtection implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    @SuppressWarnings("removal")
-    public void onEntityKnockback(EntityKnockbackByEntityEvent event){
-        Entity affectedEntity = event.getEntity();
-        Plot affectedPlot = checker.getPlot(affectedEntity.getLocation());
-        if(affectedPlot == null) return;
+    public void onEntityKnockback(EntityKnockbackByEntityEvent event) {
+        LivingEntity affectedEntity = event.getEntity();
+        if (affectedEntity == null) return;
 
-        Entity sourceEntity = event.getSourceEntity();
-        if(sourceEntity instanceof Player player){
-            if(!checker.canPlayerAffect(player, affectedPlot))
+        Plot affectedPlot = checker.getPlot(affectedEntity.getLocation());
+        if (affectedPlot == null) return;
+
+        Entity sourceEntity = event.getHitBy();
+        if (sourceEntity instanceof Player player) {
+            if (!checker.canPlayerAffect(player, affectedPlot)) {
                 event.setCancelled(true);
-        } else if (sourceEntity instanceof WindCharge windCharge){
-            ProjectileSource shooter = windCharge.getShooter();
-            if(shooter instanceof Player player){
-                if(!checker.canPlayerAffect(player, affectedPlot))
+            }
+        } else if (sourceEntity instanceof Projectile projectile) {
+            ProjectileSource shooter = projectile.getShooter();
+            if (shooter instanceof Player player) {
+                if (!checker.canPlayerAffect(player, affectedPlot)) {
                     event.setCancelled(true);
-            } else if(shooter instanceof BlockProjectileSource bps){
+                }
+            } else if (shooter instanceof BlockProjectileSource bps) {
                 Block block = bps.getBlock();
-                if(!checker.canBlockAffect(block, affectedPlot))
+                if (!checker.canBlockAffect(block, affectedPlot)) {
                     event.setCancelled(true);
+                }
             }
         }
     }

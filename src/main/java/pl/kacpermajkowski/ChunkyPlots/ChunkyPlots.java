@@ -95,11 +95,30 @@ public class ChunkyPlots extends JavaPlugin {
 
 	@Override
 	public void onEnable(){
+        if (!isPaperServer()) {
+            getLogger().severe("===============================================================");
+            getLogger().severe(" ChunkyPlots requires Paper / PaperSpigot to run!");
+            getLogger().severe(" Spigot and CraftBukkit are NOT supported.");
+            getLogger().severe(" Please run this server using PaperMC (https://papermc.io).");
+            getLogger().severe("===============================================================");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         initializeDependencies();
 
 		registerListeners();
         tryRegisterCommands();
 	}
+
+    public static boolean isPaperServer() {
+        try {
+            Class.forName("com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent");
+            return true;
+        } catch (ClassNotFoundException ignored) {
+            return false;
+        }
+    }
 
 	@Override
 	public void onDisable(){
