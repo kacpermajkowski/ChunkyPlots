@@ -40,6 +40,7 @@ messages:
   protection_ignite: "&cNie możesz podpalać bloków na działce gracza &f{plotOwnerName}&c!"
   protection_lectern: "&cNie możesz zabierać książek z pulpitów na działce gracza &f{plotOwnerName}&c!"
   protection_potion_splash: "&cNie możesz rzucać mikstur na działkę gracza &f{plotOwnerName}&c!"
+  protection_structure_grow: "&cNie możesz wyhodować drzewa, które wrasta w obcą działkę!"
 
   # User related messages
   null_user: "&cGracz o nicku &f{user} &cnigdy nie był na serwerze!"

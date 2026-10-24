@@ -40,3 +40,15 @@ worlds:
   world: ""
   world_nether: "nether"
   world_end: "end"
+
+# Ochrona przed wrastaniem struktur (drzewa, wielkie grzyby itp.) w obce dzialki
+structure-overgrowth:
+  # Jesli true: bloki wrastajace w obca dzialke nie wygeneruja sie (zostana wyciete),
+  # a reszta drzewa wyrosnie normalnie w obrebie Twojej dzialki.
+  # Jesli false: wzrost calego drzewa jest anulowany, gdy choc jeden blok wrasta w obca dzialke.
+  dont-generate-overgrowing-blocks: false
+
+  # W przypadku anulowania wzrostu drzewa (gdy wrasta):
+  # true = sadzonka wypada jako przedmiot na ziemie, a blok sadzonki znika.
+  # false = sadzonka pozostaje nienaruszona w ziemi.
+  drop-sapling-on-fail: true

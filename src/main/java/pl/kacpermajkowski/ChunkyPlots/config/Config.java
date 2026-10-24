@@ -44,6 +44,10 @@ public class Config {
 	private final Map<String, String> worlds = new LinkedHashMap<>();
 	private final Map<String, String> aliasToWorld = new HashMap<>();
 
+	// Structure overgrowth settings
+	private boolean dontGenerateOvergrowingBlocks = false;
+	private boolean dropSaplingOnFail = true;
+
 	// messages.yml options
 	private HashMap<Message, String> messages;
 
@@ -123,6 +127,7 @@ public class Config {
 			loadMessageDisplayTypes();
 			loadPlotLimits();
 			loadWorlds();
+			loadStructureOvergrowth();
 
 			loadMessages();
 		} catch (InvalidConfigException e){
@@ -251,6 +256,44 @@ public class Config {
 		this.aliasToWorld.put(lowerAlias, worldName);
 	}
 
+	private void loadStructureOvergrowth() {
+		ConfigurationSection section = this.config.getConfigurationSection("structure-overgrowth");
+		String mode = section != null ? section.getString("mode") : this.config.getString("structure-overgrowth.mode");
+		boolean trim = mode != null && (mode.equalsIgnoreCase("TRIM")
+				|| mode.equalsIgnoreCase("PREVENT_OVERGROWTH")
+				|| mode.equalsIgnoreCase("DONT_GENERATE")
+				|| mode.equalsIgnoreCase("DONT_GENERATE_OVERGROWING_BLOCKS")
+				|| mode.equalsIgnoreCase("PREVENT_OVERGROWING_BLOCKS"));
+
+		boolean dontGen;
+		if (section != null) {
+			dontGen = section.getBoolean("dont-generate-overgrowing-blocks",
+					section.getBoolean("dont_generate_overgrowing_blocks",
+					section.getBoolean("prevent-overgrowing-blocks",
+					section.getBoolean("trim-overgrowth", trim))));
+		} else {
+			dontGen = this.config.getBoolean("structure-overgrowth.dont-generate-overgrowing-blocks",
+					this.config.getBoolean("structure-overgrowth.dont_generate_overgrowing_blocks",
+					this.config.getBoolean("structure-overgrowth.prevent-overgrowing-blocks",
+					this.config.getBoolean("structure-overgrowth.trim-overgrowth", trim))));
+		}
+		this.dontGenerateOvergrowingBlocks = dontGen;
+
+		boolean dropSapling;
+		if (section != null) {
+			dropSapling = section.getBoolean("drop-sapling-on-fail",
+					section.getBoolean("drop-sapling-when-failed",
+					section.getBoolean("drop_sapling_when_failed",
+					section.getBoolean("drop-sapling", true))));
+		} else {
+			dropSapling = this.config.getBoolean("structure-overgrowth.drop-sapling-on-fail",
+					this.config.getBoolean("structure-overgrowth.drop-sapling-when-failed",
+					this.config.getBoolean("structure-overgrowth.drop_sapling_when_failed",
+					this.config.getBoolean("structure-overgrowth.drop-sapling", true))));
+		}
+		this.dropSaplingOnFail = dropSapling;
+	}
+
 	// messages.yml loaders
 	private void loadMessages(){
 		Logger logger = plugin.getLogger();
@@ -336,6 +379,22 @@ public class Config {
 			}
 		}
 		return null;
+	}
+
+	public boolean isDontGenerateOvergrowingBlocks() {
+		return dontGenerateOvergrowingBlocks;
+	}
+
+	public void setDontGenerateOvergrowingBlocks(boolean dontGenerateOvergrowingBlocks) {
+		this.dontGenerateOvergrowingBlocks = dontGenerateOvergrowingBlocks;
+	}
+
+	public boolean isDropSaplingOnFail() {
+		return dropSaplingOnFail;
+	}
+
+	public void setDropSaplingOnFail(boolean dropSaplingOnFail) {
+		this.dropSaplingOnFail = dropSaplingOnFail;
 	}
 
 	// messages.yml getters
