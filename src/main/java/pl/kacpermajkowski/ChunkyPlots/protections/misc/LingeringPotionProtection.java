@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class LingeringPotionProtection implements Listener {
@@ -41,6 +42,7 @@ public class LingeringPotionProtection implements Listener {
 	}
 
 	private boolean canShooterApplyEffectToEntityStandingOnPlot(ProjectileSource shooter, Plot entityPlot) {
+		if (entityPlot.getFlag(PlotFlag.POTIONS)) return true;
 		if(shooter instanceof Player player){
 			return checker.canPlayerAffect(player, entityPlot);
 		}

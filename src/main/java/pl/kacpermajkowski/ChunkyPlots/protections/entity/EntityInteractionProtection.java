@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -25,6 +26,8 @@ public class EntityInteractionProtection implements Listener {
 		Player player = event.getPlayer();
 		Location clickedEntityLocation = clickedEntity.getLocation();
 		Plot eventPlot = checker.getPlot(clickedEntityLocation);
+
+		if (eventPlot != null && eventPlot.getFlag(PlotFlag.ANIMAL_INTERACT)) return;
 
 		if (!checker.canPlayerAffect(player, eventPlot)) {
 			event.setCancelled(true);

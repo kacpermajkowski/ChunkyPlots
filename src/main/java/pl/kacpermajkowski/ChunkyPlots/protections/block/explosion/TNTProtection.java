@@ -13,6 +13,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.plugin.Plugin;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class TNTProtection implements Listener {
         Block tntBlock = event.getBlock();
         Plot plot = checker.getPlot(tntBlock);
         if (plot == null) return;
+        if (plot.getFlag(PlotFlag.EXPLOSIONS)) return;
 
         Entity primingEntity = event.getPrimingEntity();
         if (primingEntity instanceof Player player) {
@@ -69,8 +71,10 @@ public class TNTProtection implements Listener {
     }
 
     private boolean canTNTExplodeBlock(TNTPrimed tntPrimed, Block block) {
-        Entity tntSource = tntPrimed.getSource();
         Plot blockPlot = checker.getPlot(block);
+        if (blockPlot != null && blockPlot.getFlag(PlotFlag.EXPLOSIONS)) return true;
+
+        Entity tntSource = tntPrimed.getSource();
         if (tntSource == null) {
             Block blockSource = tntBlockSources.get(tntPrimed);
             if (blockPlot == null) return true;

@@ -5,6 +5,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockSpreadEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class BlockSpreadListener implements Listener {
@@ -25,6 +26,7 @@ public class BlockSpreadListener implements Listener {
 
 	private boolean canBlockSpreadFromPlotToPlot(Plot sourcePlot, Plot destinationPlot) {
 		if (destinationPlot == null) return true; // Spreading into unclaimed wilderness is safe
+		if (destinationPlot.getFlag(PlotFlag.FIRE_SPREAD)) return true;
 		if (sourcePlot != null) {
 			return sourcePlot.hasTheSameOwnerAs(destinationPlot);
 		}

@@ -10,13 +10,16 @@ import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.user.User;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.plot.mnemonic.PlotMnemonic;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Plot {
 	private UUID ownerUUID;
 	private final HashSet<UUID> blacklist = new HashSet<UUID>();
 	private final HashSet<UUID> whitelist = new HashSet<UUID>();
+	private final Map<String, Boolean> flags = new ConcurrentHashMap<>();
 	private final int chunkX;
 	private final int chunkZ;
 	private final String worldName;
@@ -67,6 +70,71 @@ public class Plot {
 	public void unblacklistPlayer(UUID playerUUID){
 		if(!blacklist.contains(playerUUID)) return;
 		blacklist.remove(playerUUID);
+	}
+
+	public boolean getFlag(PlotFlag flag) {
+		if (flag == null) return false;
+		Boolean value = flags.get(flag.getName());
+		return value != null ? value : flag.getDefaultValue();
+	}
+
+	public boolean getFlag(String flagName) {
+		if (flagName == null) return false;
+		PlotFlag flag = PlotFlag.getByName(flagName);
+		if (flag != null) {
+			return getFlag(flag);
+		}
+		Boolean value = flags.get(flagName.toLowerCase().replace('_', '-'));
+		return value != null && value;
+	}
+
+	public void setFlag(PlotFlag flag, boolean value) {
+		if (flag == null) return;
+		flags.put(flag.getName(), value);
+	}
+
+	public void setFlag(String flagName, boolean value) {
+		if (flagName == null) return;
+		PlotFlag flag = PlotFlag.getByName(flagName);
+		if (flag != null) {
+			setFlag(flag, value);
+		} else {
+			flags.put(flagName.toLowerCase().replace('_', '-'), value);
+		}
+	}
+
+	public void resetFlag(PlotFlag flag) {
+		if (flag == null) return;
+		flags.remove(flag.getName());
+	}
+
+	public void resetFlag(String flagName) {
+		if (flagName == null) return;
+		PlotFlag flag = PlotFlag.getByName(flagName);
+		if (flag != null) {
+			flags.remove(flag.getName());
+		} else {
+			flags.remove(flagName.toLowerCase().replace('_', '-'));
+		}
+	}
+
+	public void resetAllFlags() {
+		flags.clear();
+	}
+
+	public Map<String, Boolean> getFlags() {
+		return Collections.unmodifiableMap(flags);
+	}
+
+	public Map<PlotFlag, Boolean> getCustomFlags() {
+		Map<PlotFlag, Boolean> custom = new LinkedHashMap<>();
+		for (Map.Entry<String, Boolean> entry : flags.entrySet()) {
+			PlotFlag flag = PlotFlag.getByName(entry.getKey());
+			if (flag != null) {
+				custom.put(flag, entry.getValue());
+			}
+		}
+		return Collections.unmodifiableMap(custom);
 	}
 
 	public UUID getOwnerUUID(){
@@ -136,7 +204,6 @@ public class Plot {
 	public Set<UUID> getWhitelist(){
 		return Collections.unmodifiableSet(whitelist);
 	}
-
 
 	public boolean isLocationInside(Location location){
 		if (location == null || location.getWorld() == null) {

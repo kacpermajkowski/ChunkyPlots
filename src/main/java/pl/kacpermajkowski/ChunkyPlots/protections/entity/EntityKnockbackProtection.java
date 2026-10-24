@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 /**
@@ -32,6 +33,7 @@ public class EntityKnockbackProtection implements Listener {
 
         Plot affectedPlot = checker.getPlot(affectedEntity.getLocation());
         if (affectedPlot == null) return;
+        if (affectedPlot.getFlag(PlotFlag.KNOCKBACK)) return;
 
         Entity sourceEntity = event.getHitBy();
         if (sourceEntity instanceof Player player) {

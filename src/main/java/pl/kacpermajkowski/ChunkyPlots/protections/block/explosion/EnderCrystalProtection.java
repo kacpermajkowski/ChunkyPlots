@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class EnderCrystalProtection implements Listener {
 
     private boolean canEnderCrystalExplodeBlock(EnderCrystal enderCrystal, Block block) {
         Plot blockPlot = checker.getPlot(block);
+        if (blockPlot != null && blockPlot.getFlag(PlotFlag.EXPLOSIONS)) return true;
         Plot crystalPlot = checker.getPlot(enderCrystal.getLocation());
         return checker.canPlotAffectPlot(crystalPlot, blockPlot);
     }

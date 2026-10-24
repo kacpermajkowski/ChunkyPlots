@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.UUID;
@@ -25,6 +26,7 @@ public class HopperProtection implements Listener {
 
         Plot hopperPlot = checker.getPlot(hopper.getBlock());
         if(hopperPlot == null) return;
+        if(hopperPlot.getFlag(PlotFlag.HOPPER)) return;
 
         UUID itemThrowerUUID = event.getItem().getThrower();
         if(hopperPlot.isPlayerWhitelisted(itemThrowerUUID)) return;

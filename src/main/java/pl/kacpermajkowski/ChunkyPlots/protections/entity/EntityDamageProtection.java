@@ -10,6 +10,7 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -52,7 +53,14 @@ public class EntityDamageProtection implements Listener {
     }
 
     public boolean canPlayerDamageEntity(Player player, Entity victim) {
+        Plot victimPlot = checker.getPlot(victim);
         if(victim instanceof Player){
+            if (victimPlot != null) {
+                return victimPlot.getFlag(PlotFlag.PVP);
+            }
+            return true;
+        }
+        if(victimPlot != null && victimPlot.getFlag(PlotFlag.ANIMAL_DAMAGE)) {
             return true;
         }
         if(victim instanceof Monster monster && monster.getRemoveWhenFarAway()){

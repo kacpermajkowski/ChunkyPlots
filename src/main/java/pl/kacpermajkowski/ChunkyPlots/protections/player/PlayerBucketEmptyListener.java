@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -28,6 +29,8 @@ public class PlayerBucketEmptyListener implements Listener {
 		}
 		final Player player = event.getPlayer();
 		final Plot eventPlot = checker.getPlot(targetBlock);
+
+		if (eventPlot != null && (eventPlot.getFlag(PlotFlag.BLOCK_PLACE) || eventPlot.getFlag(PlotFlag.LIQUID_FLOW))) return;
 
 		if (!checker.canPlayerAffect(player, eventPlot)) {
 			event.setCancelled(true);

@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -23,6 +24,8 @@ public class LecternBookProtection implements Listener {
 		final Location lecternLocation = event.getLectern().getLocation();
 		final Player player = event.getPlayer();
 		final Plot eventPlot = checker.getPlot(lecternLocation);
+
+		if (eventPlot != null && eventPlot.getFlag(PlotFlag.LECTERN)) return;
 
 		if (!checker.canPlayerAffect(player, eventPlot)) {
 			event.setCancelled(true);

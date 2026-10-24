@@ -8,6 +8,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.ArrayList;
@@ -35,9 +36,8 @@ public class TNTMinecartProtection implements Listener {
     }
 
     private boolean canTNTCartExplodeBlock(ExplosiveMinecart tntCart, Block block) {
-        // ExplodingMinecart explosion source is hard to narrow so its left unfinished for now
         Plot blockPlot = checker.getPlot(block);
+        if (blockPlot != null && blockPlot.getFlag(PlotFlag.EXPLOSIONS)) return true;
         return blockPlot == null;
-        //TODO: Possibly allow tnt minecart to explode when it's ignited by an activation rail on a plot it's trying to explode
     }
 }

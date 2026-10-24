@@ -13,6 +13,7 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -52,6 +53,7 @@ public class SplashPotionProtection implements Listener {
 		Player player = (Player) event.getPotion().getShooter();
 		List<Plot> affectedEntitesPlots = getAffectedEntitiesPlotList(event);
 		for(Plot plot:affectedEntitesPlots) {
+			if (plot.getFlag(PlotFlag.POTIONS)) continue;
 			if (!checker.canPlayerAffect(player, plot)){
 				return false;
 			}
@@ -85,13 +87,15 @@ public class SplashPotionProtection implements Listener {
 		}
 		return plots;
 	}
-	private boolean canPlotSplashPotion(final Plot plot, final  PotionSplashEvent event){
+	private boolean canPlotSplashPotion(final Plot plot, final PotionSplashEvent event){
 		final List<Plot> affectedEntitesPlots = getAffectedEntitiesPlotList(event);
-		if(plot != null) {
-			return plot.hasTheSameOwnerAs(affectedEntitesPlots);
-		} else {
-			return affectedEntitesPlots.isEmpty();
+		for (Plot affected : affectedEntitesPlots) {
+			if (affected.getFlag(PlotFlag.POTIONS)) continue;
+			if (plot == null || !plot.hasTheSameOwnerAs(affected)) {
+				return false;
+			}
 		}
+		return true;
 	}
 
 	@EventHandler
@@ -122,6 +126,7 @@ public class SplashPotionProtection implements Listener {
 		Plot plot = checker.getPlot(event.getHitBlock().getLocation());
 
 		if(plot != null) {
+			if (plot.getFlag(PlotFlag.POTIONS)) return true;
 			return checker.canPlayerAffect(player, plot);
 		} else {
 			return true;
@@ -140,6 +145,9 @@ public class SplashPotionProtection implements Listener {
 		if(eventPlot == null) {
 			return true;
 		}
+		if(eventPlot.getFlag(PlotFlag.POTIONS)) {
+			return true;
+		}
 
 		return sourcePlot.hasTheSameOwnerAs(eventPlot);
 	}
@@ -152,6 +160,7 @@ public class SplashPotionProtection implements Listener {
 		final Plot eventPlot = checker.getPlot(splashLocation);
 
 		if(eventPlot == null) return true;
+		if(eventPlot.getFlag(PlotFlag.POTIONS)) return true;
 		if(sourcePlot == null) return false;
 
 		return eventPlot.hasTheSameOwnerAs(sourcePlot);

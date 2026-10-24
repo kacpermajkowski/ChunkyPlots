@@ -200,7 +200,7 @@ public class ChunkyPlots extends JavaPlugin {
 
 //		block - explosion
 		pm.registerEvents(new EnderCrystalProtection(permissionChecker), this);
-		pm.registerEvents(new ExplodeProtection(), this);
+		pm.registerEvents(new ExplodeProtection(permissionChecker), this);
 		pm.registerEvents(new TNTMinecartProtection(permissionChecker), this);
 		pm.registerEvents(new TNTProtection(permissionChecker, this), this);
 		pm.registerEvents(new WitherProtection(permissionChecker), this);

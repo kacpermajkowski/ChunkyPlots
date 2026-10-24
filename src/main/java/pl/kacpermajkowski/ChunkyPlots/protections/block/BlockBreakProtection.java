@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -21,6 +22,8 @@ public class BlockBreakProtection implements Listener {
 	public void onBlockBreak(final BlockBreakEvent event){
 		final Plot eventPlot = checker.getPlot(event.getBlock());
 		final Player player = event.getPlayer();
+
+		if (eventPlot != null && eventPlot.getFlag(PlotFlag.BLOCK_BREAK)) return;
 
 		if (!checker.canPlayerAffect(player, eventPlot)) {
 			event.setCancelled(true);

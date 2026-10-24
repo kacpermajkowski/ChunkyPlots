@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockIgniteEvent;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -51,6 +52,10 @@ public class IgniteProtection implements Listener {
 		Plot sourceBlockPlot = checker.getPlot(ignitingBlock);
 		Plot destinationBlockPlot = checker.getPlot(block);
 
+		if(destinationBlockPlot != null && destinationBlockPlot.getFlag(PlotFlag.FIRE_SPREAD)) {
+			return true;
+		}
+
 		if(sourceBlockPlot != null && destinationBlockPlot != null){
 			return sourceBlockPlot.hasTheSameOwnerAs(destinationBlockPlot);
 		} else if(sourceBlockPlot != null && destinationBlockPlot == null){
@@ -66,6 +71,9 @@ public class IgniteProtection implements Listener {
 		Plot destinationBlockPlot = checker.getPlot(block);
 
 		if (destinationBlockPlot == null) {
+			return true;
+		}
+		if (destinationBlockPlot.getFlag(PlotFlag.FIRE_SPREAD)) {
 			return true;
 		}
 		if (ignitingEntity instanceof Player player) {

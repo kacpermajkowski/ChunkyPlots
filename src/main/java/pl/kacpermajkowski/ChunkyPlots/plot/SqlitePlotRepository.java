@@ -28,6 +28,7 @@ public class SqlitePlotRepository implements PlotRepository {
 
         String selectPlots = "SELECT uuid, owner_uuid, chunk_x, chunk_z, world_name FROM plots;";
         String selectMembers = "SELECT plot_uuid, player_uuid, member_type FROM plot_members;";
+        String selectFlags = "SELECT plot_uuid, flag_name, flag_value FROM plot_flags;";
 
         try (Connection conn = databaseManager.getConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(selectPlots);
@@ -62,6 +63,20 @@ public class SqlitePlotRepository implements PlotRepository {
                     }
                 }
             }
+
+            try (PreparedStatement stmt = conn.prepareStatement(selectFlags);
+                 ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    UUID plotUuid = UUID.fromString(rs.getString("plot_uuid"));
+                    String flagName = rs.getString("flag_name");
+                    boolean flagValue = rs.getBoolean("flag_value");
+
+                    Plot plot = plotMap.get(plotUuid);
+                    if (plot != null) {
+                        plot.setFlag(flagName, flagValue);
+                    }
+                }
+            }
         } catch (SQLException e) {
             logger.severe("Failed to load plots from SQLite: " + e.getMessage());
         }
@@ -90,6 +105,7 @@ public class SqlitePlotRepository implements PlotRepository {
         if (worldName == null) return null;
         String selectPlot = "SELECT uuid, owner_uuid, chunk_x, chunk_z, world_name FROM plots WHERE world_name = ? AND chunk_x = ? AND chunk_z = ? LIMIT 1;";
         String selectMembers = "SELECT player_uuid, member_type FROM plot_members WHERE plot_uuid = ?;";
+        String selectFlags = "SELECT flag_name, flag_value FROM plot_flags WHERE plot_uuid = ?;";
 
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(selectPlot)) {
@@ -116,6 +132,16 @@ public class SqlitePlotRepository implements PlotRepository {
                             }
                         }
                     }
+
+                    try (PreparedStatement flagStmt = conn.prepareStatement(selectFlags)) {
+                        flagStmt.setString(1, uuid.toString());
+                        try (ResultSet flagRs = flagStmt.executeQuery()) {
+                            while (flagRs.next()) {
+                                plot.setFlag(flagRs.getString("flag_name"), flagRs.getBoolean("flag_value"));
+                            }
+                        }
+                    }
+
                     return plot;
                 }
             }
@@ -130,6 +156,7 @@ public class SqlitePlotRepository implements PlotRepository {
         if (uuid == null) return null;
         String selectPlot = "SELECT uuid, owner_uuid, chunk_x, chunk_z, world_name FROM plots WHERE uuid = ? LIMIT 1;";
         String selectMembers = "SELECT player_uuid, member_type FROM plot_members WHERE plot_uuid = ?;";
+        String selectFlags = "SELECT flag_name, flag_value FROM plot_flags WHERE plot_uuid = ?;";
 
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(selectPlot)) {
@@ -156,6 +183,16 @@ public class SqlitePlotRepository implements PlotRepository {
                             }
                         }
                     }
+
+                    try (PreparedStatement flagStmt = conn.prepareStatement(selectFlags)) {
+                        flagStmt.setString(1, uuid.toString());
+                        try (ResultSet flagRs = flagStmt.executeQuery()) {
+                            while (flagRs.next()) {
+                                plot.setFlag(flagRs.getString("flag_name"), flagRs.getBoolean("flag_value"));
+                            }
+                        }
+                    }
+
                     return plot;
                 }
             }
@@ -172,6 +209,7 @@ public class SqlitePlotRepository implements PlotRepository {
         Map<UUID, Plot> plotMap = new HashMap<>();
         String selectPlots = "SELECT uuid, owner_uuid, chunk_x, chunk_z, world_name FROM plots WHERE owner_uuid = ?;";
         String selectMembers = "SELECT plot_uuid, player_uuid, member_type FROM plot_members WHERE plot_uuid = ?;";
+        String selectFlags = "SELECT plot_uuid, flag_name, flag_value FROM plot_flags WHERE plot_uuid = ?;";
 
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(selectPlots)) {
@@ -189,7 +227,8 @@ public class SqlitePlotRepository implements PlotRepository {
             }
 
             if (!plots.isEmpty()) {
-                try (PreparedStatement memStmt = conn.prepareStatement(selectMembers)) {
+                try (PreparedStatement memStmt = conn.prepareStatement(selectMembers);
+                     PreparedStatement flagStmt = conn.prepareStatement(selectFlags)) {
                     for (Plot plot : plots) {
                         memStmt.setString(1, plot.getUUID().toString());
                         try (ResultSet memRs = memStmt.executeQuery()) {
@@ -201,6 +240,13 @@ public class SqlitePlotRepository implements PlotRepository {
                                 } else if ("BLACKLIST".equalsIgnoreCase(type)) {
                                     plot.blacklistPlayer(memberUuid);
                                 }
+                            }
+                        }
+
+                        flagStmt.setString(1, plot.getUUID().toString());
+                        try (ResultSet flagRs = flagStmt.executeQuery()) {
+                            while (flagRs.next()) {
+                                plot.setFlag(flagRs.getString("flag_name"), flagRs.getBoolean("flag_value"));
                             }
                         }
                     }
@@ -224,6 +270,7 @@ public class SqlitePlotRepository implements PlotRepository {
             WHERE pm.player_uuid = ? AND pm.member_type = 'WHITELIST';
         """;
         String selectMembers = "SELECT plot_uuid, player_uuid, member_type FROM plot_members WHERE plot_uuid = ?;";
+        String selectFlags = "SELECT plot_uuid, flag_name, flag_value FROM plot_flags WHERE plot_uuid = ?;";
 
         try (Connection conn = databaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(selectPlots)) {
@@ -242,7 +289,8 @@ public class SqlitePlotRepository implements PlotRepository {
             }
 
             if (!plots.isEmpty()) {
-                try (PreparedStatement memStmt = conn.prepareStatement(selectMembers)) {
+                try (PreparedStatement memStmt = conn.prepareStatement(selectMembers);
+                     PreparedStatement flagStmt = conn.prepareStatement(selectFlags)) {
                     for (Plot plot : plots) {
                         memStmt.setString(1, plot.getUUID().toString());
                         try (ResultSet memRs = memStmt.executeQuery()) {
@@ -254,6 +302,13 @@ public class SqlitePlotRepository implements PlotRepository {
                                 } else if ("BLACKLIST".equalsIgnoreCase(type)) {
                                     plot.blacklistPlayer(mUuid);
                                 }
+                            }
+                        }
+
+                        flagStmt.setString(1, plot.getUUID().toString());
+                        try (ResultSet flagRs = flagStmt.executeQuery()) {
+                            while (flagRs.next()) {
+                                plot.setFlag(flagRs.getString("flag_name"), flagRs.getBoolean("flag_value"));
                             }
                         }
                     }
@@ -302,6 +357,9 @@ public class SqlitePlotRepository implements PlotRepository {
         String deleteMembers = "DELETE FROM plot_members WHERE plot_uuid = ?;";
         String insertMember = "INSERT INTO plot_members (plot_uuid, player_uuid, member_type) VALUES (?, ?, ?);";
 
+        String deleteFlags = "DELETE FROM plot_flags WHERE plot_uuid = ?;";
+        String insertFlag = "INSERT INTO plot_flags (plot_uuid, flag_name, flag_value) VALUES (?, ?, ?);";
+
         try (Connection conn = databaseManager.getConnection()) {
             conn.setAutoCommit(false);
             try {
@@ -331,6 +389,23 @@ public class SqlitePlotRepository implements PlotRepository {
                             stmt.setString(1, plot.getUUID().toString());
                             stmt.setString(2, memberUuid.toString());
                             stmt.setString(3, "BLACKLIST");
+                            stmt.addBatch();
+                        }
+                        stmt.executeBatch();
+                    }
+                }
+
+                try (PreparedStatement stmt = conn.prepareStatement(deleteFlags)) {
+                    stmt.setString(1, plot.getUUID().toString());
+                    stmt.executeUpdate();
+                }
+
+                if (!plot.getFlags().isEmpty()) {
+                    try (PreparedStatement stmt = conn.prepareStatement(insertFlag)) {
+                        for (Map.Entry<String, Boolean> entry : plot.getFlags().entrySet()) {
+                            stmt.setString(1, plot.getUUID().toString());
+                            stmt.setString(2, entry.getKey());
+                            stmt.setBoolean(3, entry.getValue());
                             stmt.addBatch();
                         }
                         stmt.executeBatch();

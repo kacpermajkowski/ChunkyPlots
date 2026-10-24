@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -22,6 +23,7 @@ public class BlockPlaceListener implements Listener {
         final Player player = event.getPlayer();
         final Plot eventPlot = checker.getPlot(event.getBlockPlaced());
 
+        if (eventPlot != null && eventPlot.getFlag(PlotFlag.BLOCK_PLACE)) return;
         if(checker.canPlayerAffect(player, eventPlot)) return;
         event.setCancelled(true);
         ProtectionNotifier.notify(player, Message.PROTECTION_BLOCK_PLACE, eventPlot);

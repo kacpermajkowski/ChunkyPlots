@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.ArrayList;
@@ -43,9 +44,13 @@ public class PistonProtection implements Listener {
         List<Plot> blockPlots = getPlotsOfAllBlocks(blocks);
         List<Plot> affectedPlots = getPlotsAffectedByPiston(direction, blocks);
 
-        if (!checker.canOwnerAffect(pistonOwnerUuid, pistonHeadPlot)) return false;
-        if (!checker.canOwnerAffectPlots(pistonOwnerUuid, affectedPlots)) return false;
-        if (!checker.canOwnerAffectPlots(pistonOwnerUuid, blockPlots)) return false;
+        if (pistonHeadPlot != null && !pistonHeadPlot.getFlag(PlotFlag.PISTON) && !checker.canOwnerAffect(pistonOwnerUuid, pistonHeadPlot)) return false;
+        for (Plot p : affectedPlots) {
+            if (!p.getFlag(PlotFlag.PISTON) && !checker.canOwnerAffect(pistonOwnerUuid, p)) return false;
+        }
+        for (Plot p : blockPlots) {
+            if (!p.getFlag(PlotFlag.PISTON) && !checker.canOwnerAffect(pistonOwnerUuid, p)) return false;
+        }
 
         return true;
     }

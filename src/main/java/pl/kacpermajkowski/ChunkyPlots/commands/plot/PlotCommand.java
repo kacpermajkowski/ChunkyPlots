@@ -9,6 +9,7 @@ import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.blacklist.PlotDe
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.blacklist.PlotUndenyCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.border.PlotShowBorderCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.dispose.PlotDisposeCommand;
+import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.flag.PlotFlagCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.gui.PlotGuiCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.help.PlotHelpCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.info.PlotInfoCommand;
@@ -61,7 +62,7 @@ public class PlotCommand extends Command {
 		subcommands.add(new PlotUndenyCommand(plotManager));
 		subcommands.add(new PlotAddCommand(plotManager));
 		subcommands.add(new PlotRemoveCommand(plotManager));
-//		subcommands.add(new PlotFlagCommand());
+		subcommands.add(new PlotFlagCommand(plotManager));
 //		subcommands.add(new PlotGroupCommand());
 		subcommands.add(new PlotInfoCommand(plotManager));
 //		subcommands.add(new PlotVisitCommand());

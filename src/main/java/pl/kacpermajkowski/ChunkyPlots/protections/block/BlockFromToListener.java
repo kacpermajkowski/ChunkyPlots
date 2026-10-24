@@ -7,6 +7,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class BlockFromToListener implements Listener {
@@ -36,6 +37,7 @@ public class BlockFromToListener implements Listener {
 		Plot toPlot = checker.getPlot(toBlock);
 		if(fromPlot == null && toPlot == null) return true;
 		else if(fromPlot != null && toPlot == null) return true;
+		else if(toPlot != null && toPlot.getFlag(PlotFlag.LIQUID_FLOW)) return true;
 		else if(fromPlot == null && toPlot != null) return false;
 		else return fromPlot.hasTheSameOwnerAs(toPlot);
 	}

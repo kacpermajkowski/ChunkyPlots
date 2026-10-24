@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -90,6 +91,9 @@ public class StructureOvergrowProtection implements Listener {
     }
 
     public boolean isOvergrowing(Plot triggerPlot, Plot affectedPlot) {
+        if (affectedPlot != null && affectedPlot.getFlag(PlotFlag.STRUCTURE_GROW)) {
+            return false;
+        }
         return affectedPlot != null && (triggerPlot == null || !affectedPlot.hasTheSameOwnerAs(triggerPlot));
     }
 

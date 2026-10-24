@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.Map;
@@ -51,6 +52,9 @@ public class WitherProtection implements Listener {
             Plot plot = checker.getPlot(block);
             if (plot == null) {
                 return false; // Wilderness blocks can be destroyed
+            }
+            if (plot.getFlag(PlotFlag.EXPLOSIONS)) {
+                return false; // Explosions allowed by flag
             }
             if (summonerUuid == null) {
                 return true; // Unknown summoner -> Protect claimed block

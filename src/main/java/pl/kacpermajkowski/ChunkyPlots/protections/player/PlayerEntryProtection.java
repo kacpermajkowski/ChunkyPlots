@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.ChunkBorderUtil;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
@@ -33,6 +34,7 @@ public class PlayerEntryProtection implements Listener {
 
         Plot toPlot = checker.getPlot(event.getTo());
         if (toPlot == null) return;
+        if (!toPlot.getFlag(PlotFlag.ENTRY)) return;
         if (checker.canPlayerAffect(player, toPlot)) return;
         if (!toPlot.isPlayerBlacklisted(player)) return;
 

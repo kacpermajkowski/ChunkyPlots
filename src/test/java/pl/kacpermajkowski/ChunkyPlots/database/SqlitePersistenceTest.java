@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.SqlitePlotRepository;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.user.User;
 import pl.kacpermajkowski.ChunkyPlots.user.SqliteUserRepository;
 
@@ -96,6 +97,53 @@ public class SqlitePersistenceTest {
         // 4. Delete plot
         plotRepository.deleteSync(loadedPlot);
         assertTrue(plotRepository.loadAll().isEmpty(), "Plot must be removed after deletion");
+    }
+
+    @Test
+    @DisplayName("SQLite Plot Flags Persistence: Save, Load, Update, Reset and Delete flags")
+    void testPlotFlagPersistence() {
+        UUID plotId = UUID.randomUUID();
+        UUID ownerId = UUID.randomUUID();
+
+        Plot plot = new Plot(ownerId, 10, 20, "world", plotId);
+        // Default: PVP is false, ENTRY is true
+        assertFalse(plot.getFlag(PlotFlag.PVP));
+        assertTrue(plot.getFlag(PlotFlag.ENTRY));
+
+        // Set custom flags
+        plot.setFlag(PlotFlag.PVP, true);
+        plot.setFlag(PlotFlag.ENTRY, false);
+        plot.setFlag(PlotFlag.EXPLOSIONS, true);
+
+        // Save plot with flags
+        plotRepository.saveSync(plot);
+
+        // Load plot
+        List<Plot> loadedPlots = plotRepository.loadAll();
+        assertEquals(1, loadedPlots.size());
+        Plot loaded = loadedPlots.get(0);
+
+        assertTrue(loaded.getFlag(PlotFlag.PVP));
+        assertFalse(loaded.getFlag(PlotFlag.ENTRY));
+        assertTrue(loaded.getFlag(PlotFlag.EXPLOSIONS));
+        assertFalse(loaded.getFlag(PlotFlag.FIRE_SPREAD)); // default untouched
+
+        // Reset PVP flag and update
+        loaded.resetFlag(PlotFlag.PVP);
+        plotRepository.saveSync(loaded);
+
+        List<Plot> reloadedPlots = plotRepository.loadAll();
+        assertEquals(1, reloadedPlots.size());
+        Plot reloaded = reloadedPlots.get(0);
+
+        assertFalse(reloaded.getFlag(PlotFlag.PVP));
+        assertFalse(reloaded.getFlag(PlotFlag.ENTRY));
+        assertTrue(reloaded.getFlag(PlotFlag.EXPLOSIONS));
+        assertEquals(2, reloaded.getCustomFlags().size());
+
+        // Delete plot
+        plotRepository.deleteSync(reloaded);
+        assertTrue(plotRepository.loadAll().isEmpty());
     }
 
     @Test

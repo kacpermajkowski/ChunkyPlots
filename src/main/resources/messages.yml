@@ -78,6 +78,8 @@ messages:
   flag_value_on_group: "&aFlaga &f{flagName} &aprzyjmuje w tej grupie działek wartość &f{flagValue}"
   flag_values_in_group_are_different: "&eFlaga &f{flagName} &eprzyjmuje na działkach tej grupy różne wartości."
   wrong_flag_value: "&cPodałeś niepoprawną wartość! Wpisz &ftrue &c albo &ffalse"
+  flag_reset_on_plot: "&aZresetowano flagę &r{flagName} &ado wartości domyślnej na działce"
+  flags_reset_all_on_plot: "&aZresetowano wszystkie flagi do wartości domyślnych na działce"
 
   # Group related messages
   null_group: "&cGrupa o nazwie &r{groupName} &cnie istnieje!"

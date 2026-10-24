@@ -8,6 +8,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class ShriekerProtection implements Listener {
@@ -81,6 +82,7 @@ public class ShriekerProtection implements Listener {
     public void onVibrationSpawn(BlockReceiveGameEvent event) {
         Plot destPlot = checker.getPlot(event.getBlock());
         if (destPlot == null) return;
+        if (destPlot.getFlag(PlotFlag.SCULK_SHRIEKER)) return;
 
         Entity entity = event.getEntity();
         if (entity instanceof Player player) {

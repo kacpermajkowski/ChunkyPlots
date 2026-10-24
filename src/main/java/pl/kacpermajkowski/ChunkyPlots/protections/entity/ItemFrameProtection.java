@@ -10,6 +10,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -24,6 +25,7 @@ public class ItemFrameProtection implements Listener {
     public void onItemFrameProtection(final HangingBreakEvent event) {
         Plot hangingPlot = checker.getPlot(event.getEntity());
         if (hangingPlot == null) return;
+        if (hangingPlot.getFlag(PlotFlag.ITEM_FRAME)) return;
 
         if (event.getCause() == HangingBreakEvent.RemoveCause.PHYSICS) {
             // Physics pops (e.g. supporting block broken by authorized player)

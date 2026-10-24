@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -24,6 +25,7 @@ public class VehicleDamageListener implements Listener {
         final Entity vehicle = event.getVehicle();
 
         Plot vehiclePlot = checker.getPlot(vehicle);
+        if (vehiclePlot != null && vehiclePlot.getFlag(PlotFlag.VEHICLE_DAMAGE)) return;
 
         if(attacker instanceof Player player) {
             if (checker.canPlayerAffect(player, vehicle)) return;

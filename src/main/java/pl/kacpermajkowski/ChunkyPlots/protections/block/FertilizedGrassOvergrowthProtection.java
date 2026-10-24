@@ -6,6 +6,7 @@ import org.bukkit.event.*;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import pl.kacpermajkowski.ChunkyPlots.listeners.EventUtils;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class FertilizedGrassOvergrowthProtection implements Listener {
@@ -26,6 +27,9 @@ public class FertilizedGrassOvergrowthProtection implements Listener {
     }
 
     public void removeBlockIfOvergrowing(Player player, BlockState blockState) {
+        Plot plot = checker.getPlot(blockState.getLocation());
+        if (plot != null && plot.getFlag(PlotFlag.STRUCTURE_GROW)) return;
+
         if(!checker.canPlayerAffect(player, blockState)) {
             blockState.setBlockData(blockState.getBlock().getBlockData());
         }

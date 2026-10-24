@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.Plugin;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -41,6 +42,7 @@ public class PlayerInteractListener implements Listener {
 		final Player player = event.getPlayer();
 		if (block != null) {
 			final Plot eventPlot = checker.getPlot(block);
+			if (eventPlot != null && eventPlot.getFlag(PlotFlag.INTERACT)) return;
 			if (checker.canPlayerAffect(player, eventPlot)) return;
 			event.setCancelled(true);
 			ProtectionNotifier.notify(player, Message.PROTECTION_BLOCK_INTERACT, eventPlot);
@@ -55,6 +57,7 @@ public class PlayerInteractListener implements Listener {
 
 		Material type = block.getType();
 		Plot plot = checker.getPlot(block);
+		if (plot != null && plot.getFlag(PlotFlag.INTERACT)) return;
 		if (checker.canPlayerAffect(event.getPlayer(), plot)) return;
 
 		// Farmland trampling, pressure plates, tripwire hooks, and redstone ore

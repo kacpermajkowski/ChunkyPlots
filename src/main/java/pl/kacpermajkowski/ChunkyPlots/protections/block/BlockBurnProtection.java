@@ -6,6 +6,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBurnEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class BlockBurnProtection implements Listener {
@@ -23,8 +24,9 @@ public class BlockBurnProtection implements Listener {
  	}
 
 	private boolean blockCanBeBurntByFire(Block block, Block fire) {
-		if(fire == null) return false;
 		Plot blockPlot = checker.getPlot(block);
+		if(blockPlot != null && blockPlot.getFlag(PlotFlag.FIRE_SPREAD)) return true;
+		if(fire == null) return false;
 		Plot firePlot = checker.getPlot(fire);
 		if(blockPlot == null) return true;
 		if(firePlot == null) return false;

@@ -8,9 +8,12 @@ import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.messages.TextUtil;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PlotInfoCommand implements PlotSubcommand {
 	private final PlotManager plotManager;
@@ -62,6 +65,13 @@ public class PlotInfoCommand implements PlotSubcommand {
 				player.sendMessage(TextUtil.toComponent("&aZablokowani: &f" + plot.getBlacklist().stream().map((uuid) ->
 						Bukkit.getOfflinePlayer(uuid).getName()
 				).toList()));
+				Map<PlotFlag, Boolean> customFlags = plot.getCustomFlags();
+				if (!customFlags.isEmpty()) {
+					String flagsStr = customFlags.entrySet().stream()
+							.map(e -> e.getKey().getName() + ": " + (e.getValue() ? "&aON&f" : "&cOFF&f"))
+							.collect(Collectors.joining(", "));
+					player.sendMessage(TextUtil.toComponent("&aZmienione flagi: &f" + flagsStr));
+				}
 				int blockX = (plot.getChunkX() << 4) + 8;
 				int blockZ = (plot.getChunkZ() << 4) + 8;
 				player.sendMessage(TextUtil.toComponent("&aŚrodek: &7X:&f" + blockX + "  &7Z:&f" + blockZ));

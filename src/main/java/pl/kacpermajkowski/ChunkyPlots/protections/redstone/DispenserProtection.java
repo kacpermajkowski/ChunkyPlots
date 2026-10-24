@@ -7,6 +7,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class DispenserProtection implements Listener {
@@ -43,6 +44,9 @@ public class DispenserProtection implements Listener {
 	private boolean canPlotDispenseOnPlot(Plot sourcePlot, Plot destinationPlot) {
 		if (destinationPlot == null) {
 			return true; // Dispensing into wilderness is allowed
+		}
+		if (destinationPlot.getFlag(PlotFlag.DISPENSER)) {
+			return true;
 		}
 		if (sourcePlot == null) {
 			return false; // Wilderness dispenser cannot dispense into claimed plot

@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
@@ -27,6 +28,8 @@ public class AnimalTemptingProtection implements Listener {
 
         Plot plot = checker.getPlot(event.getRightClicked());
         if(plot == null) return;
+
+        if (plot.getFlag(PlotFlag.ANIMAL_TEMPT) || plot.getFlag(PlotFlag.ANIMAL_INTERACT)) return;
 
         if (!checker.canPlayerAffect(player, plot)) {
             event.setCancelled(true);

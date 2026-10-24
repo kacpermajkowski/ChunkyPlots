@@ -30,6 +30,8 @@ public class MessageBuilder {
 
     private String userName = "";
     private String groupName = "";
+    private String flagName = "";
+    private String flagValue = "";
 
     private String subcommandSyntax = "";
     private String subcommandDescription = "";
@@ -95,6 +97,21 @@ public class MessageBuilder {
         return this;
     }
 
+    public MessageBuilder flagName(String flagName) {
+        this.flagName = flagName != null ? flagName : "";
+        return this;
+    }
+
+    public MessageBuilder flagValue(String flagValue) {
+        this.flagValue = flagValue != null ? flagValue : "";
+        return this;
+    }
+
+    public MessageBuilder flagValue(boolean flagValue) {
+        this.flagValue = String.valueOf(flagValue);
+        return this;
+    }
+
     public MessageBuilder subcommand(Subcommand subcommand) {
         if (subcommand != null) {
             this.subcommandSyntax = subcommand.getSyntax() != null ? subcommand.getSyntax() : "";
@@ -146,6 +163,9 @@ public class MessageBuilder {
 
         message = message.replace("{user}", userName != null ? userName : "");
         message = message.replace("{userName}", userName != null ? userName : "");
+
+        message = message.replace("{flagName}", flagName != null ? flagName : "");
+        message = message.replace("{flagValue}", flagValue != null ? flagValue : "");
 
         message = message.replace("{subcommandSyntax}", subcommandSyntax != null ? subcommandSyntax : "");
         message = message.replace("{subcommandDescription}", subcommandDescription != null ? subcommandDescription : "");
