@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.events.*;
+import pl.kacpermajkowski.ChunkyPlots.hook.worldguard.WorldGuardHook;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.mnemonic.PlotMnemonic;
@@ -38,6 +39,7 @@ public class PlotManager {
 	private final PlotRepository repository;
 	private final ItemStack plotItem;
 	private PlotLimitManager limitManager;
+	private WorldGuardHook worldGuardHook;
 	private Config config;
 
 	public static long chunkKey(int chunkX, int chunkZ) {
@@ -187,6 +189,14 @@ public class PlotManager {
 
 	public PlotLimitManager getLimitManager() {
 		return limitManager;
+	}
+
+	public void setWorldGuardHook(WorldGuardHook worldGuardHook) {
+		this.worldGuardHook = worldGuardHook;
+	}
+
+	public WorldGuardHook getWorldGuardHook() {
+		return worldGuardHook;
 	}
 
 	public void savePlots() {
@@ -456,6 +466,16 @@ public class PlotManager {
 					.currentPlots(current)
 					.sendChat(player);
 			return false;
+		}
+
+		if (worldGuardHook != null && worldGuardHook.isHooked()) {
+			boolean allowOverlap = config != null
+					? config.isWorldGuardAllowClaimOverlappingRegions()
+					: (Config.getInstance() != null && Config.getInstance().isWorldGuardAllowClaimOverlappingRegions());
+			if (!allowOverlap && worldGuardHook.hasOverlappingRegion(chunk)) {
+				new MessageBuilder(Message.WORLDGUARD_REGION_OVERLAP).sendChat(player);
+				return false;
+			}
 		}
 
 		PlotPreClaimEvent preEvent = new PlotPreClaimEvent(player, chunk);

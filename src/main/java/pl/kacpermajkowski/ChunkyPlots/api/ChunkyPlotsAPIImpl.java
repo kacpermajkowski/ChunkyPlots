@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.hook.vault.VaultHook;
+import pl.kacpermajkowski.ChunkyPlots.hook.worldguard.WorldGuardHook;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotBorderVisualizer;
@@ -28,23 +29,30 @@ public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
     private final VaultHook vaultHook;
     private final PlotMapManager mapManager;
     private final PlotGuiManager guiManager;
+    private final WorldGuardHook worldGuardHook;
 
     public ChunkyPlotsAPIImpl(PlotManager plotManager, PlotLimitManager limitManager, PlotBorderVisualizer borderVisualizer, VaultHook vaultHook) {
-        this(plotManager, limitManager, borderVisualizer, vaultHook, null, null);
+        this(plotManager, limitManager, borderVisualizer, vaultHook, null, null, null);
     }
 
     public ChunkyPlotsAPIImpl(PlotManager plotManager, PlotLimitManager limitManager, PlotBorderVisualizer borderVisualizer, VaultHook vaultHook, PlotMapManager mapManager) {
-        this(plotManager, limitManager, borderVisualizer, vaultHook, mapManager, null);
+        this(plotManager, limitManager, borderVisualizer, vaultHook, mapManager, null, null);
     }
 
     public ChunkyPlotsAPIImpl(PlotManager plotManager, PlotLimitManager limitManager, PlotBorderVisualizer borderVisualizer,
                               VaultHook vaultHook, PlotMapManager mapManager, PlotGuiManager guiManager) {
+        this(plotManager, limitManager, borderVisualizer, vaultHook, mapManager, guiManager, null);
+    }
+
+    public ChunkyPlotsAPIImpl(PlotManager plotManager, PlotLimitManager limitManager, PlotBorderVisualizer borderVisualizer,
+                              VaultHook vaultHook, PlotMapManager mapManager, PlotGuiManager guiManager, WorldGuardHook worldGuardHook) {
         this.plotManager = plotManager;
         this.limitManager = limitManager;
         this.borderVisualizer = borderVisualizer;
         this.vaultHook = vaultHook;
         this.mapManager = mapManager;
         this.guiManager = guiManager;
+        this.worldGuardHook = worldGuardHook != null ? worldGuardHook : (plotManager != null ? plotManager.getWorldGuardHook() : null);
         instance = this;
     }
 
@@ -253,6 +261,11 @@ public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
     @Override
     public PlotLimitManager getLimitManager() {
         return limitManager;
+    }
+
+    @Override
+    public WorldGuardHook getWorldGuardHook() {
+        return worldGuardHook != null ? worldGuardHook : (plotManager != null ? plotManager.getWorldGuardHook() : null);
     }
 
     @Override

@@ -45,7 +45,7 @@ worlds:
 # Domyslnie dzialka chroni tylko od poziomu Y = 0 w gore (wszystko ponizej Y < 0 nie jest chronione).
 plot-height:
   # Dolna granica ochrony dzialki (domyslnie 0).
-  # Wszystko ponizej tego poziomu Y (np. jaskinie Y < 0) nie jest chronione.
+  # Wszystko ponizej tego poziomu Y (np. jaskinie Y < 0) nie jest chronione).
   min-y: 0
 
   # Gorny limit wysokosci ochrony dzialki.
@@ -63,3 +63,10 @@ structure-overgrowth:
   # true = sadzonka wypada jako przedmiot na ziemie, a blok sadzonki znika.
   # false = sadzonka pozostaje nienaruszona w ziemi.
   drop-sapling-on-fail: true
+
+# Integracja z WorldGuard (soft-dependency)
+worldguard:
+  # Czy mozna zajmowac dzialki na obszarach nakladajacych sie na istniejace regiony WorldGuard?
+  # false = blokuje zajmowanie chunku, jesli nachodzi na jakikolwiek region WorldGuard (z wyjatkiem __global__)
+  # true = pozwala na zajmowanie chunkow niezaleznie od regionow WorldGuard
+  allow-claim-overlapping-regions: false

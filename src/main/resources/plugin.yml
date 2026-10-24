@@ -6,6 +6,7 @@ description: ChunkyPlots - Chunk-based plot protection plugin (Paper / PaperSpig
 api-version: '26.3'
 softdepend:
   - Vault
+  - WorldGuard
 libraries:
   - com.zaxxer:HikariCP:6.2.1
   - org.xerial:sqlite-jdbc:3.47.1.0

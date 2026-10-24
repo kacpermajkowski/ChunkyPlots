@@ -22,6 +22,7 @@ repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://jitpack.io")
+    maven("https://maven.enginehub.org/repo/")
 }
 
 dependencies {
@@ -30,6 +31,11 @@ dependencies {
 
     // Vault API (soft dependency)
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
+
+    // WorldGuard API (soft dependency)
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.10") {
+        exclude(group = "org.spigotmc", module = "spigot-api")
+    }
 
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.46")
@@ -44,6 +50,9 @@ dependencies {
 
     // Tests
     testImplementation("com.github.MilkBowl:VaultAPI:1.7.1")
+    testImplementation("com.sk89q.worldguard:worldguard-bukkit:7.0.10") {
+        exclude(group = "org.spigotmc", module = "spigot-api")
+    }
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

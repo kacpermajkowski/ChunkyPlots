@@ -14,6 +14,7 @@ import pl.kacpermajkowski.ChunkyPlots.crafting.PlotItemFactory;
 import pl.kacpermajkowski.ChunkyPlots.database.DatabaseManager;
 import pl.kacpermajkowski.ChunkyPlots.exceptions.InvalidStateException;
 import pl.kacpermajkowski.ChunkyPlots.hook.vault.VaultHook;
+import pl.kacpermajkowski.ChunkyPlots.hook.worldguard.WorldGuardHook;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlotLifecycleListener;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlotTransitionNotifier;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
@@ -93,6 +94,7 @@ public class ChunkyPlots extends JavaPlugin {
 	private PlotGuiManager guiManager;
 	private GroupGuiManager groupGuiManager;
 	private VaultHook vaultHook;
+	private WorldGuardHook worldGuardHook;
 	private PlotLimitManager limitManager;
 	private ChunkyPlotsAPI api;
 
@@ -184,13 +186,16 @@ public class ChunkyPlots extends JavaPlugin {
 		this.mapManager = new PlotMapManager(this, plotManager, userManager);
 
 		this.vaultHook = new VaultHook(this);
+		this.worldGuardHook = new WorldGuardHook(this);
+		this.plotManager.setWorldGuardHook(worldGuardHook);
+
 		this.limitManager = new PlotLimitManager(config, plotManager, vaultHook);
 		this.plotManager.setLimitManager(limitManager);
 
 		this.groupGuiManager = new GroupGuiManager(plotManager, userManager, mapManager);
 		this.guiManager = new PlotGuiManager(this, plotManager, userManager, borderVisualizer, limitManager, vaultHook, mapManager, groupGuiManager);
 
-		this.api = new ChunkyPlotsAPIImpl(plotManager, limitManager, borderVisualizer, vaultHook, mapManager, guiManager);
+		this.api = new ChunkyPlotsAPIImpl(plotManager, limitManager, borderVisualizer, vaultHook, mapManager, guiManager, worldGuardHook);
 		getServer().getServicesManager().register(ChunkyPlotsAPI.class, this.api, this, ServicePriority.Normal);
 	}
 
@@ -334,6 +339,10 @@ public class ChunkyPlots extends JavaPlugin {
 
 	public VaultHook getVaultHook() {
 		return vaultHook;
+	}
+
+	public WorldGuardHook getWorldGuardHook() {
+		return worldGuardHook;
 	}
 
 	public PlotLimitManager getLimitManager() {

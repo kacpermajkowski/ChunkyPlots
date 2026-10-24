@@ -4,6 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.hook.vault.VaultHook;
+import pl.kacpermajkowski.ChunkyPlots.hook.worldguard.WorldGuardHook;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotRelation;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
@@ -196,6 +197,8 @@ public interface ChunkyPlotsAPI {
     VaultHook getVaultHook();
 
     PlotLimitManager getLimitManager();
+
+    WorldGuardHook getWorldGuardHook();
 
     // --- Allowed Worlds & Aliases ---
 

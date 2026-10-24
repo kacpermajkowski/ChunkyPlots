@@ -52,6 +52,9 @@ public class Config {
 	private boolean dontGenerateOvergrowingBlocks = false;
 	private boolean dropSaplingOnFail = true;
 
+	// WorldGuard integration settings
+	private boolean worldGuardAllowClaimOverlappingRegions = false;
+
 	// messages.yml options
 	private HashMap<Message, String> messages;
 
@@ -133,6 +136,7 @@ public class Config {
 			loadWorlds();
 			loadPlotHeight();
 			loadStructureOvergrowth();
+			loadWorldGuard();
 
 			loadMessages();
 		} catch (InvalidConfigException e){
@@ -331,6 +335,17 @@ public class Config {
 		this.dropSaplingOnFail = dropSapling;
 	}
 
+	private void loadWorldGuard() {
+		ConfigurationSection section = this.config.getConfigurationSection("worldguard");
+		if (section != null) {
+			this.worldGuardAllowClaimOverlappingRegions = section.getBoolean("allow-claim-overlapping-regions",
+					section.getBoolean("allow_claim_overlapping_regions", false));
+		} else {
+			this.worldGuardAllowClaimOverlappingRegions = this.config.getBoolean("worldguard.allow-claim-overlapping-regions",
+					this.config.getBoolean("worldguard.allow_claim_overlapping_regions", false));
+		}
+	}
+
 	// messages.yml loaders
 	private void loadMessages(){
 		Logger logger = plugin.getLogger();
@@ -462,6 +477,14 @@ public class Config {
 
 	public void setDropSaplingOnFail(boolean dropSaplingOnFail) {
 		this.dropSaplingOnFail = dropSaplingOnFail;
+	}
+
+	public boolean isWorldGuardAllowClaimOverlappingRegions() {
+		return worldGuardAllowClaimOverlappingRegions;
+	}
+
+	public void setWorldGuardAllowClaimOverlappingRegions(boolean worldGuardAllowClaimOverlappingRegions) {
+		this.worldGuardAllowClaimOverlappingRegions = worldGuardAllowClaimOverlappingRegions;
 	}
 
 	// messages.yml getters
