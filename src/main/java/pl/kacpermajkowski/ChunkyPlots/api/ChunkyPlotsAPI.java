@@ -136,6 +136,18 @@ public interface ChunkyPlotsAPI {
      */
     List<Plot> getAllPlots();
 
+    // --- Map GUI ---
+
+    /**
+     * Opens the interactive chunk map GUI for a player centered on their current chunk.
+     */
+    void openPlotMap(Player player);
+
+    /**
+     * Opens the interactive chunk map GUI for a player centered on specified chunk coordinates.
+     */
+    void openPlotMap(Player player, int chunkX, int chunkZ);
+
     // --- Hooks & Managers ---
 
     VaultHook getVaultHook();

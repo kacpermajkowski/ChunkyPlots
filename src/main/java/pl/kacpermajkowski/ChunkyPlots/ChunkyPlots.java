@@ -23,18 +23,51 @@ import pl.kacpermajkowski.ChunkyPlots.plot.PlotRepository;
 import pl.kacpermajkowski.ChunkyPlots.plot.SqlitePlotRepository;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotBorderVisualizer;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
+import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapGuiListener;
+import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapManager;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
-import pl.kacpermajkowski.ChunkyPlots.protections.block.*;
-import pl.kacpermajkowski.ChunkyPlots.protections.block.explosion.*;
-import pl.kacpermajkowski.ChunkyPlots.protections.entity.*;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.BlockBreakProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.BlockBurnProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.BlockFromToListener;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.BlockPlaceListener;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.BlockSpreadListener;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.FertilizedGrassOvergrowthProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.IgniteProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.LecternBookProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.StructureOvergrowProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.explosion.EnderCrystalProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.explosion.ExplodeProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.explosion.TNTMinecartProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.explosion.TNTProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.block.explosion.WitherProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.AnimalTemptingProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.EndermiteSpawnProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.EntityDamageProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.EntityInteractionProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.EntityKnockbackProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.EntityRunawayProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.ItemFrameProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.PlayerLeashEntityProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.PlayerShearEntityProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.PlayerUnleashEntityProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.ProjectileHitProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.VehicleDamageListener;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.VehicleEnterListener;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.VehicleMoveProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.VehicleSpamProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.entity.EntityChangeBlockProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.misc.LightningProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.misc.LingeringPotionProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.misc.SplashPotionProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerBucketEmptyListener;
 import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerEntryProtection;
 import pl.kacpermajkowski.ChunkyPlots.protections.player.PlayerInteractListener;
-import pl.kacpermajkowski.ChunkyPlots.protections.redstone.*;
+import pl.kacpermajkowski.ChunkyPlots.protections.redstone.DispenserProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.redstone.HopperProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.redstone.PistonProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.redstone.RedstoneSignalProtection;
+import pl.kacpermajkowski.ChunkyPlots.protections.redstone.ShriekerProtection;
 import pl.kacpermajkowski.ChunkyPlots.user.SqliteUserRepository;
 import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 import pl.kacpermajkowski.ChunkyPlots.user.UserRepository;
@@ -47,6 +80,7 @@ public class ChunkyPlots extends JavaPlugin {
 	private CraftingManager craftingManager;
 	private PlotPermissionChecker permissionChecker;
 	private PlotBorderVisualizer borderVisualizer;
+	private PlotMapManager mapManager;
 	private VaultHook vaultHook;
 	private PlotLimitManager limitManager;
 	private ChunkyPlotsAPI api;
@@ -94,12 +128,13 @@ public class ChunkyPlots extends JavaPlugin {
 		ProtectionUtil.init(permissionChecker);
 
 		this.borderVisualizer = new PlotBorderVisualizer(this, plotManager);
+		this.mapManager = new PlotMapManager(this, plotManager);
 
 		this.vaultHook = new VaultHook(this);
 		this.limitManager = new PlotLimitManager(config, plotManager, vaultHook);
 		this.plotManager.setLimitManager(limitManager);
 
-		this.api = new ChunkyPlotsAPIImpl(plotManager, limitManager, borderVisualizer, vaultHook);
+		this.api = new ChunkyPlotsAPIImpl(plotManager, limitManager, borderVisualizer, vaultHook, mapManager);
 		getServer().getServicesManager().register(ChunkyPlotsAPI.class, this.api, this, ServicePriority.Normal);
 	}
 
@@ -167,6 +202,7 @@ public class ChunkyPlots extends JavaPlugin {
 		pm.registerEvents(new PlotBlockPlaceListener(plotManager), this);
 		pm.registerEvents(userManager, this);
 		pm.registerEvents(borderVisualizer, this);
+		pm.registerEvents(new PlotMapGuiListener(), this);
 	}
 
     private void tryRegisterCommands(){
@@ -180,7 +216,7 @@ public class ChunkyPlots extends JavaPlugin {
     }
 
 	private void registerCommands() throws InvalidStateException {
-		requireCommand("plot").setExecutor(new PlotCommand(plotManager, userManager, borderVisualizer));
+		requireCommand("plot").setExecutor(new PlotCommand(plotManager, userManager, borderVisualizer, mapManager));
 		requireCommand("plotadmin").setExecutor(new PlotAdminCommand(plotManager, userManager));
 	}
 
@@ -224,6 +260,10 @@ public class ChunkyPlots extends JavaPlugin {
 
 	public PlotBorderVisualizer getBorderVisualizer() {
 		return borderVisualizer;
+	}
+
+	public PlotMapManager getMapManager() {
+		return mapManager;
 	}
 
 	public VaultHook getVaultHook() {

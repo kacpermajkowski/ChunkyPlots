@@ -11,6 +11,7 @@ import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotBorderVisualizer;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotRelation;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
+import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapManager;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,12 +23,18 @@ public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
     private final PlotLimitManager limitManager;
     private final PlotBorderVisualizer borderVisualizer;
     private final VaultHook vaultHook;
+    private final PlotMapManager mapManager;
 
     public ChunkyPlotsAPIImpl(PlotManager plotManager, PlotLimitManager limitManager, PlotBorderVisualizer borderVisualizer, VaultHook vaultHook) {
+        this(plotManager, limitManager, borderVisualizer, vaultHook, null);
+    }
+
+    public ChunkyPlotsAPIImpl(PlotManager plotManager, PlotLimitManager limitManager, PlotBorderVisualizer borderVisualizer, VaultHook vaultHook, PlotMapManager mapManager) {
         this.plotManager = plotManager;
         this.limitManager = limitManager;
         this.borderVisualizer = borderVisualizer;
         this.vaultHook = vaultHook;
+        this.mapManager = mapManager;
         instance = this;
     }
 
@@ -105,8 +112,11 @@ public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
         }
         String name = plot.getOwnerName();
         if (name != null) return name;
-        OfflinePlayer op = Bukkit.getOfflinePlayer(plot.getOwnerUUID());
-        return op.getName() != null ? op.getName() : "Unknown";
+        if (Bukkit.getServer() != null) {
+            OfflinePlayer op = Bukkit.getOfflinePlayer(plot.getOwnerUUID());
+            if (op != null && op.getName() != null) return op.getName();
+        }
+        return "Unknown";
     }
 
     @Override
@@ -162,6 +172,20 @@ public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
     @Override
     public List<Plot> getAllPlots() {
         return plotManager != null ? plotManager.getPlots() : List.of();
+    }
+
+    @Override
+    public void openPlotMap(Player player) {
+        if (mapManager != null && player != null) {
+            mapManager.openMap(player);
+        }
+    }
+
+    @Override
+    public void openPlotMap(Player player, int chunkX, int chunkZ) {
+        if (mapManager != null && player != null) {
+            mapManager.openMap(player, chunkX, chunkZ);
+        }
     }
 
     @Override

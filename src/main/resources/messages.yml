@@ -119,6 +119,10 @@ messages:
   border_disabled: "&cWyłączono podgląd granicy chunku/działki."
   border_expired: "&7Podgląd granicy chunku został automatycznie wyłączony po 10 minutach."
 
+  # Map GUI messages
+  map_opened: "&aOtwarto mapę działek w okolicy."
+  map_help_description: "otwiera interaktywną mapę działek i chunków w okolicy"
+
   # Message for unspecified errors occurring at runtime in code
   error_unspecified: "&cPojawił się bliżej nieprzewidziany błąd. Zgłoś ten fakt administratorowi"
 
