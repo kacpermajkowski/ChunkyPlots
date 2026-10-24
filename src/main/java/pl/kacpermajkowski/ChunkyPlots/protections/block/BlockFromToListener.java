@@ -7,9 +7,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class BlockFromToListener implements Listener {
+	private final PlotPermissionChecker checker;
+
+	public BlockFromToListener(PlotPermissionChecker checker) {
+		this.checker = checker;
+	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockFromTo(BlockFromToEvent event){
@@ -27,8 +32,8 @@ public class BlockFromToListener implements Listener {
     }
 
 	private boolean canLiquidMoveFromTo(Block fromBlock, Block toBlock) {
-		Plot fromPlot = PlotManager.getInstance().getPlot(fromBlock);
-		Plot toPlot = PlotManager.getInstance().getPlot(toBlock);
+		Plot fromPlot = checker.getPlot(fromBlock);
+		Plot toPlot = checker.getPlot(toBlock);
 		if(fromPlot == null && toPlot == null) return true;
 		else if(fromPlot != null && toPlot == null) return true;
 		else if(fromPlot == null && toPlot != null) return false;
@@ -36,8 +41,8 @@ public class BlockFromToListener implements Listener {
 	}
 
 	private boolean canDragonEggMoveFromTo(Block fromBlock, Block toBlock) {
-		Plot fromPlot = PlotManager.getInstance().getPlot(fromBlock);
-		Plot toPlot = PlotManager.getInstance().getPlot(toBlock);
+		Plot fromPlot = checker.getPlot(fromBlock);
+		Plot toPlot = checker.getPlot(toBlock);
 		if(fromPlot == null && toPlot == null) return true;
 		else if(fromPlot != null && toPlot == null) return false;
 		else if(fromPlot == null && toPlot != null) return false;

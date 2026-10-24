@@ -5,13 +5,19 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockSpreadEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class BlockSpreadListener implements Listener {
+	private final PlotPermissionChecker checker;
+
+	public BlockSpreadListener(PlotPermissionChecker checker) {
+		this.checker = checker;
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockSpread(BlockSpreadEvent event){
-		Plot sourceBlockPlot = PlotManager.getInstance().getPlot(event.getSource());
-		Plot destinationBlockPlot = PlotManager.getInstance().getPlot(event.getBlock());
+		Plot sourceBlockPlot = checker.getPlot(event.getSource());
+		Plot destinationBlockPlot = checker.getPlot(event.getBlock());
 		if(!canBlockSpreadFromPlotToPlot(sourceBlockPlot, destinationBlockPlot)){
 			event.setCancelled(true);
 		}

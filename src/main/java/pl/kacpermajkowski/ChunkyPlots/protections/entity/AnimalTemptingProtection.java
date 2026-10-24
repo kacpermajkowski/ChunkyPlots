@@ -1,32 +1,31 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.entity;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.ItemStack;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class AnimalTemptingProtection implements Listener {
+    private final PlotPermissionChecker checker;
+
+    public AnimalTemptingProtection(PlotPermissionChecker checker) {
+        this.checker = checker;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onAnimalMove(EntityTargetEvent event){
-        if(event.getReason() != EntityTargetEvent.TargetReason.TEMPT){
-            return;
-        }
-        if(!(event.getTarget() instanceof Player player)){
-            return;
-        }
+    public void onPlayerInteractAtEntity(PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+        if(itemInMainHand.getType() == Material.AIR) return;
 
-        Plot plot = PlotManager.getInstance().getPlot(event.getEntity());
-        if(plot == null){
-            return;
-        }
-        if(ProtectionUtil.canPlayerAffect(player,plot)){
-            return;
-        }
+        Plot plot = checker.getPlot(event.getRightClicked());
+        if(plot == null) return;
 
-        event.setCancelled(true);
+        event.setCancelled(!checker.canPlayerAffect(player, plot));
     }
 }

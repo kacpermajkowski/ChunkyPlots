@@ -1,6 +1,5 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.redstone;
 
-import org.bukkit.block.Block;
 import org.bukkit.block.Hopper;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -8,18 +7,23 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.UUID;
 
 public class HopperProtection implements Listener {
+    private final PlotPermissionChecker checker;
+
+    public HopperProtection(PlotPermissionChecker checker) {
+        this.checker = checker;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onItemPickup(InventoryPickupItemEvent event) {
         InventoryHolder inventoryHolder = event.getInventory().getHolder();
         if(!(inventoryHolder instanceof Hopper hopper)) return;
 
-        Plot hopperPlot = PlotManager.getInstance().getPlot(hopper.getChunk());
+        Plot hopperPlot = checker.getPlot(hopper.getChunk());
         if(hopperPlot == null) return;
 
         UUID itemThrowerUUID = event.getItem().getThrower();

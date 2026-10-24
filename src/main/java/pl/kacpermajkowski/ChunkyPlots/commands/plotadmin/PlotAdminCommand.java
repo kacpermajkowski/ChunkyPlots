@@ -18,9 +18,11 @@ public class PlotAdminCommand extends Command {
 
     public PlotAdminCommand(PlotManager plotManager, UserManager userManager) {
         subcommands = new ArrayList<>();
-        subcommands.add(new PlotAdminHelpCommand());
+        PlotAdminHelpCommand help = new PlotAdminHelpCommand();
+        subcommands.add(help);
         subcommands.add(new PlotAdminBlockCommand(plotManager));
         subcommands.add(new PlotAdminBypassCommand(userManager));
+        help.updateSubcommandList(new ArrayList<>(subcommands));
     }
 
     protected List<Subcommand> getSubcommands() {

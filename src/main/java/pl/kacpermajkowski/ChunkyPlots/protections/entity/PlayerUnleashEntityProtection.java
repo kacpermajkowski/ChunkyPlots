@@ -7,16 +7,21 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class PlayerUnleashEntityProtection implements Listener {
+	private final PlotPermissionChecker checker;
+
+	public PlayerUnleashEntityProtection(PlotPermissionChecker checker) {
+		this.checker = checker;
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerUnleashEntity(PlayerUnleashEntityEvent event){
 		final Location entityLocation = event.getEntity().getLocation();
 		final Player player = event.getPlayer();
-		final Plot eventPlot = PlotManager.getInstance().getPlot(entityLocation);
+		final Plot eventPlot = checker.getPlot(entityLocation);
 
-		event.setCancelled(!ProtectionUtil.canPlayerAffect(player, eventPlot));
+		event.setCancelled(!checker.canPlayerAffect(player, eventPlot));
 	}
 }

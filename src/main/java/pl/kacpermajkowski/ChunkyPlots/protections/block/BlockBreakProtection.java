@@ -6,15 +6,20 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class BlockBreakProtection implements Listener {
+	private final PlotPermissionChecker checker;
+
+	public BlockBreakProtection(PlotPermissionChecker checker) {
+		this.checker = checker;
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(final BlockBreakEvent event){
-		final Plot eventPlot = PlotManager.getInstance().getPlot(event.getBlock());
+		final Plot eventPlot = checker.getPlot(event.getBlock());
 		final Player player = event.getPlayer();
 
-		event.setCancelled(!ProtectionUtil.canPlayerAffect(player, eventPlot));
+		event.setCancelled(!checker.canPlayerAffect(player, eventPlot));
 	}
 }

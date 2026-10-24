@@ -8,12 +8,19 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
+import org.bukkit.plugin.Plugin;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class PlayerInteractListener implements Listener {
+	private final PlotPermissionChecker checker;
+	private final Plugin plugin;
+
+	public PlayerInteractListener(PlotPermissionChecker checker, Plugin plugin) {
+		this.checker = checker;
+		this.plugin = plugin;
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(final PlayerInteractEvent event){
 		switch (event.getAction()){
@@ -32,8 +39,8 @@ public class PlayerInteractListener implements Listener {
 		final Player player = event.getPlayer();
 		final Plot eventPlot;
 		if(block != null) {
-			eventPlot = PlotManager.getInstance().getPlot(block.getChunk());
-			if(ProtectionUtil.canPlayerAffect(player, eventPlot)) return;
+			eventPlot = checker.getPlot(block.getChunk());
+			if(checker.canPlayerAffect(player, eventPlot)) return;
 			event.setCancelled(true);
 		}
 	}
@@ -46,12 +53,12 @@ public class PlayerInteractListener implements Listener {
 		if (block == null) return;
 		if (block.getType() != Material.REDSTONE_ORE) return;
 
-		Plot plot = PlotManager.getInstance().getPlot(block);
-		if (ProtectionUtil.canPlayerAffect(event.getPlayer(), plot)) return;
+		Plot plot = checker.getPlot(block);
+		if (checker.canPlayerAffect(event.getPlayer(), plot)) return;
 		event.setCancelled(true);
 
 //		client-side prediction cosmetic effect fix, still works only when player drops off the ore
-		Bukkit.getScheduler().runTaskLater(ChunkyPlots.instance(),
+		Bukkit.getScheduler().runTaskLater(plugin,
 				() -> event.getPlayer().sendBlockChange(block.getLocation(), block.getBlockData())
 		, 1L);
 	}

@@ -8,20 +8,25 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
-import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-
-import static pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil.getSafeBorderPoint;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
+import pl.kacpermajkowski.ChunkyPlots.protections.ChunkBorderUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class PlayerEntryProtection implements Listener {
+    private final PlotPermissionChecker checker;
+
+    public PlayerEntryProtection(PlotPermissionChecker checker) {
+        this.checker = checker;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if(event.getTo() == null || event.getFrom().distance(event.getTo()) == 0) return;
 
-        Plot toPlot = PlotManager.getInstance().getPlot(event.getTo());
+        Plot toPlot = checker.getPlot(event.getTo());
         if(toPlot == null) return;
 
         if(!toPlot.isPlayerBlacklisted(player)) return;
@@ -32,7 +37,7 @@ public class PlayerEntryProtection implements Listener {
         int xDirection = fromChunk.getX() - toChunk.getX();
 
         if(zDirection == 0 && xDirection == 0) {
-            Location closestBorderPoint = getSafeBorderPoint(player, toChunk);
+            Location closestBorderPoint = ChunkBorderUtil.getSafeBorderPoint(player, toChunk);
             closestBorderPoint.setYaw(event.getTo().getYaw());
             closestBorderPoint.setPitch(event.getTo().getPitch());
 

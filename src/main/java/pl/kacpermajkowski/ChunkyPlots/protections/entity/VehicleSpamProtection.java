@@ -8,28 +8,33 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class VehicleSpamProtection implements Listener {
+    private final PlotPermissionChecker checker;
+
+    public VehicleSpamProtection(PlotPermissionChecker checker) {
+        this.checker = checker;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onVehicleExit(VehicleExitEvent event) {
-        Plot plot = PlotManager.getInstance().getPlot(event.getVehicle());
+        Plot plot = checker.getPlot(event.getVehicle());
         if (plot == null) return;
 
         if(!(event.getExited() instanceof Player player)) return;
-        else if (ProtectionUtil.canPlayerAffect(player, plot)) return;
+        else if (checker.canPlayerAffect(player, plot)) return;
 
         event.getVehicle().remove();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onVehicleMove(VehicleMoveEvent event) {
-        Plot destination = PlotManager.getInstance().getPlot(event.getTo());
+        Plot destination = checker.getPlot(event.getTo());
         if (destination == null) return;
 
         boolean isAllowed;
-        Plot source =  PlotManager.getInstance().getPlot(event.getFrom());
+        Plot source = checker.getPlot(event.getFrom());
         if (source == null){
             isAllowed = handleVehicleEnteringPlot(event, destination);
         } else {
@@ -44,7 +49,7 @@ public class VehicleSpamProtection implements Listener {
     }
 
     private boolean handleVehicleSwitchingPlots(VehicleMoveEvent event, Plot source, Plot destination) {
-        if(ProtectionUtil.canPlotAffectPlot(source, destination)){
+        if(checker.canPlotAffectPlot(source, destination)){
             return true;
         } else return handleVehicleEnteringPlot(event, destination);
     }
@@ -53,7 +58,7 @@ public class VehicleSpamProtection implements Listener {
         boolean result = false;
         for(Entity passenger: event.getVehicle().getPassengers()){
             if(passenger instanceof Player player){
-                if(ProtectionUtil.canPlayerAffect(player, destination)) {
+                if(checker.canPlayerAffect(player, destination)) {
                     result = true;
                 }
             }

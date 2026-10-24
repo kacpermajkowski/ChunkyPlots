@@ -8,9 +8,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class EntityDamageProtection implements Listener {
+    private final PlotPermissionChecker checker;
+
+    public EntityDamageProtection(PlotPermissionChecker checker) {
+        this.checker = checker;
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntity(final EntityDamageByEntityEvent event){
@@ -32,7 +37,7 @@ public class EntityDamageProtection implements Listener {
             return canLightningDamageEntity(lightning, victim);
         }
 
-        return ProtectionUtil.canEntityAffect(attacker, victim);
+        return checker.canEntityAffect(attacker, victim);
     }
 
     public boolean canPlayerDamageEntity(Player player, Entity victim) {
@@ -42,7 +47,7 @@ public class EntityDamageProtection implements Listener {
         if(victim instanceof Monster monster && monster.getRemoveWhenFarAway()){
             return true;
         }
-        return ProtectionUtil.canPlayerAffect(player, victim);
+        return checker.canPlayerAffect(player, victim);
     }
 
     public boolean canProjectileDamageEntity(Projectile projectile, Entity victim) {
@@ -51,19 +56,18 @@ public class EntityDamageProtection implements Listener {
             return canEntityDamageEntity(livingEntity, victim);
         } else if(projectileSource instanceof BlockProjectileSource blockProjectileSource){
             Block block = blockProjectileSource.getBlock();
-            return ProtectionUtil.canBlockAffectEntity(block, victim);
+            return checker.canBlockAffectEntity(block, victim);
         }
 
         return false;
     }
-
 
     public boolean canTntDamageEntity(TNTPrimed tntPrimed, Entity victim) {
         Entity source = tntPrimed.getSource();
         if(source != null){
             return canEntityDamageEntity(source, victim);
         }
-        return ProtectionUtil.canEntityAffect(tntPrimed, victim);
+        return checker.canEntityAffect(tntPrimed, victim);
     }
 
     public boolean canLightningDamageEntity(LightningStrike lightning, Entity victim) {
@@ -72,6 +76,6 @@ public class EntityDamageProtection implements Listener {
             return canEntityDamageEntity(causingEntity, victim);
         }
 
-        return ProtectionUtil.canEntityAffect(lightning, victim);
+        return checker.canEntityAffect(lightning, victim);
     }
 }

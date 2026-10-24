@@ -1,6 +1,5 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.entity;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -9,19 +8,24 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class VehicleEnterListener implements Listener {
+    private final PlotPermissionChecker checker;
+
+    public VehicleEnterListener(PlotPermissionChecker checker) {
+        this.checker = checker;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onVehicleEnter(final VehicleEnterEvent event) {
         final Entity entered = event.getEntered();
 
         final Location vehicleLocation = event.getVehicle().getLocation();
-        final Plot eventPlot = PlotManager.getInstance().getPlot(vehicleLocation.getChunk());
+        final Plot eventPlot = checker.getPlot(vehicleLocation.getChunk());
 
         if(entered instanceof Player player) {
-            event.setCancelled(!ProtectionUtil.canPlayerAffect(player, eventPlot));
+            event.setCancelled(!checker.canPlayerAffect(player, eventPlot));
         }
     }
 }

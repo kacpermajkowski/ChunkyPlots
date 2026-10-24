@@ -7,8 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +15,12 @@ import java.util.List;
 import static org.bukkit.event.EventPriority.HIGHEST;
 
 public class EnderCrystalProtection implements Listener {
+    private final PlotPermissionChecker checker;
+
+    public EnderCrystalProtection(PlotPermissionChecker checker) {
+        this.checker = checker;
+    }
+
     @EventHandler(priority = HIGHEST)
     public void onEnderCrystalExplosion(EntityExplodeEvent event) {
         if(event.getEntity().getType() != EntityType.END_CRYSTAL) return;
@@ -31,8 +36,8 @@ public class EnderCrystalProtection implements Listener {
     }
 
     private boolean canEnderCrystalExplodeBlock(EnderCrystal enderCrystal, Block block) {
-        Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
-        Plot crystalPlot = PlotManager.getInstance().getPlot(enderCrystal.getLocation().getChunk());
-        return ProtectionUtil.canPlotAffectPlot(crystalPlot, blockPlot);
+        Plot blockPlot = checker.getPlot(block.getChunk());
+        Plot crystalPlot = checker.getPlot(enderCrystal.getLocation().getChunk());
+        return checker.canPlotAffectPlot(crystalPlot, blockPlot);
     }
 }

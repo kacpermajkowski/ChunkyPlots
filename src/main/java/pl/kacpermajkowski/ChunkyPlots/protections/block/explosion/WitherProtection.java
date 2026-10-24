@@ -10,8 +10,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,8 +18,13 @@ import java.util.List;
 import java.util.UUID;
 
 public class WitherProtection implements Listener {
+    private final PlotPermissionChecker checker;
     private final HashMap<UUID, Player> witherSummoners = new HashMap<>();
     private Player lastWitherBlockPlacer;
+
+    public WitherProtection(PlotPermissionChecker checker) {
+        this.checker = checker;
+    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntitySpawn(final EntitySpawnEvent event){
@@ -41,9 +45,11 @@ public class WitherProtection implements Listener {
     public void onEntityExplode(final EntityExplodeEvent event){
         Entity exploder = event.getEntity();
         Wither wither = null;
-        if(exploder instanceof WitherSkull witherSkull)
-            if(witherSkull.getShooter() instanceof Wither w) wither = w;
-        else if (exploder instanceof Wither w) wither = w;
+        if(exploder instanceof WitherSkull witherSkull) {
+            if (witherSkull.getShooter() instanceof Wither w) wither = w;
+        } else if (exploder instanceof Wither w) {
+            wither = w;
+        }
         if(wither == null) return;
 
         event.setCancelled(false);
@@ -54,16 +60,15 @@ public class WitherProtection implements Listener {
                 blocksToSave.add(block);
 
         event.blockList().removeAll(blocksToSave);
-
     }
 
     private boolean canWitherExplodeBlock(Wither wither, Block block) {
-        Plot blockPlot = PlotManager.getInstance().getPlot(block);
+        Plot blockPlot = checker.getPlot(block);
         UUID witherUUID = wither.getUniqueId();
         Player summoner = witherSummoners.get(witherUUID);
 
         if(summoner == null) return false;
-        else return ProtectionUtil.canPlayerAffect(summoner, blockPlot);
+        else return checker.canPlayerAffect(summoner, blockPlot);
     }
 
     private boolean canWitherSkullExplodeBlock(WitherSkull witherSkull, Block block) {

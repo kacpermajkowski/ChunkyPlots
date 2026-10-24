@@ -7,16 +7,21 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class LecternBookProtection implements Listener {
+	private final PlotPermissionChecker checker;
+
+	public LecternBookProtection(PlotPermissionChecker checker) {
+		this.checker = checker;
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerTakeLecternBook(PlayerTakeLecternBookEvent event){
 		final Location lecternLocation = event.getLectern().getLocation();
 		final Player player = event.getPlayer();
-		final Plot eventPlot = PlotManager.getInstance().getPlot(lecternLocation.getChunk());
+		final Plot eventPlot = checker.getPlot(lecternLocation.getChunk());
 
-		event.setCancelled(!ProtectionUtil.canPlayerAffect(player, eventPlot));
+		event.setCancelled(!checker.canPlayerAffect(player, eventPlot));
 	}
 }

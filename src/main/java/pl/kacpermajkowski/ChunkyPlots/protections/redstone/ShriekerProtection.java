@@ -1,6 +1,5 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.redstone;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -9,13 +8,18 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class ShriekerProtection implements Listener {
     //TODO: Add a way to disable it in config cuz its prolly a resource hog
 
-    Block lastBlock = null;
+    private final PlotPermissionChecker checker;
+    private Block lastBlock = null;
+
+    public ShriekerProtection(PlotPermissionChecker checker) {
+        this.checker = checker;
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void BellResonateEvent(BellResonateEvent event) {
         registerBlockEvent(event);
@@ -147,17 +151,17 @@ public class ShriekerProtection implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onVibrationSpawn(BlockReceiveGameEvent event) {
-        Plot destPlot = PlotManager.getInstance().getPlot(event.getBlock());
+        Plot destPlot = checker.getPlot(event.getBlock());
         if(destPlot == null) return;
 
         Entity entity = event.getEntity();
         if(entity instanceof Player player) {
-            if(ProtectionUtil.canPlayerAffect(player, destPlot)) return;
+            if(checker.canPlayerAffect(player, destPlot)) return;
         } else if (entity != null) {
-            Plot entityPlot = PlotManager.getInstance().getPlot(entity);
+            Plot entityPlot = checker.getPlot(entity);
             if(entityPlot != null && entityPlot.hasTheSameOwnerAs(destPlot)) return;
         } else if (lastBlock != null) {
-            if(ProtectionUtil.canBlockAffect(lastBlock, destPlot)) return;
+            if(checker.canBlockAffect(lastBlock, destPlot)) return;
         }
 
         event.setCancelled(true);

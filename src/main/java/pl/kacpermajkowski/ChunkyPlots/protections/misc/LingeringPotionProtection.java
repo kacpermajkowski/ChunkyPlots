@@ -8,10 +8,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class LingeringPotionProtection implements Listener {
+	private final PlotPermissionChecker checker;
+
+	public LingeringPotionProtection(PlotPermissionChecker checker) {
+		this.checker = checker;
+	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onAreaEffectCloudApply(AreaEffectCloudApplyEvent event){
@@ -19,6 +23,7 @@ public class LingeringPotionProtection implements Listener {
 			event.setCancelled(true);
 		}
 	}
+
 	private boolean canEffectBeApplied(AreaEffectCloudApplyEvent event){
 		for(LivingEntity entity:event.getAffectedEntities()){
 			ProjectileSource shooter = event.getEntity().getSource();
@@ -28,7 +33,7 @@ public class LingeringPotionProtection implements Listener {
 	}
 
 	private boolean canShooterApplyEffectToEntity(ProjectileSource shooter, LivingEntity entity) {
-		Plot plotEntityIsStandingOn = PlotManager.getInstance().getPlot(entity.getLocation().getChunk());
+		Plot plotEntityIsStandingOn = checker.getPlot(entity.getLocation().getChunk());
 		if(plotEntityIsStandingOn != null){
 			return canShooterApplyEffectToEntityStandingOnPlot(shooter, plotEntityIsStandingOn);
 		}
@@ -37,7 +42,7 @@ public class LingeringPotionProtection implements Listener {
 
 	private boolean canShooterApplyEffectToEntityStandingOnPlot(ProjectileSource shooter, Plot entityPlot) {
 		if(shooter instanceof Player player){
-			return ProtectionUtil.canPlayerAffect(player, entityPlot);
+			return checker.canPlayerAffect(player, entityPlot);
 		}
 		return false;
 	}

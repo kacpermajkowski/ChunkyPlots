@@ -10,26 +10,28 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
-import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
-import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
-
-import static pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil.getSafeBorderPoint;
+import pl.kacpermajkowski.ChunkyPlots.protections.ChunkBorderUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class VehicleMoveProtection implements Listener {
+    private final PlotPermissionChecker checker;
+
+    public VehicleMoveProtection(PlotPermissionChecker checker) {
+        this.checker = checker;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onVehicleMove(VehicleMoveEvent event) {
         if(event.getTo() == null || event.getFrom().distance(event.getTo()) == 0) return;
 
-        Plot toPlot = PlotManager.getInstance().getPlot(event.getTo());
+        Plot toPlot = checker.getPlot(event.getTo());
         if(toPlot == null) return;
 
         Vehicle vehicle = event.getVehicle();
         for(Entity entity : vehicle.getPassengers()) {
             if(entity instanceof Player player){
-                if(ProtectionUtil.canPlayerAffect(player, toPlot)) return;
+                if(checker.canPlayerAffect(player, toPlot)) return;
             }
         }
 
@@ -39,7 +41,7 @@ public class VehicleMoveProtection implements Listener {
         int xDirection = fromChunk.getX() - toChunk.getX();
 
         if(zDirection == 0 && xDirection == 0) {
-            Location closestBorderPoint = getSafeBorderPoint(vehicle, toChunk);
+            Location closestBorderPoint = ChunkBorderUtil.getSafeBorderPoint(vehicle, toChunk);
             closestBorderPoint.setYaw(event.getTo().getYaw());
             closestBorderPoint.setPitch(event.getTo().getPitch());
 

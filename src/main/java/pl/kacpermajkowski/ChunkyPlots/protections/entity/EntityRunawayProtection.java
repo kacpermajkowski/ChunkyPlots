@@ -12,8 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -37,6 +36,12 @@ public class EntityRunawayProtection implements Listener {
         }
     }
 
+    private final PlotPermissionChecker checker;
+
+    public EntityRunawayProtection(PlotPermissionChecker checker) {
+        this.checker = checker;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityMove(EntityMoveEvent event) {
         if (!isAMob(event.getEntity())) {
@@ -49,20 +54,20 @@ public class EntityRunawayProtection implements Listener {
             return;
         }
 
-        Plot source = PlotManager.getInstance().getPlot(event.getFrom());
+        Plot source = checker.getPlot(event.getFrom());
         if (source == null) {
             return;
         }
 
-        Plot destination = PlotManager.getInstance().getPlot(event.getTo());
-        if (ProtectionUtil.canPlotAffectPlot(destination, source)) {
+        Plot destination = checker.getPlot(event.getTo());
+        if (checker.canPlotAffectPlot(destination, source)) {
             return;
         }
 
         if (nms instanceof Animal animal) {
             Player tempter = getTemptingPlayer(animal);
             if (tempter != null) {
-                if (ProtectionUtil.canPlayerAffect(tempter, source)) {
+                if (checker.canPlayerAffect(tempter, source)) {
                     return;
                 }
             }

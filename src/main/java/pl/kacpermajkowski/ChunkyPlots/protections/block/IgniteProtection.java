@@ -11,10 +11,15 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockIgniteEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class IgniteProtection implements Listener {
+	private final PlotPermissionChecker checker;
+
+	public IgniteProtection(PlotPermissionChecker checker) {
+		this.checker = checker;
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockIgnite(BlockIgniteEvent event){
 		if(!canBlockBeIgnited(event)){
@@ -40,8 +45,8 @@ public class IgniteProtection implements Listener {
 	private boolean canBlockBeIgnitedByBlock(Block block, Block ignitingBlock) {
 		Chunk ignitingBlockChunk = ignitingBlock.getChunk();
 		Chunk blockChunk = block.getChunk();
-		Plot sourceBlockPlot = PlotManager.getInstance().getPlot(ignitingBlockChunk);
-		Plot destinationBlockPlot = PlotManager.getInstance().getPlot(blockChunk);
+		Plot sourceBlockPlot = checker.getPlot(ignitingBlockChunk);
+		Plot destinationBlockPlot = checker.getPlot(blockChunk);
 
 		if(sourceBlockPlot != null && destinationBlockPlot != null){
 			return sourceBlockPlot.hasTheSameOwnerAs(destinationBlockPlot);
@@ -56,13 +61,13 @@ public class IgniteProtection implements Listener {
 
 	private boolean canBlockBeIgnitedByEntity(Block block, Entity ignitingEntity) {
 		Chunk blockChunk = block.getChunk();
-		Plot destinationBlockPlot = PlotManager.getInstance().getPlot(blockChunk);
+		Plot destinationBlockPlot = checker.getPlot(blockChunk);
 
 		if (destinationBlockPlot == null) {
 			return true;
 		}
 		if (ignitingEntity instanceof Player player) {
-			return ProtectionUtil.canPlayerAffect(player, destinationBlockPlot);
+			return checker.canPlayerAffect(player, destinationBlockPlot);
 		} else if (ignitingEntity instanceof EnderCrystal enderCrystal) {
 			return canEnderCrystalIgnitePlot(enderCrystal, destinationBlockPlot);
 		} else {

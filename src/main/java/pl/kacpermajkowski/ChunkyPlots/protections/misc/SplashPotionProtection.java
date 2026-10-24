@@ -12,14 +12,18 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class SplashPotionProtection implements Listener {
+	private final PlotPermissionChecker checker;
+
+	public SplashPotionProtection(PlotPermissionChecker checker) {
+		this.checker = checker;
+	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPotionSplash(final PotionSplashEvent event){
@@ -42,7 +46,7 @@ public class SplashPotionProtection implements Listener {
 		Player player = (Player) event.getPotion().getShooter();
 		List<Plot> affectedEntitesPlots = getAffectedEntitiesPlotList(event);
 		for(Plot plot:affectedEntitesPlots) {
-			if (!ProtectionUtil.canPlayerAffect(player, plot)){
+			if (!checker.canPlayerAffect(player, plot)){
 				return false;
 			}
 		}
@@ -51,13 +55,13 @@ public class SplashPotionProtection implements Listener {
 	private boolean canBlockSplashPotion(final PotionSplashEvent event) {
 		BlockProjectileSource blockProjectileSource = (BlockProjectileSource) event.getPotion().getShooter();
 		Block block = blockProjectileSource.getBlock();
-		Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
+		Plot blockPlot = checker.getPlot(block.getChunk());
 
 		return canPlotSplashPotion(blockPlot, event);
 	}
 	private boolean canLivingEntitySplashPotion(final PotionSplashEvent event) {
 		LivingEntity livingEntity = (LivingEntity) event.getPotion().getShooter();
-		Plot plot = PlotManager.getInstance().getPlot(livingEntity.getLocation());
+		Plot plot = checker.getPlot(livingEntity.getLocation());
 
 		return canPlotSplashPotion(plot, event);
 	}
@@ -66,7 +70,7 @@ public class SplashPotionProtection implements Listener {
 		Collection<LivingEntity> affectedEntities = event.getAffectedEntities();
 
 		for(LivingEntity entity:affectedEntities){
-			Plot plot = PlotManager.getInstance().getPlot(entity.getLocation());
+			Plot plot = checker.getPlot(entity.getLocation());
 			if(plot != null){
 				if(!plots.contains(plot)) {
 					plots.add(plot);
@@ -105,10 +109,10 @@ public class SplashPotionProtection implements Listener {
 		ProjectileSource shooter = event.getEntity().getShooter();
 		Player player = (Player) shooter;
 
-		Plot plot = PlotManager.getInstance().getPlot(event.getHitBlock().getLocation());
+		Plot plot = checker.getPlot(event.getHitBlock().getLocation());
 
 		if(plot != null) {
-			return ProtectionUtil.canPlayerAffect(player, plot);
+			return checker.canPlayerAffect(player, plot);
 		} else {
 			return true;
 		}
@@ -120,8 +124,8 @@ public class SplashPotionProtection implements Listener {
 		final Block blockShooter = blockProjectileSource.getBlock();
 		final Location splashLocation = event.getHitBlock() == null ? event.getHitBlock().getLocation() : event.getHitEntity().getLocation();
 
-		final Plot sourcePlot = PlotManager.getInstance().getPlot(blockShooter);
-		final Plot eventPlot = PlotManager.getInstance().getPlot(splashLocation);
+		final Plot sourcePlot = checker.getPlot(blockShooter);
+		final Plot eventPlot = checker.getPlot(splashLocation);
 
 		if(eventPlot == null) {
 			return true;
@@ -132,10 +136,10 @@ public class SplashPotionProtection implements Listener {
 	private boolean canLivingEntitySplashLingeringPotion(LingeringPotionSplashEvent event) {
 		final ProjectileSource shooter = event.getEntity().getShooter();
 		final LivingEntity livingEntity = (LivingEntity) shooter;
-		final Plot sourcePlot = PlotManager.getInstance().getPlot(livingEntity.getLocation());
+		final Plot sourcePlot = checker.getPlot(livingEntity.getLocation());
 
 		final Location splashLocation = event.getHitBlock() == null ? event.getHitBlock().getLocation() : event.getHitEntity().getLocation();
-		final Plot eventPlot = PlotManager.getInstance().getPlot(splashLocation);
+		final Plot eventPlot = checker.getPlot(splashLocation);
 
 		if(eventPlot == null) return true;
 		if(sourcePlot == null) return false;

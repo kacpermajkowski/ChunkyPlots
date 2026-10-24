@@ -12,28 +12,36 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.TNTPrimeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
-import pl.kacpermajkowski.ChunkyPlots.ChunkyPlots;
+import org.bukkit.plugin.Plugin;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
-import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class TNTProtection implements Listener {
-    Block lastTntPrimedSource = null;
-    HashMap<TNTPrimed, Block> tntBlockSources = new HashMap<>();
+    private final PlotPermissionChecker checker;
+    private final Plugin plugin;
+    private Block lastTntPrimedSource = null;
+    private final HashMap<TNTPrimed, Block> tntBlockSources = new HashMap<>();
+
+    public TNTProtection(PlotPermissionChecker checker, Plugin plugin) {
+        this.checker = checker;
+        this.plugin = plugin;
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTntPrimed(TNTPrimeEvent event) {
         lastTntPrimedSource = event.getBlock();
     }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTntSpawn(EntitySpawnEvent event) {
         Entity entity = event.getEntity();
         if(!(entity instanceof TNTPrimed tnt)) return;
         tntBlockSources.put(tnt, lastTntPrimedSource);
-        Bukkit.getScheduler().runTaskLater(ChunkyPlots.instance(), () -> {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
             tntBlockSources.remove(tnt);
         }, tnt.getFuseTicks()* 2L);
     }
@@ -52,22 +60,22 @@ public class TNTProtection implements Listener {
         event.blockList().removeAll(blockToSave);
     }
 
-    //TODO: maybe? add detection of where did redstone signal which primed  the tnt come from
+    //TODO: maybe? add detection of where did redstone signal which primed the tnt come from
 
     private boolean canTNTExplodeBlock(TNTPrimed tntPrimed, Block block) {
         Entity tntSource = tntPrimed.getSource();
-        Plot blockPlot = PlotManager.getInstance().getPlot(block);
+        Plot blockPlot = checker.getPlot(block);
         if(tntSource == null) {
             Block blockSource = tntBlockSources.get(tntPrimed);
             if(blockPlot == null) return true;
             else if(blockSource != null) {
-                return ProtectionUtil.canBlockAffect(blockSource, block);
+                return checker.canBlockAffect(blockSource, block);
             }
         } else {
             if(!tntSource.isValid()) return false;
 
             if (tntSource instanceof Player player)
-                return ProtectionUtil.canPlayerAffect(player, blockPlot);
+                return checker.canPlayerAffect(player, blockPlot);
         }
         return false;
     }

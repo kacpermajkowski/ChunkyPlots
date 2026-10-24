@@ -7,9 +7,15 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class DispenserProtection implements Listener {
+	private final PlotPermissionChecker checker;
+
+	public DispenserProtection(PlotPermissionChecker checker) {
+		this.checker = checker;
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDispense(BlockDispenseEvent event){
 		if(!canBlockDispense(event)){
@@ -25,7 +31,7 @@ public class DispenserProtection implements Listener {
 
 	private Plot getEventSourcePlot(BlockDispenseEvent event) {
 		Block source = event.getBlock();
-		return PlotManager.getInstance().getPlot(source.getChunk());
+		return checker.getPlot(source.getChunk());
 	}
 
 	private Plot getEventDestinationPlot(BlockDispenseEvent event) {
@@ -35,7 +41,7 @@ public class DispenserProtection implements Listener {
 		World world = event.getBlock().getWorld();
 		Block destination = world.getBlockAt(x, y, z);
 
-		return PlotManager.getInstance().getPlot(destination.getChunk());
+		return checker.getPlot(destination.getChunk());
 	}
 
 	private boolean canPlotDispenseOnPlot(Plot sourcePlot, Plot destinationPlot) {

@@ -6,9 +6,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBurnEvent;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
-import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 
 public class BlockBurnProtection implements Listener {
+	private final PlotPermissionChecker checker;
+
+	public BlockBurnProtection(PlotPermissionChecker checker) {
+		this.checker = checker;
+	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBurn(BlockBurnEvent event){
@@ -19,8 +24,8 @@ public class BlockBurnProtection implements Listener {
 
 	private boolean blockCanBeBurntByFire(Block block, Block fire) {
 		if(fire == null) return false;
-		Plot blockPlot = PlotManager.getInstance().getPlot(block.getChunk());
-		Plot firePlot = PlotManager.getInstance().getPlot(fire.getChunk());
+		Plot blockPlot = checker.getPlot(block.getChunk());
+		Plot firePlot = checker.getPlot(fire.getChunk());
 		if(blockPlot == null) return true;
 		if(firePlot == null) return false;
 		return blockPlot.hasTheSameOwnerAs(firePlot);
