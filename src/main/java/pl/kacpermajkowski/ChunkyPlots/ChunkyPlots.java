@@ -22,6 +22,8 @@ import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotRepository;
 import pl.kacpermajkowski.ChunkyPlots.plot.SqlitePlotRepository;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotBorderVisualizer;
+import pl.kacpermajkowski.ChunkyPlots.plot.group.gui.GroupGuiListener;
+import pl.kacpermajkowski.ChunkyPlots.plot.group.gui.GroupGuiManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.gui.PlotGuiListener;
 import pl.kacpermajkowski.ChunkyPlots.plot.gui.PlotGuiManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
@@ -89,6 +91,7 @@ public class ChunkyPlots extends JavaPlugin {
 	private PlotBorderVisualizer borderVisualizer;
 	private PlotMapManager mapManager;
 	private PlotGuiManager guiManager;
+	private GroupGuiManager groupGuiManager;
 	private VaultHook vaultHook;
 	private PlotLimitManager limitManager;
 	private ChunkyPlotsAPI api;
@@ -167,24 +170,25 @@ public class ChunkyPlots extends JavaPlugin {
 		PlotRepository plotRepository = new SqlitePlotRepository(databaseManager, getDataFolder(), getLogger());
 		ItemStack plotItem = new PlotItemFactory(config).createPlotItem();
 
-		UserRepository userRepository = new SqliteUserRepository(databaseManager, getDataFolder(), getLogger());
-
 		this.plotManager = new PlotManager(plotRepository, plotItem);
 		this.plotManager.setConfig(config);
-		this.userManager = new UserManager(userRepository);
+
+		UserRepository userRepository = new SqliteUserRepository(databaseManager, getDataFolder(), getLogger());
+		this.userManager = new UserManager(userRepository, plotManager);
 		this.craftingManager = new CraftingManager(this, plotItem);
 
 		this.permissionChecker = new PlotPermissionChecker(plotManager, userManager);
 		ProtectionUtil.init(permissionChecker);
 
 		this.borderVisualizer = new PlotBorderVisualizer(this, plotManager);
-		this.mapManager = new PlotMapManager(this, plotManager);
+		this.mapManager = new PlotMapManager(this, plotManager, userManager);
 
 		this.vaultHook = new VaultHook(this);
 		this.limitManager = new PlotLimitManager(config, plotManager, vaultHook);
 		this.plotManager.setLimitManager(limitManager);
 
-		this.guiManager = new PlotGuiManager(this, plotManager, userManager, borderVisualizer, limitManager, vaultHook, mapManager);
+		this.groupGuiManager = new GroupGuiManager(plotManager, userManager, mapManager);
+		this.guiManager = new PlotGuiManager(this, plotManager, userManager, borderVisualizer, limitManager, vaultHook, mapManager, groupGuiManager);
 
 		this.api = new ChunkyPlotsAPIImpl(plotManager, limitManager, borderVisualizer, vaultHook, mapManager, guiManager);
 		getServer().getServicesManager().register(ChunkyPlotsAPI.class, this.api, this, ServicePriority.Normal);
@@ -256,6 +260,7 @@ public class ChunkyPlots extends JavaPlugin {
 		pm.registerEvents(borderVisualizer, this);
 		pm.registerEvents(new PlotMapGuiListener(), this);
 		pm.registerEvents(new PlotGuiListener(guiManager), this);
+		pm.registerEvents(new GroupGuiListener(groupGuiManager), this);
 	}
 
     private void tryRegisterCommands(){
@@ -269,7 +274,7 @@ public class ChunkyPlots extends JavaPlugin {
     }
 
 	private void registerCommands() throws InvalidStateException {
-		requireCommand("plot").setExecutor(new PlotCommand(plotManager, userManager, borderVisualizer, mapManager, guiManager));
+		requireCommand("plot").setExecutor(new PlotCommand(plotManager, userManager, borderVisualizer, mapManager, guiManager, groupGuiManager));
 		requireCommand("plotadmin").setExecutor(new PlotAdminCommand(plotManager, userManager));
 	}
 
@@ -321,6 +326,10 @@ public class ChunkyPlots extends JavaPlugin {
 
 	public PlotGuiManager getGuiManager() {
 		return guiManager;
+	}
+
+	public GroupGuiManager getGroupGuiManager() {
+		return groupGuiManager;
 	}
 
 	public VaultHook getVaultHook() {

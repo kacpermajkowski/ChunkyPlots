@@ -8,6 +8,7 @@ import org.bukkit.plugin.Plugin;
 import pl.kacpermajkowski.ChunkyPlots.messages.TextUtil;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 
 /**
  * Service to create and open the interactive chunk map GUI for players.
@@ -15,10 +16,16 @@ import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 public class PlotMapManager {
     private final Plugin plugin;
     private final PlotManager plotManager;
+    private final UserManager userManager;
 
     public PlotMapManager(Plugin plugin, PlotManager plotManager) {
+        this(plugin, plotManager, null);
+    }
+
+    public PlotMapManager(Plugin plugin, PlotManager plotManager, UserManager userManager) {
         this.plugin = plugin;
         this.plotManager = plotManager;
+        this.userManager = userManager;
     }
 
     /**
@@ -47,7 +54,7 @@ public class PlotMapManager {
         if (world == null) world = player.getWorld();
         if (world == null) return;
 
-        PlotMapHolder holder = new PlotMapHolder(player, world, plotManager, chunkX, chunkZ);
+        PlotMapHolder holder = new PlotMapHolder(player, world, plotManager, userManager, chunkX, chunkZ);
         Inventory inventory = Bukkit.createInventory(holder, PlotMapHolder.INVENTORY_SIZE, TextUtil.toComponent("§8Mapa działek: §6[" + chunkX + ", " + chunkZ + "]"));
         holder.setInventory(inventory);
         holder.render();
@@ -72,5 +79,9 @@ public class PlotMapManager {
 
     public PlotManager getPlotManager() {
         return plotManager;
+    }
+
+    public UserManager getUserManager() {
+        return userManager;
     }
 }

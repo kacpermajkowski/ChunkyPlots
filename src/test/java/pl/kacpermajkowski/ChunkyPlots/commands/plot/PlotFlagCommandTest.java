@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -117,13 +118,16 @@ class PlotFlagCommandTest {
 
     @Test
     @DisplayName("Set subcommand updates flag and persists to database")
-    void testSetFlagAndPersist() {
+    void testSetFlagAndPersist() throws Exception {
         assertFalse(plot.getFlag(PlotFlag.PVP));
 
         flagCommand.execute(mockOwner, new String[]{"set", "pvp", "true"});
 
         Plot updatedPlot = plotManager.getPlot(plot.getUUID());
         assertTrue(updatedPlot.getFlag(PlotFlag.PVP));
+
+        // Wait for async persistence to finish
+        databaseManager.runAsync(() -> {}).get(5, TimeUnit.SECONDS);
 
         // Reload directly from database repository
         List<Plot> fromDb = plotRepository.loadAll();

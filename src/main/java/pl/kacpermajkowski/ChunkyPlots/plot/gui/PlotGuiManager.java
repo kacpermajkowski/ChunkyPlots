@@ -18,6 +18,7 @@ import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotBorderVisualizer;
 import pl.kacpermajkowski.ChunkyPlots.plot.group.Group;
+import pl.kacpermajkowski.ChunkyPlots.plot.group.gui.GroupGuiManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapManager;
 import pl.kacpermajkowski.ChunkyPlots.user.User;
@@ -36,10 +37,17 @@ public class PlotGuiManager {
     private final PlotLimitManager limitManager;
     private final VaultHook vaultHook;
     private final PlotMapManager mapManager;
+    private final GroupGuiManager groupGuiManager;
 
     public PlotGuiManager(Plugin plugin, PlotManager plotManager, UserManager userManager,
                           PlotBorderVisualizer borderVisualizer, PlotLimitManager limitManager,
                           VaultHook vaultHook, PlotMapManager mapManager) {
+        this(plugin, plotManager, userManager, borderVisualizer, limitManager, vaultHook, mapManager, null);
+    }
+
+    public PlotGuiManager(Plugin plugin, PlotManager plotManager, UserManager userManager,
+                          PlotBorderVisualizer borderVisualizer, PlotLimitManager limitManager,
+                          VaultHook vaultHook, PlotMapManager mapManager, GroupGuiManager groupGuiManager) {
         this.plugin = plugin;
         this.plotManager = plotManager;
         this.userManager = userManager;
@@ -47,6 +55,7 @@ public class PlotGuiManager {
         this.limitManager = limitManager;
         this.vaultHook = vaultHook;
         this.mapManager = mapManager;
+        this.groupGuiManager = groupGuiManager;
     }
 
     /**
@@ -221,6 +230,38 @@ public class PlotGuiManager {
                 )
         ));
         holder.setSlotData(29, "PLOT_LIST");
+
+        // Slot 30: Groups (Bulk plot management)
+        List<String> assignedGroups = new ArrayList<>();
+        if (userManager != null && plot != null && isOwner) {
+            User u = userManager.getUser(player);
+            if (u != null) {
+                for (Group g : u.getGroups()) {
+                    if (!g.isDefault() && g.contains(plot)) {
+                        assignedGroups.add(g.getName());
+                    }
+                }
+            }
+        }
+        List<String> groupLore = new ArrayList<>();
+        groupLore.add("§7Zarządzaj grupami działek i konfiguruj");
+        groupLore.add("§7wiele działek jednocześnie (flagi, członkowie).");
+        groupLore.add("");
+        if (plot != null && isOwner) {
+            if (!assignedGroups.isEmpty()) {
+                groupLore.add("§7Grupy tej działki: §d" + String.join(", ", assignedGroups));
+            } else {
+                groupLore.add("§7Ta działka nie jest w żadnej własnej grupie.");
+            }
+            groupLore.add("");
+        }
+        groupLore.add("§eKliknij, aby zarządzać grupami działek!");
+        inv.setItem(30, PlotGuiHolder.createItem(
+                Material.ENDER_CHEST,
+                "§d§lGrupy działek",
+                groupLore
+        ));
+        holder.setSlotData(30, "GROUPS");
 
         // Slot 31: Stats & Limits
         int remaining = limitManager != null ? limitManager.getRemainingPlots(player) : 0;
@@ -425,14 +466,15 @@ public class PlotGuiManager {
             for (Player target : Bukkit.getOnlinePlayers()) {
                 if (target == null) continue;
                 // Cannot select owner
-                if (target.getUniqueId().equals(player.getUniqueId()) || plot.isPlayerOwner(target)) continue;
+                if (target.getUniqueId().equals(player.getUniqueId())) continue;
+                if (plot != null && plot.isPlayerOwner(target)) continue;
                 // Whitelist filter: not already whitelisted and not blacklisted
                 if (action == PlayerSelectAction.ADD_WHITELIST) {
-                    if (plot.isPlayerWhitelisted(target) || plot.isPlayerBlacklisted(target)) continue;
+                    if (plot != null && (plot.isPlayerWhitelisted(target) || plot.isPlayerBlacklisted(target))) continue;
                 }
                 // Blacklist filter: not already blacklisted and not whitelisted
                 if (action == PlayerSelectAction.ADD_BLACKLIST) {
-                    if (plot.isPlayerBlacklisted(target)) continue;
+                    if (plot != null && plot.isPlayerBlacklisted(target)) continue;
                 }
                 eligible.add(target);
             }
@@ -684,6 +726,10 @@ public class PlotGuiManager {
 
     public PlotMapManager getMapManager() {
         return mapManager;
+    }
+
+    public GroupGuiManager getGroupGuiManager() {
+        return groupGuiManager;
     }
 
     private String resolvePlayerName(UUID uuid) {

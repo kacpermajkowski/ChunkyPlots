@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.SqlitePlotRepository;
 import pl.kacpermajkowski.ChunkyPlots.plot.flag.PlotFlag;
+import pl.kacpermajkowski.ChunkyPlots.plot.group.Group;
 import pl.kacpermajkowski.ChunkyPlots.user.User;
 import pl.kacpermajkowski.ChunkyPlots.user.SqliteUserRepository;
 
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -178,6 +180,88 @@ public class SqlitePersistenceTest {
                 .orElse(null);
         assertNotNull(loadedUser2);
         assertFalse(loadedUser2.isTeleportOnCooldown());
+    }
+
+    @Test
+    @DisplayName("SQLite User Groups Persistence: Save custom groups and plot associations")
+    void testUserGroupPersistence() {
+        UUID ownerId = UUID.randomUUID();
+        Plot plot1 = new Plot(ownerId, 1, 1, "world", UUID.randomUUID());
+        Plot plot2 = new Plot(ownerId, 2, 2, "world", UUID.randomUUID());
+        plotRepository.saveSync(plot1);
+        plotRepository.saveSync(plot2);
+
+        Map<UUID, Plot> plotMap = Map.of(plot1.getUUID(), plot1, plot2.getUUID(), plot2);
+        userRepository.setPlotResolver(plotMap::get);
+
+        User user = new User(ownerId);
+        user.bindPlotSupplier(() -> List.of(plot1, plot2));
+
+        Group farmsGroup = user.createGroup("Farms");
+        farmsGroup.add(plot1);
+        farmsGroup.add(plot2);
+
+        Group castlesGroup = user.createGroup("Castles");
+        castlesGroup.add(plot1);
+
+        // Save user synchronously
+        userRepository.saveSync(user);
+
+        // Load users from DB
+        Set<User> loadedUsers = userRepository.loadAll();
+        assertEquals(1, loadedUsers.size());
+
+        User loadedUser = loadedUsers.iterator().next();
+        assertEquals(ownerId, loadedUser.getPlayerUUID());
+        assertTrue(loadedUser.hasGroup("all"));
+        assertTrue(loadedUser.hasGroup("farms"));
+        assertTrue(loadedUser.hasGroup("castles"));
+
+        Group loadedFarms = loadedUser.getGroup("farms");
+        assertNotNull(loadedFarms);
+        assertEquals(2, loadedFarms.getPlots().size());
+        assertTrue(loadedFarms.contains(plot1));
+        assertTrue(loadedFarms.contains(plot2));
+
+        Group loadedCastles = loadedUser.getGroup("castles");
+        assertNotNull(loadedCastles);
+        assertEquals(1, loadedCastles.getPlots().size());
+        assertTrue(loadedCastles.contains(plot1));
+
+        // Remove castles group and save
+        loadedUser.removeGroup("castles");
+        userRepository.saveSync(loadedUser);
+
+        Set<User> reloaded = userRepository.loadAll();
+        User reloadedUser = reloaded.iterator().next();
+        assertFalse(reloadedUser.hasGroup("castles"));
+        assertTrue(reloadedUser.hasGroup("farms"));
+    }
+
+    @Test
+    @DisplayName("SQLite Cascade Delete: Deleting a plot automatically cascades to user_group_plots")
+    void testGroupPlotCascadeOnDelete() {
+        UUID ownerId = UUID.randomUUID();
+        Plot plot = new Plot(ownerId, 1, 1, "world", UUID.randomUUID());
+        plotRepository.saveSync(plot);
+
+        userRepository.setPlotResolver(id -> id.equals(plot.getUUID()) ? plot : null);
+
+        User user = new User(ownerId);
+        Group group = user.createGroup("TempGroup");
+        group.add(plot);
+        userRepository.saveSync(user);
+
+        // Verify group has 1 plot
+        Set<User> loaded = userRepository.loadAll();
+        assertEquals(1, loaded.iterator().next().getGroup("tempgroup").getPlots().size());
+
+        // Delete plot from plot repository (cascades via foreign key ON DELETE CASCADE)
+        plotRepository.deleteSync(plot);
+
+        // Reload users with resolver
+        Set<User> reloaded = userRepository.loadAll();
+        assertEquals(0, reloaded.iterator().next().getGroup("tempgroup").getPlots().size());
     }
 
     @Test

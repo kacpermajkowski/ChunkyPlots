@@ -13,6 +13,7 @@ import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotBorderVisualizer;
+import pl.kacpermajkowski.ChunkyPlots.plot.group.gui.GroupGuiManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapManager;
 
 import java.util.UUID;
@@ -121,6 +122,13 @@ public class PlotGuiListener implements Listener {
             case "PLOT_LIST" -> {
                 playSound(player, SOUND_CLICK, 1.1f);
                 guiManager.openPlotListGui(player, 0);
+            }
+            case "GROUPS" -> {
+                GroupGuiManager groupGui = guiManager.getGroupGuiManager();
+                if (groupGui != null) {
+                    playSound(player, SOUND_CLICK, 1.2f);
+                    groupGui.openGroupListGui(player);
+                }
             }
             case "DISPOSE" -> {
                 if (plot == null) return;

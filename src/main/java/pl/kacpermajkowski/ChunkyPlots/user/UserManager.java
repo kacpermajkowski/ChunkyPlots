@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,13 +16,37 @@ public class UserManager implements Listener {
 
 	private final Map<UUID, User> usersByUuid = new ConcurrentHashMap<>();
 	private final UserRepository repository;
+	private PlotManager plotManager;
 
 	public UserManager(UserRepository repository) {
+		this(repository, null);
+	}
+
+	public UserManager(UserRepository repository, PlotManager plotManager) {
 		this.repository = repository;
+		this.plotManager = plotManager;
+		if (repository instanceof SqliteUserRepository sqliteRepo && plotManager != null) {
+			sqliteRepo.setPlotResolver(plotManager::getPlot);
+		}
 		for (User user : repository.loadAll()) {
+			if (plotManager != null) {
+				user.bindPlotSupplier(() -> plotManager.getPlotsByOwner(user.getPlayerUUID()));
+			}
 			usersByUuid.put(user.getPlayerUUID(), user);
 		}
 		instance = this;
+	}
+
+	public void setPlotManager(PlotManager plotManager) {
+		this.plotManager = plotManager;
+		if (repository instanceof SqliteUserRepository sqliteRepo && plotManager != null) {
+			sqliteRepo.setPlotResolver(plotManager::getPlot);
+		}
+		for (User user : usersByUuid.values()) {
+			if (plotManager != null) {
+				user.bindPlotSupplier(() -> plotManager.getPlotsByOwner(user.getPlayerUUID()));
+			}
+		}
 	}
 
 	@Deprecated
@@ -29,10 +54,14 @@ public class UserManager implements Listener {
 		return instance;
 	}
 
-	private void createUser(OfflinePlayer player) {
+	private User createUser(OfflinePlayer player) {
 		final User user = new User(player);
+		if (plotManager != null) {
+			user.bindPlotSupplier(() -> plotManager.getPlotsByOwner(user.getPlayerUUID()));
+		}
 		usersByUuid.put(user.getPlayerUUID(), user);
 		saveUser(user);
+		return user;
 	}
 
 	@EventHandler
@@ -68,11 +97,27 @@ public class UserManager implements Listener {
 
 	public User getUser(UUID uuid) {
 		if (uuid == null) return null;
-		return usersByUuid.get(uuid);
+		User user = usersByUuid.get(uuid);
+		if (user == null && BukkitTestOrLiveCheck(uuid)) {
+			user = new User(uuid);
+			if (plotManager != null) {
+				user.bindPlotSupplier(() -> plotManager.getPlotsByOwner(uuid));
+			}
+			usersByUuid.put(uuid, user);
+		}
+		return user;
 	}
 
 	public User getUser(OfflinePlayer player) {
 		if (player == null) return null;
-		return getUser(player.getUniqueId());
+		User user = getUser(player.getUniqueId());
+		if (user == null) {
+			user = createUser(player);
+		}
+		return user;
+	}
+
+	private boolean BukkitTestOrLiveCheck(UUID uuid) {
+		return uuid != null;
 	}
 }

@@ -69,22 +69,64 @@ public class DatabaseManager {
 
             // Plots table
             stmt.execute("""
-                CREATE TABLE IF NOT EXISTS plots (\n                    uuid VARCHAR(36) PRIMARY KEY,\n                    owner_uuid VARCHAR(36) NOT NULL,\n                    chunk_x INTEGER NOT NULL,\n                    chunk_z INTEGER NOT NULL,\n                    world_name VARCHAR(255) NOT NULL,\n                    UNIQUE(world_name, chunk_x, chunk_z)\n                );
+                CREATE TABLE IF NOT EXISTS plots (
+                    uuid VARCHAR(36) PRIMARY KEY,
+                    owner_uuid VARCHAR(36) NOT NULL,
+                    chunk_x INTEGER NOT NULL,
+                    chunk_z INTEGER NOT NULL,
+                    world_name VARCHAR(255) NOT NULL,
+                    UNIQUE(world_name, chunk_x, chunk_z)
+                );
             """);
 
             // Plot members table (whitelist / blacklist)
             stmt.execute("""
-                CREATE TABLE IF NOT EXISTS plot_members (\n                    plot_uuid VARCHAR(36) NOT NULL,\n                    player_uuid VARCHAR(36) NOT NULL,\n                    member_type VARCHAR(16) NOT NULL,\n                    PRIMARY KEY (plot_uuid, player_uuid),\n                    FOREIGN KEY (plot_uuid) REFERENCES plots(uuid) ON DELETE CASCADE\n                );
+                CREATE TABLE IF NOT EXISTS plot_members (
+                    plot_uuid VARCHAR(36) NOT NULL,
+                    player_uuid VARCHAR(36) NOT NULL,
+                    member_type VARCHAR(16) NOT NULL,
+                    PRIMARY KEY (plot_uuid, player_uuid),
+                    FOREIGN KEY (plot_uuid) REFERENCES plots(uuid) ON DELETE CASCADE
+                );
             """);
 
             // Plot flags table
             stmt.execute("""
-                CREATE TABLE IF NOT EXISTS plot_flags (\n                    plot_uuid VARCHAR(36) NOT NULL,\n                    flag_name VARCHAR(64) NOT NULL,\n                    flag_value BOOLEAN NOT NULL,\n                    PRIMARY KEY (plot_uuid, flag_name),\n                    FOREIGN KEY (plot_uuid) REFERENCES plots(uuid) ON DELETE CASCADE\n                );
+                CREATE TABLE IF NOT EXISTS plot_flags (
+                    plot_uuid VARCHAR(36) NOT NULL,
+                    flag_name VARCHAR(64) NOT NULL,
+                    flag_value BOOLEAN NOT NULL,
+                    PRIMARY KEY (plot_uuid, flag_name),
+                    FOREIGN KEY (plot_uuid) REFERENCES plots(uuid) ON DELETE CASCADE
+                );
             """);
 
             // Users table
             stmt.execute("""
-                CREATE TABLE IF NOT EXISTS users (\n                    uuid VARCHAR(36) PRIMARY KEY,\n                    is_teleport_on_cooldown BOOLEAN NOT NULL DEFAULT 0\n                );
+                CREATE TABLE IF NOT EXISTS users (
+                    uuid VARCHAR(36) PRIMARY KEY,
+                    is_teleport_on_cooldown BOOLEAN NOT NULL DEFAULT 0
+                );
+            """);
+
+            // User groups table
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS user_groups (
+                    owner_uuid VARCHAR(36) NOT NULL,
+                    group_name VARCHAR(64) NOT NULL,
+                    PRIMARY KEY (owner_uuid, group_name)
+                );
+            """);
+
+            // User group plots table (mapping custom groups to plots)
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS user_group_plots (
+                    owner_uuid VARCHAR(36) NOT NULL,
+                    group_name VARCHAR(64) NOT NULL,
+                    plot_uuid VARCHAR(36) NOT NULL,
+                    PRIMARY KEY (owner_uuid, group_name, plot_uuid),
+                    FOREIGN KEY (plot_uuid) REFERENCES plots(uuid) ON DELETE CASCADE
+                );
             """);
 
             // Performance indexes for O(log N) seeks at billion-scale
@@ -92,6 +134,8 @@ public class DatabaseManager {
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_plots_owner ON plots(owner_uuid);");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_plot_members_plot ON plot_members(plot_uuid);");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_plot_flags_plot ON plot_flags(plot_uuid);");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_user_groups_owner ON user_groups(owner_uuid);");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_user_group_plots ON user_group_plots(owner_uuid, group_name);");
 
         } catch (SQLException e) {
             logger.severe("Failed to initialize SQLite database schema: " + e.getMessage());

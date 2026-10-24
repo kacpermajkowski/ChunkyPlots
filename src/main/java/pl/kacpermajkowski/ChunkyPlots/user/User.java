@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class User {
     @Getter
@@ -33,7 +34,7 @@ public class User {
 
 	public User(final UUID playerUUID) {
 		this.playerUUID = playerUUID;
-		groups.add(new Group("all"));
+		groups.add(new Group("all", playerUUID, true));
 	}
 	public User(OfflinePlayer player) {
 		this(player.getUniqueId());
@@ -41,7 +42,9 @@ public class User {
 
     // USER NAME
 	public String getName(){
-        return Bukkit.getServer().getOfflinePlayer(playerUUID).getName();
+        if (Bukkit.getServer() == null) return playerUUID.toString().substring(0, 8);
+        OfflinePlayer op = Bukkit.getServer().getOfflinePlayer(playerUUID);
+        return op != null && op.getName() != null ? op.getName() : playerUUID.toString().substring(0, 8);
     }
 
     // GROUPS
@@ -49,15 +52,47 @@ public class User {
 		return Collections.unmodifiableList(groups);
 	}
 
-	public void createGroup(String groupName){
-		groups.add(new Group(groupName));
+    public Group getDefaultGroup() {
+        return getGroup("all");
+    }
+
+    public void bindPlotSupplier(Supplier<List<Plot>> supplier) {
+        Group defaultGroup = getDefaultGroup();
+        if (defaultGroup != null) {
+            defaultGroup.setAllPlotsSupplier(supplier);
+        }
+    }
+
+	public Group createGroup(String groupName){
+        if (groupName == null) throw new IllegalArgumentException("Group name cannot be null");
+        String cleanName = groupName.trim();
+        if (cleanName.isEmpty()) throw new IllegalArgumentException("Group name cannot be empty");
+        if (cleanName.equalsIgnoreCase("all")) throw new IllegalArgumentException("Cannot create group named 'all'");
+        if (hasGroup(cleanName)) throw new IllegalArgumentException("Group '" + cleanName + "' already exists");
+
+        Group newGroup = new Group(cleanName, playerUUID, false);
+		groups.add(newGroup);
+        return newGroup;
 	}
-	public void removeGroup(String groupName){
-		groups.remove(getGroup(groupName));
+
+    public void addGroup(Group group) {
+        if (group == null) return;
+        if (hasGroup(group.getName())) return;
+        groups.add(group);
+    }
+
+	public boolean removeGroup(String groupName){
+        if (groupName == null) return false;
+        Group g = getGroup(groupName);
+        if (g == null || g.isDefault()) return false;
+		return groups.remove(g);
 	}
+
 	public Group getGroup(String groupName){
-		for(Group group:groups){
-			if(group.getName().equals(groupName)) {
+        if (groupName == null) return null;
+        String clean = groupName.trim();
+		for(Group group : groups){
+			if(group.getName().equalsIgnoreCase(clean)) {
 				return group;
 			}
 		}
@@ -65,15 +100,11 @@ public class User {
 	}
 
 	public boolean hasGroup(String groupName){
-		for(Group group:groups){
-			if(group.getName().equals(groupName)) {
-				return true;
-			}
-		}
-		return false;
+        return getGroup(groupName) != null;
 	}
 
 	public Player getPlayer(){
-		return Bukkit.getServer().getPlayer(playerUUID);
+        if (Bukkit.getServer() == null) return null;
+        return Bukkit.getServer().getPlayer(playerUUID);
 	}
 }

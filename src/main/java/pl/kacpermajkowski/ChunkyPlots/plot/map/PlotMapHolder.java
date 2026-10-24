@@ -16,6 +16,9 @@ import pl.kacpermajkowski.ChunkyPlots.messages.TextUtil;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotRelation;
+import pl.kacpermajkowski.ChunkyPlots.plot.group.Group;
+import pl.kacpermajkowski.ChunkyPlots.user.User;
+import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +51,7 @@ public class PlotMapHolder implements InventoryHolder {
     private final Player player;
     private World world;
     private final PlotManager plotManager;
+    private final UserManager userManager;
 
     private int centerX;
     private int centerZ;
@@ -55,9 +59,14 @@ public class PlotMapHolder implements InventoryHolder {
     private Inventory inventory;
 
     public PlotMapHolder(Player player, World world, PlotManager plotManager, int initialCenterX, int initialCenterZ) {
+        this(player, world, plotManager, null, initialCenterX, initialCenterZ);
+    }
+
+    public PlotMapHolder(Player player, World world, PlotManager plotManager, UserManager userManager, int initialCenterX, int initialCenterZ) {
         this.player = player;
         this.world = world;
         this.plotManager = plotManager;
+        this.userManager = userManager;
         this.centerX = initialCenterX;
         this.centerZ = initialCenterZ;
     }
@@ -85,6 +94,10 @@ public class PlotMapHolder implements InventoryHolder {
 
     public PlotManager getPlotManager() {
         return plotManager;
+    }
+
+    public UserManager getUserManager() {
+        return userManager;
     }
 
     public int getCenterX() {
@@ -220,8 +233,7 @@ public class PlotMapHolder implements InventoryHolder {
     }
 
     /**
-     * Renders all 45 chunk items in rows 0-4 and 9 control items in row 5.
-     */
+     * Renders all 45 chunk items in rows 0-4 and 9 control items in row 5.\n     */
     public void render() {
         if (inventory == null || player == null || world == null) return;
 
@@ -290,6 +302,20 @@ public class PlotMapHolder implements InventoryHolder {
                     if (plot.getWhitelist() != null && !plot.getWhitelist().isEmpty()) {
                         lore.add(TextUtil.toComponent("§7Członkowie: §b" + plot.getWhitelist().size()));
                     }
+                    if (userManager != null && player != null && plot.isPlayerOwner(player)) {
+                        User u = userManager.getUser(player);
+                        if (u != null) {
+                            List<String> groups = new ArrayList<>();
+                            for (Group g : u.getGroups()) {
+                                if (!g.isDefault() && g.contains(plot)) {
+                                    groups.add(g.getName());
+                                }
+                            }
+                            if (!groups.isEmpty()) {
+                                lore.add(TextUtil.toComponent("§7Grupy: §d" + String.join(", ", groups)));
+                            }
+                        }
+                    }
                 }
 
                 lore.add(Component.empty());
@@ -340,6 +366,20 @@ public class PlotMapHolder implements InventoryHolder {
                 lore.add(TextUtil.toComponent("§7Kod: §e" + plot.getMnemonicId()));
                 if (plot.getWhitelist() != null && !plot.getWhitelist().isEmpty()) {
                     lore.add(TextUtil.toComponent("§7Członkowie: §b" + plot.getWhitelist().size() + " graczy"));
+                }
+                if (userManager != null && player != null && plot.isPlayerOwner(player)) {
+                    User u = userManager.getUser(player);
+                    if (u != null) {
+                        List<String> groups = new ArrayList<>();
+                        for (Group g : u.getGroups()) {
+                            if (!g.isDefault() && g.contains(plot)) {
+                                groups.add(g.getName());
+                            }
+                        }
+                        if (!groups.isEmpty()) {
+                            lore.add(TextUtil.toComponent("§7Grupy: §d" + String.join(", ", groups)));
+                        }
+                    }
                 }
             } else {
                 lore.add(TextUtil.toComponent("§aWolny chunk! Możesz go zająć."));

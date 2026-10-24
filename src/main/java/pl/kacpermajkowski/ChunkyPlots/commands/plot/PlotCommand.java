@@ -10,6 +10,7 @@ import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.blacklist.PlotUn
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.border.PlotShowBorderCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.dispose.PlotDisposeCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.flag.PlotFlagCommand;
+import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.group.PlotGroupCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.gui.PlotGuiCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.help.PlotHelpCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.info.PlotInfoCommand;
@@ -20,6 +21,7 @@ import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.whitelist.PlotAd
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.whitelist.PlotRemoveCommand;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotBorderVisualizer;
+import pl.kacpermajkowski.ChunkyPlots.plot.group.gui.GroupGuiManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.gui.PlotGuiManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapManager;
 import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
@@ -37,22 +39,31 @@ public class PlotCommand extends Command {
 		this(plotManager, userManager,
 				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getBorderVisualizer() : null,
 				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getMapManager() : null,
-				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getGuiManager() : null);
+				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getGuiManager() : null,
+				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getGroupGuiManager() : null);
 	}
 
 	public PlotCommand(PlotManager plotManager, UserManager userManager, PlotBorderVisualizer borderVisualizer) {
 		this(plotManager, userManager, borderVisualizer,
 				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getMapManager() : null,
-				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getGuiManager() : null);
+				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getGuiManager() : null,
+				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getGroupGuiManager() : null);
 	}
 
 	public PlotCommand(PlotManager plotManager, UserManager userManager, PlotBorderVisualizer borderVisualizer, PlotMapManager mapManager) {
 		this(plotManager, userManager, borderVisualizer, mapManager,
-				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getGuiManager() : null);
+				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getGuiManager() : null,
+				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getGroupGuiManager() : null);
 	}
 
 	public PlotCommand(PlotManager plotManager, UserManager userManager, PlotBorderVisualizer borderVisualizer,
 					   PlotMapManager mapManager, PlotGuiManager guiManager) {
+		this(plotManager, userManager, borderVisualizer, mapManager, guiManager,
+				ChunkyPlots.instance() != null ? ChunkyPlots.instance().getGroupGuiManager() : null);
+	}
+
+	public PlotCommand(PlotManager plotManager, UserManager userManager, PlotBorderVisualizer borderVisualizer,
+					   PlotMapManager mapManager, PlotGuiManager guiManager, GroupGuiManager groupGuiManager) {
 		this.guiManager = guiManager;
 		this.subcommands = new ArrayList<>();
 		this.help = new PlotHelpCommand();
@@ -63,7 +74,7 @@ public class PlotCommand extends Command {
 		subcommands.add(new PlotAddCommand(plotManager));
 		subcommands.add(new PlotRemoveCommand(plotManager));
 		subcommands.add(new PlotFlagCommand(plotManager));
-//		subcommands.add(new PlotGroupCommand());
+		subcommands.add(new PlotGroupCommand(plotManager, userManager, groupGuiManager));
 		subcommands.add(new PlotInfoCommand(plotManager));
 //		subcommands.add(new PlotVisitCommand());
 		subcommands.add(new PlotListCommand(plotManager));
