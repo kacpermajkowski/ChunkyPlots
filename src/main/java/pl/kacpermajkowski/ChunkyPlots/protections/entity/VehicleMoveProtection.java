@@ -1,6 +1,5 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.entity;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -9,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
-import org.bukkit.util.Vector;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.protections.ChunkBorderUtil;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
@@ -35,20 +33,30 @@ public class VehicleMoveProtection implements Listener {
             }
         }
 
-        Chunk fromChunk = event.getFrom().getChunk();
-        Chunk toChunk = event.getTo().getChunk();
-        int zDirection = fromChunk.getZ() - toChunk.getZ();
-        int xDirection = fromChunk.getX() - toChunk.getX();
+        Plot fromPlot = checker.getPlot(event.getFrom());
+        boolean isFromSafe = !toPlot.equals(fromPlot);
+        if (isFromSafe && fromPlot != null) {
+            for (Entity entity : vehicle.getPassengers()) {
+                if (entity instanceof Player player) {
+                    if (fromPlot.isPlayerBlacklisted(player) && !checker.canPlayerAffect(player, fromPlot)) {
+                        isFromSafe = false;
+                        break;
+                    }
+                }
+            }
+        }
 
-        if(zDirection == 0 && xDirection == 0) {
-            Location closestBorderPoint = ChunkBorderUtil.getSafeBorderPoint(vehicle, toChunk);
-            closestBorderPoint.setYaw(event.getTo().getYaw());
-            closestBorderPoint.setPitch(event.getTo().getPitch());
-
-            vehicle.teleport(closestBorderPoint);
+        Location safeLocation;
+        if (isFromSafe) {
+            safeLocation = event.getFrom().clone();
         } else {
-            Vector pushVector = new Vector(xDirection, event.getTo().getDirection().getY() + 0.2, zDirection);
-            vehicle.setVelocity(pushVector);
+            safeLocation = ChunkBorderUtil.getSafeBorderPoint(vehicle, toPlot.getChunkX(), toPlot.getChunkZ(), checker);
+        }
+
+        if (safeLocation != null) {
+            safeLocation.setYaw(event.getTo().getYaw());
+            safeLocation.setPitch(event.getTo().getPitch());
+            vehicle.teleport(safeLocation);
         }
     }
 }

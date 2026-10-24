@@ -1,6 +1,7 @@
 package pl.kacpermajkowski.ChunkyPlots.commands.plot.subcommands.blacklist;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
@@ -8,6 +9,9 @@ import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotSubcommand;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
+import pl.kacpermajkowski.ChunkyPlots.protections.ChunkBorderUtil;
+import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
+import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 import pl.kacpermajkowski.ChunkyPlots.utils.PlayerUtil;
 
 import java.util.ArrayList;
@@ -90,6 +94,19 @@ public class PlotDenyCommand implements PlotSubcommand {
 
         plot.blacklistPlayer(playerToBlacklist);
         messageBuilder.message(Message.BLACKLIST_ADDED_TO_PLOT).sendChat(playerOwner);
+
+        if (playerToBlacklist.isOnline()) {
+            Player targetPlayer = playerToBlacklist.getPlayer();
+            if (targetPlayer != null && plot.isLocationInside(targetPlayer.getLocation())) {
+                Location safeLocation = ChunkBorderUtil.getSafeBorderPoint(targetPlayer, plot.getChunk(), new PlotPermissionChecker(plotManager, null));
+                if (safeLocation != null) {
+                    safeLocation.setYaw(targetPlayer.getLocation().getYaw());
+                    safeLocation.setPitch(targetPlayer.getLocation().getPitch());
+                    targetPlayer.teleport(safeLocation);
+                    ProtectionNotifier.notify(targetPlayer, Message.CANNOT_ENTER_PLOT, plot);
+                }
+            }
+        }
     }
 
     @Override

@@ -1,13 +1,11 @@
 package pl.kacpermajkowski.ChunkyPlots.protections.player;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.util.Vector;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.protections.ChunkBorderUtil;
@@ -38,21 +36,22 @@ public class PlayerEntryProtection implements Listener {
         if (checker.canPlayerAffect(player, toPlot)) return;
         if (!toPlot.isPlayerBlacklisted(player)) return;
 
-        Chunk fromChunk = event.getFrom().getChunk();
-        Chunk toChunk = event.getTo().getChunk();
-        int zDirection = fromChunk.getZ() - toChunk.getZ();
-        int xDirection = fromChunk.getX() - toChunk.getX();
+        Plot fromPlot = checker.getPlot(event.getFrom());
+        boolean isFromSafe = (fromPlot == null || !fromPlot.isPlayerBlacklisted(player) || checker.canPlayerAffect(player, fromPlot))
+                && !toPlot.equals(fromPlot);
 
-        if (zDirection == 0 && xDirection == 0) {
-            Location closestBorderPoint = ChunkBorderUtil.getSafeBorderPoint(player, toChunk);
-            closestBorderPoint.setYaw(event.getTo().getYaw());
-            closestBorderPoint.setPitch(event.getTo().getPitch());
-
-            player.teleport(closestBorderPoint);
+        Location safeLocation;
+        if (isFromSafe) {
+            safeLocation = event.getFrom().clone();
         } else {
-            Vector pushVector = new Vector(xDirection, event.getTo().getDirection().getY() + 0.2, zDirection);
-            player.setVelocity(pushVector);
-            ProtectionNotifier.notify(player, Message.CANNOT_ENTER_PLOT, toPlot);
+            safeLocation = ChunkBorderUtil.getSafeBorderPoint(player, toPlot.getChunkX(), toPlot.getChunkZ(), checker);
         }
+
+        if (safeLocation != null) {
+            safeLocation.setYaw(event.getTo().getYaw());
+            safeLocation.setPitch(event.getTo().getPitch());
+            player.teleport(safeLocation);
+        }
+        ProtectionNotifier.notify(player, Message.CANNOT_ENTER_PLOT, toPlot);
     }
 }
