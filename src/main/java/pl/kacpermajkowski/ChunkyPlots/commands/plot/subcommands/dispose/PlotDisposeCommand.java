@@ -68,13 +68,13 @@ public class PlotDisposeCommand implements PlotSubcommand {
 
 	private void informBystandersAboutDisposingAndUpdateCache(Plot disposedPlot) {
 		MessageBuilder mb = new MessageBuilder(Message.CURRENT_PLOT_DELETED).plot(disposedPlot);
-		PlayerUtil.getPlayersInPlot(disposedPlot).forEach(p -> {
-			mb.sendAll(p);
-			User u = userManager.getUser(p);
-			if (u != null) {
-				u.setCachedCurrentPlot(null);
+		PlayerUtil.getPlayersInPlot(disposedPlot).forEach(mb::sendAll);
+
+		for (User user : userManager.getUsers()) {
+			if (disposedPlot.equals(user.getCachedCurrentPlot())) {
+				user.setCachedCurrentPlot(null);
 			}
-		});
+		}
 	}
 
 	private void refundPlotBlock(Player player){

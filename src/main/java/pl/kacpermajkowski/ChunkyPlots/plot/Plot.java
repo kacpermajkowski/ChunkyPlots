@@ -71,7 +71,9 @@ public class Plot {
 		return ownerUUID;
 	}
 	public String getOwnerName(){
-		return Bukkit.getOfflinePlayer(ownerUUID).getName();
+		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(ownerUUID);
+		String name = offlinePlayer != null ? offlinePlayer.getName() : null;
+		return name != null ? name : "Unknown (" + (ownerUUID != null ? ownerUUID.toString().substring(0, 8) : "null") + ")";
 	}
 	public int getChunkX() {
 		return chunkX;
@@ -80,7 +82,11 @@ public class Plot {
 		return chunkZ;
 	}
 	public Chunk getChunk(){
-		return Objects.requireNonNull(Bukkit.getWorld(worldName)).getChunkAt(chunkX, chunkZ);
+		org.bukkit.World world = Bukkit.getWorld(worldName);
+		if (world == null) {
+			return null;
+		}
+		return world.getChunkAt(chunkX, chunkZ);
 	}
 	public String getWorldName(){
 		return worldName;
@@ -101,7 +107,12 @@ public class Plot {
 
 
 	public boolean isLocationInside(Location location){
-		return location.getChunk().getX() == chunkX && location.getChunk().getZ() == chunkZ;
+		if (location == null || location.getWorld() == null) {
+			return false;
+		}
+		return location.getWorld().getName().equals(worldName)
+				&& (location.getBlockX() >> 4) == chunkX
+				&& (location.getBlockZ() >> 4) == chunkZ;
 	}
 
 	public boolean isPlayerWhitelisted(UUID playerUUID){
@@ -121,11 +132,17 @@ public class Plot {
 		return blacklist.contains(user.getPlayerUUID());
 	}
 
+	public boolean isPlayerOwner(Player player){
+		return isPlayerOwner(player.getUniqueId());
+	}
 	public boolean isPlayerOwner(UUID playerUUID){
 		return ownerUUID.equals(playerUUID);
 	}
 	public boolean isPlayerOwner(OfflinePlayer player){
 		return ownerUUID.equals(player.getUniqueId());
+	}
+	public boolean isPlayerOwner(User user){
+		return isPlayerOwner(user.getPlayerUUID());
 	}
 	public boolean hasTheSameOwnerAs(Plot plot){
 		if(plot == null) return false;
@@ -153,7 +170,7 @@ public class Plot {
 
 		if (!(o instanceof Plot plot)) return false;
 
-        return new EqualsBuilder().append(chunkX, plot.chunkX).append(chunkZ, plot.chunkZ).append(worldName, plot.worldName).isEquals();
+		return new EqualsBuilder().append(chunkX, plot.chunkX).append(chunkZ, plot.chunkZ).append(worldName, plot.worldName).isEquals();
 	}
 
 	@Override

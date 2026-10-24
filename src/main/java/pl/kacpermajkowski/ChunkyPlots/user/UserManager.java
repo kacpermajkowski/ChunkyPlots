@@ -8,16 +8,19 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UserManager implements Listener {
 	private static UserManager instance;
 
-	private final Set<User> users = new HashSet<>();
+	private final Map<UUID, User> usersByUuid = new ConcurrentHashMap<>();
 	private final UserRepository repository;
 
 	public UserManager(UserRepository repository) {
 		this.repository = repository;
-		this.users.addAll(repository.loadAll());
+		for (User user : repository.loadAll()) {
+			usersByUuid.put(user.getPlayerUUID(), user);
+		}
 		instance = this;
 	}
 
@@ -28,7 +31,7 @@ public class UserManager implements Listener {
 
 	private void createUser(OfflinePlayer player) {
 		final User user = new User(player);
-		users.add(user);
+		usersByUuid.put(user.getPlayerUUID(), user);
 		saveUser(user);
 	}
 
@@ -46,10 +49,11 @@ public class UserManager implements Listener {
 	}
 
 	public void saveUsers() {
-		repository.saveAll(users);
+		repository.saveAll(usersByUuid.values());
 	}
 
 	public void saveUser(OfflinePlayer player) {
+		if (player == null) return;
 		saveUser(getUser(player));
 	}
 
@@ -58,16 +62,17 @@ public class UserManager implements Listener {
 		repository.save(user);
 	}
 
+	public Collection<User> getUsers() {
+		return Collections.unmodifiableCollection(usersByUuid.values());
+	}
+
 	public User getUser(UUID uuid) {
-		for (User user : users) {
-			if (user.getPlayerUUID().equals(uuid)) {
-				return user;
-			}
-		}
-		return null;
+		if (uuid == null) return null;
+		return usersByUuid.get(uuid);
 	}
 
 	public User getUser(OfflinePlayer player) {
+		if (player == null) return null;
 		return getUser(player.getUniqueId());
 	}
 }

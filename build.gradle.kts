@@ -30,7 +30,11 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.20.0")
 
     // Tests
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(platform("org.junit:junit-bom:5.11.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.mockito:mockito-core:5.14.2")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
 }
 
 paperweight.reobfArtifactConfiguration =
@@ -38,6 +42,12 @@ paperweight.reobfArtifactConfiguration =
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+}
+
+tasks.test {
+    useJUnitPlatform()
+    maxHeapSize = "2g"
+    jvmArgs("-Dnet.bytebuddy.experimental=true")
 }
 
 tasks.processResources {

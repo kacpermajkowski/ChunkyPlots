@@ -47,8 +47,9 @@ public class MessageBuilder {
     }
 
     public MessageBuilder plot(Plot plot) {
+        if (plot == null) return this;
         this.plotID = plot.getID();
-        this.plotOwnerName = Bukkit.getOfflinePlayer(plot.getOwnerUUID()).getName();
+        this.plotOwnerName = plot.getOwnerName();
         this.worldName = plot.getWorldName();
         return this;
     }

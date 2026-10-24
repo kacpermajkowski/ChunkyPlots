@@ -22,14 +22,13 @@ public class PlayerUtil {
      * @see OfflinePlayer
      * **/
     public static OfflinePlayer getOfflinePlayer(final String playerName) {
-        for(final OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+        if (playerName == null) return null;
+        for (final OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
             final String offlinePlayerName = offlinePlayer.getName();
-            if(offlinePlayerName == null){
-                throw new IllegalStateException(
-                        "OfflinePlayer.getName() from Bukkit.getOfflinePlayer() is null. " +
-                        "This is most likely a Bukkit issue. Try a newer/an older server build.");
+            if (offlinePlayerName == null) {
+                continue;
             }
-            if(offlinePlayerName.equalsIgnoreCase(playerName)) {
+            if (offlinePlayerName.equalsIgnoreCase(playerName)) {
                 return offlinePlayer;
             }
         }
@@ -37,11 +36,15 @@ public class PlayerUtil {
     }
 
     public static List<Player> getPlayersInChunk(Chunk chunk) {
-        if(chunk == null) return List.of();
+        if (chunk == null || chunk.getWorld() == null) return List.of();
         List<Player> result = new ArrayList<>();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getLocation().getChunk().equals(chunk)) {
+            Location loc = player.getLocation();
+            if (loc.getWorld() != null
+                    && loc.getWorld().equals(chunk.getWorld())
+                    && (loc.getBlockX() >> 4) == chunk.getX()
+                    && (loc.getBlockZ() >> 4) == chunk.getZ()) {
                 result.add(player);
             }
         }
@@ -49,8 +52,14 @@ public class PlayerUtil {
         return result;
     }
 
-    public static List<Player> getPlayersInPlot(Plot plot){
-        if(plot == null) return List.of();
-        return getPlayersInChunk(plot.getChunk());
+    public static List<Player> getPlayersInPlot(Plot plot) {
+        if (plot == null) return List.of();
+        List<Player> result = new ArrayList<>();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (plot.isLocationInside(player.getLocation())) {
+                result.add(player);
+            }
+        }
+        return result;
     }
 }
