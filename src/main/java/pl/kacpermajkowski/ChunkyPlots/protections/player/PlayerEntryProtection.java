@@ -9,10 +9,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
-import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.protections.ChunkBorderUtil;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
+import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
 public class PlayerEntryProtection implements Listener {
     private final PlotPermissionChecker checker;
@@ -52,7 +52,7 @@ public class PlayerEntryProtection implements Listener {
         } else {
             Vector pushVector = new Vector(xDirection, event.getTo().getDirection().getY() + 0.2, zDirection);
             player.setVelocity(pushVector);
-            new MessageBuilder(Message.CANNOT_ENTER_PLOT).username(toPlot.getOwnerName()).sendChat(player);
+            ProtectionNotifier.notify(player, Message.CANNOT_ENTER_PLOT, toPlot);
         }
     }
 }

@@ -52,47 +52,48 @@ public class MessageBuilder {
 
     public MessageBuilder plot(Plot plot) {
         if (plot == null) return this;
-        this.plotID = plot.getID();
-        this.plotOwnerName = plot.getOwnerName();
-        this.worldName = plot.getWorldName();
+        this.plotID = plot.getID() != null ? plot.getID() : "";
+        this.plotOwnerName = plot.getOwnerName() != null ? plot.getOwnerName() : "";
+        this.worldName = plot.getWorldName() != null ? plot.getWorldName() : "";
         return this;
     }
     public MessageBuilder plotID(String plotID){
-        this.plotID = plotID;
+        this.plotID = plotID != null ? plotID : "";
         return this;
     }
     public MessageBuilder plotOwnerName(String plotOwnerName) {
-        this.plotOwnerName = plotOwnerName;
+        this.plotOwnerName = plotOwnerName != null ? plotOwnerName : "";
         return this;
     }
     public MessageBuilder world(String worldName) {
-        this.worldName = worldName;
+        this.worldName = worldName != null ? worldName : "";
         return this;
     }
 
     public MessageBuilder user(Player userPlayer){
-        return username(userPlayer.getName());
+        return username(userPlayer != null ? userPlayer.getName() : "");
     }
     public MessageBuilder user(User user) {
-        return username(user.getName());
+        return username(user != null ? user.getName() : "");
     }
     public MessageBuilder username(String username) {
-        this.userName = username;
+        this.userName = username != null ? username : "";
         return this;
     }
 
     public MessageBuilder group(Group group) {
-        this.groupName = group.getName();
-        return this;
+        return groupName(group != null ? group.getName() : "");
     }
     public MessageBuilder groupName(String groupName) {
-        this.groupName = groupName;
+        this.groupName = groupName != null ? groupName : "";
         return this;
     }
 
     public MessageBuilder subcommand(Subcommand subcommand) {
-        this.subcommandSyntax = subcommand.getSyntax();
-        this.subcommandDescription = subcommand.getDescription();
+        if (subcommand != null) {
+            this.subcommandSyntax = subcommand.getSyntax() != null ? subcommand.getSyntax() : "";
+            this.subcommandDescription = subcommand.getDescription() != null ? subcommand.getDescription() : "";
+        }
         return this;
     }
 
@@ -126,23 +127,23 @@ public class MessageBuilder {
             message = message.replace("{prefix}", "");
             message = message.replace("{prefixSpacer}", "");
         }
-        message = message.replace("{plotOwnerName}", plotOwnerName);
-        message = message.replace("{plotOwner}", plotOwnerName);
-        message = message.replace("{plotID}", plotID);
-        message = message.replace("{world}", worldName);
-        message = message.replace("{worldName}", worldName);
+        message = message.replace("{plotOwnerName}", plotOwnerName != null ? plotOwnerName : "");
+        message = message.replace("{plotOwner}", plotOwnerName != null ? plotOwnerName : "");
+        message = message.replace("{plotID}", plotID != null ? plotID : "");
+        message = message.replace("{world}", worldName != null ? worldName : "");
+        message = message.replace("{worldName}", worldName != null ? worldName : "");
 
-        message = message.replace("{groupName}", groupName);
-        message = message.replace("{group}", groupName);
+        message = message.replace("{groupName}", groupName != null ? groupName : "");
+        message = message.replace("{group}", groupName != null ? groupName : "");
 
-        message = message.replace("{user}", userName);
-        message = message.replace("{userName}", userName);
+        message = message.replace("{user}", userName != null ? userName : "");
+        message = message.replace("{userName}", userName != null ? userName : "");
 
-        message = message.replace("{subcommandSyntax}", subcommandSyntax);
-        message = message.replace("{subcommandDescription}", subcommandDescription);
+        message = message.replace("{subcommandSyntax}", subcommandSyntax != null ? subcommandSyntax : "");
+        message = message.replace("{subcommandDescription}", subcommandDescription != null ? subcommandDescription : "");
 
-        message = message.replace("{plotLimit}", plotLimit);
-        message = message.replace("{currentPlots}", currentPlots);
+        message = message.replace("{plotLimit}", plotLimit != null ? plotLimit : "");
+        message = message.replace("{currentPlots}", currentPlots != null ? currentPlots : "");
 
         return message;
     }
@@ -157,7 +158,7 @@ public class MessageBuilder {
 
     public void sendChat(CommandSender receiver) {
         if(receiver == null){
-            Bukkit.getLogger().warning("MessageBuilder.sendChat(): receiver is null");
+            if (Bukkit.getServer() != null) Bukkit.getLogger().warning("MessageBuilder.sendChat(): receiver is null");
             return;
         }
         receiver.sendMessage(buildComponent());
@@ -165,13 +166,13 @@ public class MessageBuilder {
 
     public void sendChat(User user){
         if(user == null){
-            Bukkit.getLogger().warning("MessageBuilder.sendChat(): user is null");
+            if (Bukkit.getServer() != null) Bukkit.getLogger().warning("MessageBuilder.sendChat(): user is null");
             return;
         }
 
         Player receiver = user.getPlayer();
         if(receiver == null){
-            Bukkit.getLogger().warning("MessageBuilder.sendChat() called for a user that's not online.");
+            if (Bukkit.getServer() != null) Bukkit.getLogger().warning("MessageBuilder.sendChat() called for a user that's not online.");
             return;
         }
 

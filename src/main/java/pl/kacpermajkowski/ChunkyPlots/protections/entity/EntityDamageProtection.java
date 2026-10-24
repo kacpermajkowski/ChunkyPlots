@@ -8,7 +8,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
+import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
+import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
 public class EntityDamageProtection implements Listener {
     private final PlotPermissionChecker checker;
@@ -24,6 +27,14 @@ public class EntityDamageProtection implements Listener {
 
         if(canEntityDamageEntity(attacker, victim)) return;
         event.setCancelled(true);
+
+        if (attacker instanceof Player player) {
+            Plot victimPlot = checker.getPlot(victim);
+            ProtectionNotifier.notify(player, Message.PROTECTION_ENTITY_DAMAGE, victimPlot);
+        } else if (attacker instanceof Projectile projectile && projectile.getShooter() instanceof Player player) {
+            Plot victimPlot = checker.getPlot(victim);
+            ProtectionNotifier.notify(player, Message.PROTECTION_ENTITY_DAMAGE, victimPlot);
+        }
     }
 
     public boolean canEntityDamageEntity(Entity attacker, Entity victim) {

@@ -23,6 +23,23 @@ messages:
   not_owner: "&cNie możesz tego zrobić, bo nie jesteś właścicielem tej działki!"
   not_permitted: "&cNie masz uprawnień, aby to zrobić!"
 
+  # Protection breach messages
+  protection_block_break: "&cNie możesz niszczyć bloków na działce gracza &f{plotOwnerName}&c!"
+  protection_block_place: "&cNie możesz stawiać bloków na działce gracza &f{plotOwnerName}&c!"
+  protection_block_interact: "&cNie możesz używać obiektów na działce gracza &f{plotOwnerName}&c!"
+  protection_crop_trample: "&cNie możesz niszczyć upraw ani aktywować mechanizmów na działce gracza &f{plotOwnerName}&c!"
+  protection_bucket_empty: "&cNie możesz wylewać płynów na działce gracza &f{plotOwnerName}&c!"
+  protection_entity_damage: "&cNie możesz atakować stworzeń na działce gracza &f{plotOwnerName}&c!"
+  protection_entity_interact: "&cNie możesz wchodzić w interakcję ze stworzeniami na działce gracza &f{plotOwnerName}&c!"
+  protection_hanging_break: "&cNie możesz niszczyć ramek na przedmioty ani obrazów na działce gracza &f{plotOwnerName}&c!"
+  protection_vehicle_enter: "&cNie możesz wsiadać do pojazdów na działce gracza &f{plotOwnerName}&c!"
+  protection_vehicle_damage: "&cNie możesz niszczyć pojazdów na działce gracza &f{plotOwnerName}&c!"
+  protection_entity_leash: "&cNie możesz używać smyczy na stworzeniach na działce gracza &f{plotOwnerName}&c!"
+  protection_entity_shear: "&cNie możesz strzyc zwierząt na działce gracza &f{plotOwnerName}&c!"
+  protection_ignite: "&cNie możesz podpalać bloków na działce gracza &f{plotOwnerName}&c!"
+  protection_lectern: "&cNie możesz zabierać książek z pulpitów na działce gracza &f{plotOwnerName}&c!"
+  protection_potion_splash: "&cNie możesz rzucać mikstur na działkę gracza &f{plotOwnerName}&c!"
+
   # User related messages
   null_user: "&cGracz o nicku &f{user} &cnigdy nie był na serwerze!"
 

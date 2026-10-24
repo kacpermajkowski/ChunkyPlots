@@ -71,9 +71,16 @@ public class Plot {
 		return ownerUUID;
 	}
 	public String getOwnerName(){
-		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(ownerUUID);
-		String name = offlinePlayer != null ? offlinePlayer.getName() : null;
-		return name != null ? name : "Unknown (" + (ownerUUID != null ? ownerUUID.toString().substring(0, 8) : "null") + ")";
+		if (Bukkit.getServer() == null) {
+			return "Unknown (" + (ownerUUID != null ? ownerUUID.toString().substring(0, 8) : "null") + ")";
+		}
+		try {
+			OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(ownerUUID);
+			String name = offlinePlayer != null ? offlinePlayer.getName() : null;
+			return name != null ? name : "Unknown (" + (ownerUUID != null ? ownerUUID.toString().substring(0, 8) : "null") + ")";
+		} catch (Exception e) {
+			return "Unknown (" + (ownerUUID != null ? ownerUUID.toString().substring(0, 8) : "null") + ")";
+		}
 	}
 	public int getChunkX() {
 		return chunkX;
@@ -82,6 +89,9 @@ public class Plot {
 		return chunkZ;
 	}
 	public Chunk getChunk(){
+		if (Bukkit.getServer() == null) {
+			return null;
+		}
 		org.bukkit.World world = Bukkit.getWorld(worldName);
 		if (world == null) {
 			return null;

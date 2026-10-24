@@ -11,8 +11,10 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
+import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +31,10 @@ public class SplashPotionProtection implements Listener {
 	public void onPotionSplash(final PotionSplashEvent event){
 		if(!canPotionBeSplashed(event)){
 			event.setCancelled(true);
+			if (event.getPotion().getShooter() instanceof Player player) {
+				Plot plot = checker.getPlot(event.getPotion().getLocation());
+				ProtectionNotifier.notify(player, Message.PROTECTION_POTION_SPLASH, plot);
+			}
 		}
 	}
 	private boolean canPotionBeSplashed(final PotionSplashEvent event) {
@@ -92,6 +98,10 @@ public class SplashPotionProtection implements Listener {
 	public void onLingeringPotionSplash(final LingeringPotionSplashEvent event){
 		if(!canLingeringPotionBeSplashed(event)){
 			event.setCancelled(true);
+			if (event.getEntity().getShooter() instanceof Player player) {
+				Plot plot = event.getHitBlock() != null ? checker.getPlot(event.getHitBlock().getLocation()) : checker.getPlot(event.getEntity().getLocation());
+				ProtectionNotifier.notify(player, Message.PROTECTION_POTION_SPLASH, plot);
+			}
 		}
 	}
 	private boolean canLingeringPotionBeSplashed(LingeringPotionSplashEvent event) {

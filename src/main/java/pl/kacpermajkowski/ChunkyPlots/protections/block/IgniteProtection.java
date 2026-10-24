@@ -10,8 +10,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockIgniteEvent;
+import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
+import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionNotifier;
 
 public class IgniteProtection implements Listener {
 	private final PlotPermissionChecker checker;
@@ -24,6 +26,10 @@ public class IgniteProtection implements Listener {
 	public void onBlockIgnite(BlockIgniteEvent event){
 		if(!canBlockBeIgnited(event)){
 			event.setCancelled(true);
+			if (event.getIgnitingEntity() instanceof Player player) {
+				Plot plot = checker.getPlot(event.getBlock().getChunk());
+				ProtectionNotifier.notify(player, Message.PROTECTION_IGNITE, plot);
+			}
 		}
 	}
 
