@@ -22,6 +22,8 @@ import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotRepository;
 import pl.kacpermajkowski.ChunkyPlots.plot.SqlitePlotRepository;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotBorderVisualizer;
+import pl.kacpermajkowski.ChunkyPlots.plot.gui.PlotGuiListener;
+import pl.kacpermajkowski.ChunkyPlots.plot.gui.PlotGuiManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapGuiListener;
 import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapManager;
@@ -81,6 +83,7 @@ public class ChunkyPlots extends JavaPlugin {
 	private PlotPermissionChecker permissionChecker;
 	private PlotBorderVisualizer borderVisualizer;
 	private PlotMapManager mapManager;
+	private PlotGuiManager guiManager;
 	private VaultHook vaultHook;
 	private PlotLimitManager limitManager;
 	private ChunkyPlotsAPI api;
@@ -134,7 +137,9 @@ public class ChunkyPlots extends JavaPlugin {
 		this.limitManager = new PlotLimitManager(config, plotManager, vaultHook);
 		this.plotManager.setLimitManager(limitManager);
 
-		this.api = new ChunkyPlotsAPIImpl(plotManager, limitManager, borderVisualizer, vaultHook, mapManager);
+		this.guiManager = new PlotGuiManager(this, plotManager, userManager, borderVisualizer, limitManager, vaultHook, mapManager);
+
+		this.api = new ChunkyPlotsAPIImpl(plotManager, limitManager, borderVisualizer, vaultHook, mapManager, guiManager);
 		getServer().getServicesManager().register(ChunkyPlotsAPI.class, this.api, this, ServicePriority.Normal);
 	}
 
@@ -203,6 +208,7 @@ public class ChunkyPlots extends JavaPlugin {
 		pm.registerEvents(userManager, this);
 		pm.registerEvents(borderVisualizer, this);
 		pm.registerEvents(new PlotMapGuiListener(), this);
+		pm.registerEvents(new PlotGuiListener(guiManager), this);
 	}
 
     private void tryRegisterCommands(){
@@ -216,7 +222,7 @@ public class ChunkyPlots extends JavaPlugin {
     }
 
 	private void registerCommands() throws InvalidStateException {
-		requireCommand("plot").setExecutor(new PlotCommand(plotManager, userManager, borderVisualizer, mapManager));
+		requireCommand("plot").setExecutor(new PlotCommand(plotManager, userManager, borderVisualizer, mapManager, guiManager));
 		requireCommand("plotadmin").setExecutor(new PlotAdminCommand(plotManager, userManager));
 	}
 
@@ -264,6 +270,10 @@ public class ChunkyPlots extends JavaPlugin {
 
 	public PlotMapManager getMapManager() {
 		return mapManager;
+	}
+
+	public PlotGuiManager getGuiManager() {
+		return guiManager;
 	}
 
 	public VaultHook getVaultHook() {

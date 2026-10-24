@@ -136,7 +136,7 @@ public interface ChunkyPlotsAPI {
      */
     List<Plot> getAllPlots();
 
-    // --- Map GUI ---
+    // --- Map & Management GUI ---
 
     /**
      * Opens the interactive chunk map GUI for a player centered on their current chunk.
@@ -147,6 +147,16 @@ public interface ChunkyPlotsAPI {
      * Opens the interactive chunk map GUI for a player centered on specified chunk coordinates.
      */
     void openPlotMap(Player player, int chunkX, int chunkZ);
+
+    /**
+     * Opens the plot management GUI for a player.
+     */
+    void openPlotGui(Player player);
+
+    /**
+     * Opens the plot management GUI for a player on a specific plot.
+     */
+    void openPlotGui(Player player, Plot plot);
 
     // --- Hooks & Managers ---
 

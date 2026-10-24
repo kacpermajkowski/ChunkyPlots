@@ -10,6 +10,7 @@ import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotBorderVisualizer;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotRelation;
+import pl.kacpermajkowski.ChunkyPlots.plot.gui.PlotGuiManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapManager;
 
@@ -24,17 +25,24 @@ public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
     private final PlotBorderVisualizer borderVisualizer;
     private final VaultHook vaultHook;
     private final PlotMapManager mapManager;
+    private final PlotGuiManager guiManager;
 
     public ChunkyPlotsAPIImpl(PlotManager plotManager, PlotLimitManager limitManager, PlotBorderVisualizer borderVisualizer, VaultHook vaultHook) {
-        this(plotManager, limitManager, borderVisualizer, vaultHook, null);
+        this(plotManager, limitManager, borderVisualizer, vaultHook, null, null);
     }
 
     public ChunkyPlotsAPIImpl(PlotManager plotManager, PlotLimitManager limitManager, PlotBorderVisualizer borderVisualizer, VaultHook vaultHook, PlotMapManager mapManager) {
+        this(plotManager, limitManager, borderVisualizer, vaultHook, mapManager, null);
+    }
+
+    public ChunkyPlotsAPIImpl(PlotManager plotManager, PlotLimitManager limitManager, PlotBorderVisualizer borderVisualizer,
+                              VaultHook vaultHook, PlotMapManager mapManager, PlotGuiManager guiManager) {
         this.plotManager = plotManager;
         this.limitManager = limitManager;
         this.borderVisualizer = borderVisualizer;
         this.vaultHook = vaultHook;
         this.mapManager = mapManager;
+        this.guiManager = guiManager;
         instance = this;
     }
 
@@ -185,6 +193,20 @@ public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
     public void openPlotMap(Player player, int chunkX, int chunkZ) {
         if (mapManager != null && player != null) {
             mapManager.openMap(player, chunkX, chunkZ);
+        }
+    }
+
+    @Override
+    public void openPlotGui(Player player) {
+        if (guiManager != null && player != null) {
+            guiManager.openMainGui(player);
+        }
+    }
+
+    @Override
+    public void openPlotGui(Player player, Plot plot) {
+        if (guiManager != null && player != null) {
+            guiManager.openPlotDashboard(player, plot);
         }
     }
 
