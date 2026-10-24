@@ -9,6 +9,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import pl.kacpermajkowski.ChunkyPlots.user.User;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
+import pl.kacpermajkowski.ChunkyPlots.plot.mnemonic.PlotMnemonic;
 
 import java.util.*;
 
@@ -115,6 +116,10 @@ public class Plot {
 			}
 		}
 		return chunkX + ";" + chunkZ;
+	}
+
+	public String getMnemonicId() {
+		return PlotMnemonic.format(this);
 	}
 
 	public String getWorldAlias() {

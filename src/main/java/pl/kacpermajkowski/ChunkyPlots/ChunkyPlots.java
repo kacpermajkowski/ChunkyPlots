@@ -27,6 +27,8 @@ import pl.kacpermajkowski.ChunkyPlots.plot.gui.PlotGuiManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapGuiListener;
 import pl.kacpermajkowski.ChunkyPlots.plot.map.PlotMapManager;
+import pl.kacpermajkowski.ChunkyPlots.plot.mnemonic.MnemonicDictionary;
+import pl.kacpermajkowski.ChunkyPlots.plot.mnemonic.PlotMnemonic;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 import pl.kacpermajkowski.ChunkyPlots.protections.block.BlockBreakProtection;
@@ -74,6 +76,9 @@ import pl.kacpermajkowski.ChunkyPlots.user.SqliteUserRepository;
 import pl.kacpermajkowski.ChunkyPlots.user.UserManager;
 import pl.kacpermajkowski.ChunkyPlots.user.UserRepository;
 
+import java.io.File;
+import java.io.InputStream;
+
 public class ChunkyPlots extends JavaPlugin {
 	private Config config;
 	private DatabaseManager databaseManager;
@@ -116,6 +121,28 @@ public class ChunkyPlots extends JavaPlugin {
 	private void initializeDependencies(){
 		this.config = new Config(this);
 		MessageBuilder.init(config);
+
+		File dictFile = new File(getDataFolder(), "dictionary.txt");
+		if (!dictFile.exists()) {
+			try {
+				saveResource("dictionary.txt", false);
+			} catch (Exception e) {
+				getLogger().warning("Could not save default dictionary.txt: " + e.getMessage());
+			}
+		}
+		try {
+			if (dictFile.exists()) {
+				PlotMnemonic.init(MnemonicDictionary.loadFromFile(dictFile));
+			} else {
+				try (InputStream in = getResource("dictionary.txt")) {
+					if (in != null) {
+						PlotMnemonic.init(MnemonicDictionary.loadFromStream(in));
+					}
+				}
+			}
+		} catch (Exception e) {
+			getLogger().severe("Failed to load mnemonic dictionary: " + e.getMessage());
+		}
 
 		this.databaseManager = new DatabaseManager(getDataFolder(), getLogger());
 		PlotRepository plotRepository = new SqlitePlotRepository(databaseManager, getDataFolder(), getLogger());

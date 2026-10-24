@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Subcommand /plot gui [id] opening the interactive Plot Management GUI.
+ * Subcommand /plot gui [plotId] opening the main plot management GUI.
  */
 public class PlotGuiCommand implements PlotSubcommand {
     private final PlotGuiManager guiManager;
@@ -30,7 +30,7 @@ public class PlotGuiCommand implements PlotSubcommand {
 
     @Override
     public String getDescription() {
-        return "otwiera graficzny panel zarządzania działkami";
+        return "otwiera graficzny interfejs zarządzania działką";
     }
 
     @Override
@@ -50,16 +50,15 @@ public class PlotGuiCommand implements PlotSubcommand {
             return;
         }
 
-        if (args.length >= 1 && plotManager != null) {
+        if (args.length >= 1) {
             String plotId = args[0];
             Plot plot = plotManager.getPlot(plotId);
-            if (plot != null) {
-                guiManager.openPlotDashboard(player, plot);
-                return;
-            } else {
+            if (plot == null) {
                 new MessageBuilder(Message.NULL_PLOT).sendChat(player);
                 return;
             }
+            guiManager.openPlotDashboard(player, plot);
+            return;
         }
 
         guiManager.openMainGui(player);
@@ -70,11 +69,14 @@ public class PlotGuiCommand implements PlotSubcommand {
         if (args.length == 1 && plotManager != null && player != null) {
             List<String> completions = new ArrayList<>();
             for (Plot plot : plotManager.getPlotsByOwner(player.getUniqueId())) {
-                if (plot != null && plot.getID() != null) {
-                    completions.add(plot.getID());
+                if (plot != null) {
+                    if (plot.getID() != null) completions.add(plot.getID());
+                    if (plot.getMnemonicId() != null) completions.add(plot.getMnemonicId());
                 }
             }
-            return completions;
+            return completions.stream()
+                    .filter(id -> id.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .toList();
         }
         return List.of();
     }

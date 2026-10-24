@@ -13,6 +13,7 @@ import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.events.*;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
 import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
+import pl.kacpermajkowski.ChunkyPlots.plot.mnemonic.PlotMnemonic;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -235,6 +236,15 @@ public class PlotManager {
 			if (plot != null) return plot;
 		} catch (IllegalArgumentException ignored) {}
 
+		// Check by mnemonic representation (e.g. god-water, end-home-table, nether-hand-value)
+		if (idOrCoords.contains("-")) {
+			PlotMnemonic.MnemonicCoordinates mnemonicCoords = PlotMnemonic.parse(idOrCoords, config, null);
+			if (mnemonicCoords != null) {
+				Plot found = getPlot(mnemonicCoords.chunkX(), mnemonicCoords.chunkZ(), mnemonicCoords.worldName());
+				if (found != null) return found;
+			}
+		}
+
 		// Check by ID or chunk coords (x;z or x;z;world or x;z;alias)
 		if (idOrCoords.contains(";")) {
 			String[] parts = idOrCoords.split(";");
@@ -273,9 +283,9 @@ public class PlotManager {
 			}
 		}
 
-		// Fallback: match by Plot#getID
+		// Fallback: match by Plot#getID or Plot#getMnemonicId
 		for (Plot plot : plotsByUuid.values()) {
-			if (plot.getID().equalsIgnoreCase(idOrCoords)) {
+			if (plot.getID().equalsIgnoreCase(idOrCoords) || plot.getMnemonicId().equalsIgnoreCase(idOrCoords)) {
 				return plot;
 			}
 		}

@@ -9,6 +9,7 @@ import pl.kacpermajkowski.ChunkyPlots.messages.TextUtil;
 import pl.kacpermajkowski.ChunkyPlots.plot.Plot;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlotInfoCommand implements PlotSubcommand {
@@ -52,6 +53,7 @@ public class PlotInfoCommand implements PlotSubcommand {
 				new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().sendChat(player);
 				player.sendMessage(TextUtil.toComponent("&aWłaściciel: &f" + Bukkit.getOfflinePlayer(plot.getOwnerUUID()).getName()));
 				player.sendMessage(TextUtil.toComponent("&aID Działki: &6" + plot.getID()));
+				player.sendMessage(TextUtil.toComponent("&aIdentyfikator: &e" + plot.getMnemonicId()));
 				player.sendMessage(TextUtil.toComponent("&aChunk: &7X:&f" + plot.getChunkX() + "  &7Z:&f" + plot.getChunkZ()));
 				player.sendMessage(TextUtil.toComponent("&aŚwiat: &f" + plot.getWorldName()));
 				player.sendMessage(TextUtil.toComponent("&aCzłonkowie: &f" + plot.getWhitelist().stream().map((uuid) ->
@@ -63,7 +65,6 @@ public class PlotInfoCommand implements PlotSubcommand {
 				int blockX = (plot.getChunkX() << 4) + 8;
 				int blockZ = (plot.getChunkZ() << 4) + 8;
 				player.sendMessage(TextUtil.toComponent("&aŚrodek: &7X:&f" + blockX + "  &7Z:&f" + blockZ));
-				player.sendMessage(TextUtil.toComponent("&aUUID: &7" + plot.getUUID()));
 				new MessageBuilder(Message.WIDE_HEADER).noPrependedPrefix().sendChat(player);
 			} else {
 				new MessageBuilder(Message.NULL_PLOT).sendChat(sender);
@@ -74,8 +75,12 @@ public class PlotInfoCommand implements PlotSubcommand {
 	@Override
 	public List<String> getTabCompletion(Player player, String[] args) {
 		if (args.length == 1) {
-			return plotManager.getPlots().stream()
-					.map(Plot::getID)
+			List<String> completions = new ArrayList<>();
+			for (Plot plot : plotManager.getPlots()) {
+				if (plot.getID() != null) completions.add(plot.getID());
+				if (plot.getMnemonicId() != null) completions.add(plot.getMnemonicId());
+			}
+			return completions.stream()
 					.filter(id -> id.toLowerCase().startsWith(args[0].toLowerCase()))
 					.toList();
 		}

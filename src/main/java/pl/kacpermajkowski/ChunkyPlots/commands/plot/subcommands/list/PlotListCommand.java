@@ -45,7 +45,7 @@ public class PlotListCommand implements PlotSubcommand {
 	public void execute(Player sender, String[] args) {
 		if(sender instanceof Player player){
 			new MessageBuilder(Message.WIDE_HEADER).sendChat(player);
-			player.sendMessage(TextUtil.toComponent("&eID Działki &9» &eKoordynaty &8(kliknij, aby zarządzać)"));
+			player.sendMessage(TextUtil.toComponent("&eID Działki &8(&eKod&8) &9» &eKoordynaty &8(kliknij, aby zarządzać)"));
 			List<Plot> ownedPlots = plotManager.getPlotsByOwner(player.getUniqueId());
 			boolean hasPlots = !ownedPlots.isEmpty();
 			for(Plot plot : ownedPlots){
@@ -55,15 +55,17 @@ public class PlotListCommand implements PlotSubcommand {
 				Component line = Component.text()
 						.append(Component.text("(", NamedTextColor.DARK_GRAY))
 						.append(Component.text(plot.getID(), NamedTextColor.GOLD))
-						.append(Component.text(") ", NamedTextColor.DARK_GRAY))
+						.append(Component.text(") [", NamedTextColor.DARK_GRAY))
+						.append(Component.text(plot.getMnemonicId(), NamedTextColor.YELLOW))
+						.append(Component.text("] ", NamedTextColor.DARK_GRAY))
 						.append(Component.text("» ", NamedTextColor.GREEN))
 						.append(Component.text("X:", NamedTextColor.GRAY))
 						.append(Component.text(blockX + " ", NamedTextColor.WHITE))
 						.append(Component.text("Z:", NamedTextColor.GRAY))
 						.append(Component.text(blockZ + " ", NamedTextColor.WHITE))
 						.append(Component.text("[" + plot.getWorldName() + "]", NamedTextColor.DARK_AQUA))
-						.hoverEvent(HoverEvent.showText(Component.text("Kliknij, aby zarządzać działką /plot info " + plot.getID(), NamedTextColor.YELLOW)))
-						.clickEvent(ClickEvent.runCommand("/plot info " + plot.getID()))
+						.hoverEvent(HoverEvent.showText(Component.text("Kliknij, aby zarządzać działką /plot info " + plot.getMnemonicId(), NamedTextColor.YELLOW)))
+						.clickEvent(ClickEvent.runCommand("/plot info " + plot.getMnemonicId()))
 						.build();
 
 				player.sendMessage(line);

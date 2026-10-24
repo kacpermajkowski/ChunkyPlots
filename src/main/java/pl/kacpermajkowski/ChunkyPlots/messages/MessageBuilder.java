@@ -26,6 +26,7 @@ public class MessageBuilder {
     private String plotID = "";
     private String plotOwnerName = "";
     private String worldName = "";
+    private String plotMnemonic = "";
 
     private String userName = "";
     private String groupName = "";
@@ -55,10 +56,15 @@ public class MessageBuilder {
         this.plotID = plot.getID() != null ? plot.getID() : "";
         this.plotOwnerName = plot.getOwnerName() != null ? plot.getOwnerName() : "";
         this.worldName = plot.getWorldName() != null ? plot.getWorldName() : "";
+        this.plotMnemonic = plot.getMnemonicId() != null ? plot.getMnemonicId() : "";
         return this;
     }
     public MessageBuilder plotID(String plotID){
         this.plotID = plotID != null ? plotID : "";
+        return this;
+    }
+    public MessageBuilder plotMnemonic(String plotMnemonic){
+        this.plotMnemonic = plotMnemonic != null ? plotMnemonic : "";
         return this;
     }
     public MessageBuilder plotOwnerName(String plotOwnerName) {
@@ -130,6 +136,8 @@ public class MessageBuilder {
         message = message.replace("{plotOwnerName}", plotOwnerName != null ? plotOwnerName : "");
         message = message.replace("{plotOwner}", plotOwnerName != null ? plotOwnerName : "");
         message = message.replace("{plotID}", plotID != null ? plotID : "");
+        message = message.replace("{plotMnemonic}", plotMnemonic != null ? plotMnemonic : "");
+        message = message.replace("{mnemonic}", plotMnemonic != null ? plotMnemonic : "");
         message = message.replace("{world}", worldName != null ? worldName : "");
         message = message.replace("{worldName}", worldName != null ? worldName : "");
 

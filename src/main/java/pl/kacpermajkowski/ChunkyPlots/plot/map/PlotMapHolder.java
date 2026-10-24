@@ -175,6 +175,7 @@ public class PlotMapHolder implements InventoryHolder {
                     lore.add(TextUtil.toComponent("§7Status: " + relation.getChatColor() + relation.getPlName()));
                     lore.add(TextUtil.toComponent("§7Właściciel: §f" + plot.getOwnerName()));
                     lore.add(TextUtil.toComponent("§7ID Działki: §f" + plot.getID()));
+                    lore.add(TextUtil.toComponent("§7Kod: §e" + plot.getMnemonicId()));
                     if (plot.getWhitelist() != null && !plot.getWhitelist().isEmpty()) {
                         lore.add(TextUtil.toComponent("§7Członkowie: §b" + plot.getWhitelist().size()));
                     }
@@ -225,6 +226,7 @@ public class PlotMapHolder implements InventoryHolder {
             if (plot != null) {
                 lore.add(TextUtil.toComponent("§7Właściciel: §f" + plot.getOwnerName()));
                 lore.add(TextUtil.toComponent("§7ID Działki: §8" + plot.getID()));
+                lore.add(TextUtil.toComponent("§7Kod: §e" + plot.getMnemonicId()));
                 if (plot.getWhitelist() != null && !plot.getWhitelist().isEmpty()) {
                     lore.add(TextUtil.toComponent("§7Członkowie: §b" + plot.getWhitelist().size() + " graczy"));
                 }

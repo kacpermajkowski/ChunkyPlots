@@ -123,6 +123,7 @@ public class PlotGuiManager {
                     (isOwner ? "§a§lTwoja działka: §e" : "§6§lDziałka: §e") + plot.getID(),
                     List.of(
                             "§7Właściciel: §f" + ownerName,
+                            "§7Kod działki: §e" + plot.getMnemonicId(),
                             "§7Świat: §f" + worldName,
                             "§7Koordynaty chunka: §eX: " + chunkX + ", Z: " + chunkZ,
                             "§7Zakres bloków: §8X: " + minX + ".." + maxX + ", Z: " + minZ + ".." + maxZ,
@@ -532,8 +533,9 @@ public class PlotGuiManager {
 
             inv.setItem(slot, PlotGuiHolder.createItem(
                     Material.GRASS_BLOCK,
-                    "§a§lDziałka: §f" + p.getID(),
+                    "§a§lDziałka: §f" + p.getID() + " §7(" + p.getMnemonicId() + ")",
                     List.of(
+                            "§7Kod działki: §e" + p.getMnemonicId(),
                             "§7Świat: §f" + p.getWorldName(),
                             "§7Chunk: §e[" + p.getChunkX() + ", " + p.getChunkZ() + "]",
                             "§7Bloki: §8X: " + minX + ".." + maxX + ", Z: " + minZ + ".." + maxZ,
@@ -601,7 +603,8 @@ public class PlotGuiManager {
                 Material.TNT,
                 "§4§lCZY NA PEWNO CHCESZ USUNĄĆ TĘ DZIAŁKĘ?",
                 List.of(
-                        "§7Działka: §c" + plot.getID() + " §7(Świat: §f" + plot.getWorldName() + "§7)",
+                        "§7Działka: §c" + plot.getID() + " §7(" + plot.getMnemonicId() + ")",
+                        "§7Świat: §f" + plot.getWorldName(),
                         "§7Koordynaty: §e[" + plot.getChunkX() + ", " + plot.getChunkZ() + "]",
                         "",
                         "§cTa operacja jest trwała i nieodwracalna!",

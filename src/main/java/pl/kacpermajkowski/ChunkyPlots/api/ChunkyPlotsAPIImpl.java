@@ -185,6 +185,16 @@ public class ChunkyPlotsAPIImpl implements ChunkyPlotsAPI {
     }
 
     @Override
+    public String getPlotMnemonic(Plot plot) {
+        return plot != null ? plot.getMnemonicId() : null;
+    }
+
+    @Override
+    public Plot getPlotByMnemonic(String mnemonic) {
+        return plotManager != null ? plotManager.getPlot(mnemonic) : null;
+    }
+
+    @Override
     public void openPlotMap(Player player) {
         if (mapManager != null && player != null) {
             mapManager.openMap(player);

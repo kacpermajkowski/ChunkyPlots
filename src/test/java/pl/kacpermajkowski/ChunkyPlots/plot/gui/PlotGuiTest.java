@@ -364,6 +364,7 @@ class PlotGuiTest {
         // Tab completion
         when(mockPlotManager.getPlotsByOwner(playerUuid)).thenReturn(List.of(mockPlot));
         List<String> completions = cmd.getTabCompletion(mockPlayer, new String[]{""});
-        assertEquals(List.of("5;10"), completions);
+        assertTrue(completions.contains("5;10"));
+        assertTrue(completions.contains(mockPlot.getMnemonicId()));
     }
 }

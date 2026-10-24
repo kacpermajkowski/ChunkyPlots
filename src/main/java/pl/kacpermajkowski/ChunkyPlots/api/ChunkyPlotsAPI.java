@@ -137,6 +137,18 @@ public interface ChunkyPlotsAPI {
      */
     List<Plot> getAllPlots();
 
+    // --- Mnemonic Identifiers ---
+
+    /**
+     * Gets the human-readable mnemonic identifier for a plot (e.g. "god-water", "nether-hand-value").
+     */
+    String getPlotMnemonic(Plot plot);
+
+    /**
+     * Gets the plot associated with the given mnemonic identifier, or null if not found.
+     */
+    Plot getPlotByMnemonic(String mnemonic);
+
     // --- Map & Management GUI ---
 
     /**
