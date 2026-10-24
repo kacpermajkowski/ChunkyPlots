@@ -2,7 +2,10 @@ package pl.kacpermajkowski.ChunkyPlots;
 
 import org.bukkit.command.PluginCommand;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import pl.kacpermajkowski.ChunkyPlots.api.ChunkyPlotsAPI;
+import pl.kacpermajkowski.ChunkyPlots.api.ChunkyPlotsAPIImpl;
 import pl.kacpermajkowski.ChunkyPlots.commands.plot.PlotCommand;
 import pl.kacpermajkowski.ChunkyPlots.commands.plotadmin.PlotAdminCommand;
 import pl.kacpermajkowski.ChunkyPlots.config.Config;
@@ -10,6 +13,7 @@ import pl.kacpermajkowski.ChunkyPlots.crafting.CraftingManager;
 import pl.kacpermajkowski.ChunkyPlots.crafting.PlotItemFactory;
 import pl.kacpermajkowski.ChunkyPlots.database.DatabaseManager;
 import pl.kacpermajkowski.ChunkyPlots.exceptions.InvalidStateException;
+import pl.kacpermajkowski.ChunkyPlots.hook.vault.VaultHook;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlotLifecycleListener;
 import pl.kacpermajkowski.ChunkyPlots.listeners.PlotTransitionNotifier;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
@@ -18,6 +22,7 @@ import pl.kacpermajkowski.ChunkyPlots.plot.PlotManager;
 import pl.kacpermajkowski.ChunkyPlots.plot.PlotRepository;
 import pl.kacpermajkowski.ChunkyPlots.plot.SqlitePlotRepository;
 import pl.kacpermajkowski.ChunkyPlots.plot.border.PlotBorderVisualizer;
+import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
 import pl.kacpermajkowski.ChunkyPlots.protections.PlotPermissionChecker;
 import pl.kacpermajkowski.ChunkyPlots.protections.ProtectionUtil;
 import pl.kacpermajkowski.ChunkyPlots.protections.block.*;
@@ -42,6 +47,9 @@ public class ChunkyPlots extends JavaPlugin {
 	private CraftingManager craftingManager;
 	private PlotPermissionChecker permissionChecker;
 	private PlotBorderVisualizer borderVisualizer;
+	private VaultHook vaultHook;
+	private PlotLimitManager limitManager;
+	private ChunkyPlotsAPI api;
 
 	@Override
 	public void onEnable(){
@@ -65,6 +73,7 @@ public class ChunkyPlots extends JavaPlugin {
 		if(databaseManager != null) {
 			databaseManager.close();
 		}
+		getServer().getServicesManager().unregisterAll(this);
 	}
 
 	private void initializeDependencies(){
@@ -85,6 +94,13 @@ public class ChunkyPlots extends JavaPlugin {
 		ProtectionUtil.init(permissionChecker);
 
 		this.borderVisualizer = new PlotBorderVisualizer(this, plotManager);
+
+		this.vaultHook = new VaultHook(this);
+		this.limitManager = new PlotLimitManager(config, plotManager, vaultHook);
+		this.plotManager.setLimitManager(limitManager);
+
+		this.api = new ChunkyPlotsAPIImpl(plotManager, limitManager, borderVisualizer, vaultHook);
+		getServer().getServicesManager().register(ChunkyPlotsAPI.class, this.api, this, ServicePriority.Normal);
 	}
 
 	private void registerListeners(){
@@ -208,5 +224,21 @@ public class ChunkyPlots extends JavaPlugin {
 
 	public PlotBorderVisualizer getBorderVisualizer() {
 		return borderVisualizer;
+	}
+
+	public VaultHook getVaultHook() {
+		return vaultHook;
+	}
+
+	public PlotLimitManager getLimitManager() {
+		return limitManager;
+	}
+
+	public ChunkyPlotsAPI getApi() {
+		return api;
+	}
+
+	public static ChunkyPlotsAPI api() {
+		return ChunkyPlotsAPI.get();
 	}
 }

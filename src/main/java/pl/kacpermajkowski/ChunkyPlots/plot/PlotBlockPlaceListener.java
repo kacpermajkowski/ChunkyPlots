@@ -19,17 +19,14 @@ public class PlotBlockPlaceListener implements Listener {
         if(event.isCancelled()) return;
 
         if(!isBlockAPlotBlock(event.getItemInHand())) return;
-        if(!canPlotBeCreated(event)) {
+
+        boolean claimed = plotManager.claimPlot(event.getPlayer(), event.getBlockPlaced());
+        if (!claimed) {
             event.setCancelled(true);
             return;
         }
 
-        plotManager.claimPlot(event.getPlayer(), event.getBlockPlaced());
         event.getBlockPlaced().setType(Material.AIR);
-    }
-
-    private boolean canPlotBeCreated(BlockPlaceEvent event) {
-        return plotManager.getPlot(event.getBlockPlaced()) == null;
     }
 
     private boolean isBlockAPlotBlock(ItemStack block) {

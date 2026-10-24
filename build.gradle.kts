@@ -21,11 +21,15 @@ if (deployFile.exists()) deployProps.load(deployFile.inputStream())
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://jitpack.io")
 }
 
 dependencies {
     // NMS via paperweight (replaces paper-nms + paper-api)
     paperweight.paperDevBundle("26.3.build.+")
+
+    // Vault API (soft dependency)
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.46")
@@ -39,6 +43,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:6.2.1")
 
     // Tests
+    testImplementation("com.github.MilkBowl:VaultAPI:1.7.1")
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

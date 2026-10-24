@@ -33,6 +33,9 @@ public class MessageBuilder {
     private String subcommandSyntax = "";
     private String subcommandDescription = "";
 
+    private String plotLimit = "";
+    private String currentPlots = "";
+
     private boolean prependPrefix = true;
 
     public MessageBuilder(){
@@ -93,6 +96,16 @@ public class MessageBuilder {
         return this;
     }
 
+    public MessageBuilder plotLimit(int limit) {
+        this.plotLimit = limit == Integer.MAX_VALUE ? "∞" : String.valueOf(limit);
+        return this;
+    }
+
+    public MessageBuilder currentPlots(int current) {
+        this.currentPlots = String.valueOf(current);
+        return this;
+    }
+
     public MessageBuilder noPrependedPrefix() {
         this.prependPrefix = false;
         return this;
@@ -127,6 +140,9 @@ public class MessageBuilder {
 
         message = message.replace("{subcommandSyntax}", subcommandSyntax);
         message = message.replace("{subcommandDescription}", subcommandDescription);
+
+        message = message.replace("{plotLimit}", plotLimit);
+        message = message.replace("{currentPlots}", currentPlots);
 
         return message;
     }

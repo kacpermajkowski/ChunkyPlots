@@ -1,6 +1,7 @@
 package pl.kacpermajkowski.ChunkyPlots.config;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,9 +11,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -33,6 +36,9 @@ public class Config {
 	private List<String> plotItemLore;
 
 	private Set<MessageDisplayType> messageDisplayTypes;
+
+	private int defaultPlotLimit = 1;
+	private final HashMap<String, Integer> groupPlotLimits = new HashMap<>();
 
 	// messages.yml options
 	private HashMap<Message, String> messages;
@@ -88,6 +94,7 @@ public class Config {
 			loadPlotItemName();
 			loadPlotItemLore();
 			loadMessageDisplayTypes();
+			loadPlotLimits();
 
 			loadMessages();
 		} catch (InvalidConfigException e){
@@ -156,6 +163,18 @@ public class Config {
 		}
 	}
 
+	private void loadPlotLimits() {
+		this.defaultPlotLimit = this.config.getInt("plot-limits.default", 1);
+		this.groupPlotLimits.clear();
+		ConfigurationSection section = this.config.getConfigurationSection("plot-limits.groups");
+		if (section != null) {
+			for (String group : section.getKeys(false)) {
+				int limit = section.getInt(group, defaultPlotLimit);
+				this.groupPlotLimits.put(group.toLowerCase(), limit);
+			}
+		}
+	}
+
 	// messages.yml loaders
 	private void loadMessages(){
 		Logger logger = plugin.getLogger();
@@ -191,6 +210,14 @@ public class Config {
 	}
 
 	public Set<MessageDisplayType> getMessageDisplayTypes() { return messageDisplayTypes; }
+
+	public int getDefaultPlotLimit() {
+		return defaultPlotLimit;
+	}
+
+	public Map<String, Integer> getGroupPlotLimits() {
+		return Collections.unmodifiableMap(groupPlotLimits);
+	}
 
 	// messages.yml getters
 	public String getMessage(Message type){

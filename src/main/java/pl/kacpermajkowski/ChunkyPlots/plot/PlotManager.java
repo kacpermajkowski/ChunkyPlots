@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import pl.kacpermajkowski.ChunkyPlots.config.lang.Message;
 import pl.kacpermajkowski.ChunkyPlots.events.*;
 import pl.kacpermajkowski.ChunkyPlots.messages.MessageBuilder;
+import pl.kacpermajkowski.ChunkyPlots.plot.limit.PlotLimitManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +34,7 @@ public class PlotManager {
 
 	private final PlotRepository repository;
 	private final ItemStack plotItem;
+	private PlotLimitManager limitManager;
 
 	public static long chunkKey(int chunkX, int chunkZ) {
 		return ((long) chunkX & 0xFFFFFFFFL) | (((long) chunkZ & 0xFFFFFFFFL) << 32);
@@ -114,6 +116,14 @@ public class PlotManager {
 	@Deprecated
 	public static PlotManager getInstance() {
 		return instance;
+	}
+
+	public void setLimitManager(PlotLimitManager limitManager) {
+		this.limitManager = limitManager;
+	}
+
+	public PlotLimitManager getLimitManager() {
+		return limitManager;
 	}
 
 	public void savePlots() {
@@ -293,6 +303,16 @@ public class PlotManager {
 		String plotID = chunk.getX() + ";" + chunk.getZ();
 		if (getPlot(chunk) != null) {
 			new MessageBuilder(Message.PLOT_ALREADY_EXISTS).plotID(plotID).sendChat(player);
+			return false;
+		}
+
+		if (limitManager != null && limitManager.hasReachedPlotLimit(player)) {
+			int limit = limitManager.getPlotLimit(player);
+			int current = limitManager.getPlotCount(player);
+			new MessageBuilder(Message.PLOT_LIMIT_REACHED)
+					.plotLimit(limit)
+					.currentPlots(current)
+					.sendChat(player);
 			return false;
 		}
 

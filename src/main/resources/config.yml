@@ -22,8 +22,13 @@ plot-item:
     - "&7tak, aby nikt obcy nie mogl"
     - "&7zniszczyc ci dzialki"
 
-
-
-
-
-
+# Permission and group plot count limits
+plot-limits:
+  # Default limit for players without special permissions
+  default: 1
+  # Group-based plot limits (integrated with Vault if installed)
+  groups:
+    default: 1
+    vip: 5
+    svip: 10
+    mvp: 20
