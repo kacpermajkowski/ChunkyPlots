@@ -1,0 +1,45 @@
+{
+  "name": "ChunkyPlots (Paper MC Dev)",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "forwardPorts": [
+    25565,
+    25575,
+    5005
+  ],
+  "portsAttributes": {
+    "25565": {
+      "label": "Paper Minecraft Server",
+      "onAutoForward": "notify"
+    },
+    "25575": {
+      "label": "Paper RCON",
+      "onAutoForward": "silent"
+    },
+    "5005": {
+      "label": "JVM Remote Debug",
+      "onAutoForward": "silent"
+    }
+  },
+  "remoteUser": "vscode",
+  "containerUser": "vscode",
+  "postCreateCommand": "bash .devcontainer/scripts/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vscjava.vscode-gradle",
+        "vscjava.vscode-maven",
+        "redhat.java"
+      ],
+      "settings": {
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "java.compile.nullAnalysis.mode": "automatic",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "java.import.gradle.enabled": true
+      }
+    }
+  }
+}
+

@@ -1,0 +1,70 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Paper: Start Dev Server (Interactive)",
+      "type": "shell",
+      "command": "bash ${workspaceFolder}/dev-server/start.sh",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "focus": true
+      }
+    },
+    {
+      "label": "Paper: Start Dev Server (Background)",
+      "type": "shell",
+      "command": "bash ${workspaceFolder}/dev-server/start-bg.sh",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Paper: Attach Console (tmux)",
+      "type": "shell",
+      "command": "bash ${workspaceFolder}/dev-server/attach.sh",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Paper: Stop Dev Server",
+      "type": "shell",
+      "command": "bash ${workspaceFolder}/dev-server/stop.sh",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "ChunkyPlots: Compile (Gradle Jar)",
+      "type": "shell",
+      "command": "gradle jar",
+      "problemMatcher": ["$gradle-build-error"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "ChunkyPlots: Deploy JAR to Server",
+      "type": "shell",
+      "command": "gradle deployJar",
+      "problemMatcher": ["$gradle-build-error"],
+      "dependsOn": ["ChunkyPlots: Compile (Gradle Jar)"]
+    },
+    {
+      "label": "ChunkyPlots: Hot Deploy & Reload (PlugMan)",
+      "type": "shell",
+      "command": "gradle hotDeploy",
+      "problemMatcher": ["$gradle-build-error"]
+    }
+  ]
+}
+

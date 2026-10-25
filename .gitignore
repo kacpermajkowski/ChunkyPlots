@@ -9,3 +9,6 @@ deploy.properties
 /skills/
 /logs/
 *.db
+/dev-server/
+/dev-server/
+
